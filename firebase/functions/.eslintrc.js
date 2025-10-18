@@ -6,28 +6,34 @@ module.exports = {
   },
   extends: [
     "eslint:recommended",
-    "plugin:import/errors",
-    "plugin:import/warnings",
-    "plugin:import/typescript",
-    "google",
     "plugin:@typescript-eslint/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     project: ["tsconfig.json", "tsconfig.dev.json"],
     sourceType: "module",
+    ecmaVersion: 2020,
   },
-  ignorePatterns: [
-    "/lib/**/*", // Ignore built files.
-    "/generated/**/*", // Ignore generated files.
-  ],
-  plugins: [
-    "@typescript-eslint",
-    "import",
-  ],
+  ignorePatterns: ["/lib/**/*", "/generated/**/*"],
+  plugins: ["@typescript-eslint", "import"],
   rules: {
-    "quotes": ["error", "double"],
-    "import/no-unresolved": 0,
-    "indent": ["error", 2],
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
+
+    "object-curly-spacing": ["warn", "never"],
+    indent: ["warn", 2],
+    quotes: ["off"],
+    semi: ["off"],
+    "comma-dangle": "off",
+    "no-mixed-spaces-and-tabs": "off",
+
+    "import/order": "off",
+
+    "no-console": "off",
   },
 };
