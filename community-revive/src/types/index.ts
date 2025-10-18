@@ -1,22 +1,13 @@
-export interface Property {
-  id: string;
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  coordinates: {
-    lat: number;
-    lng: number;
-  };
-  communityValueScore: number;
-  beforeImage: string;
+// Import the API schema types
+import { Schema as ApiProperty } from '../backend/scheme_of_api';
+
+// Extended Property interface that combines API data with community-specific data
+export interface Property extends Omit<ApiProperty, 'propertyType'> {
+  // Override propertyType with our community-specific types
   propertyType: 'residential' | 'commercial' | 'industrial' | 'vacant';
-  size: {
-    squareFeet: number;
-    acres?: number;
-  };
-  yearBuilt?: number;
-  lastOccupied?: number;
+  
+  // Community-specific fields that we'll calculate or add
+  communityValueScore: number;
   estimatedRenovationCost: number;
   potentialUses: string[];
   communityImpact: {
@@ -44,6 +35,22 @@ export interface Property {
     description: string;
     keyPoints: string[];
   };
+  // Helper properties for easier access
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  beforeImage: string;
+  size: {
+    squareFeet: number;
+    acres?: number;
+  };
+  yearBuilt?: number;
+  lastOccupied?: number;
 }
 
 export interface FilterOption {

@@ -1,231 +1,531 @@
 import { Property, FilterOption } from '../types';
+import { Schema as ApiProperty, PropertyType, Section, Currency, SellerType, Rating, Utility, FeaturedLevel, FeaturedLevelFull, Sticker, SellingType, Category, State, Platform } from '../backend/scheme_of_api';
 
-export const mockProperties: Property[] = [
-  {
-    id: '1',
-    address: '1234 Oak Street',
-    city: 'Detroit',
-    state: 'MI',
-    zipCode: '48201',
-    coordinates: { lat: 42.3314, lng: -83.0458 },
-    communityValueScore: 88,
-    beforeImage: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=600&fit=crop',
-    propertyType: 'residential',
-    size: { squareFeet: 2400, acres: 0.15 },
-    yearBuilt: 1925,
-    lastOccupied: 2018,
-    estimatedRenovationCost: 125000,
-    potentialUses: ['Community Library', 'Affordable Housing', 'Youth Center'],
-    communityImpact: {
-      blightRemoval: true,
-      nearSchool: true,
-      nearPark: true,
-      nearTransit: false,
-      historicDistrict: true,
-      highYouthImpact: true,
-      potentialGreenSpace: false,
-    },
-    neighborhoodMetrics: {
-      renewalScore: 85,
-      walkabilityScore: 72,
-      safetyScore: 68,
-    },
-    communityVoice: {
-      organization: 'Detroit Community Development Coalition',
-      quote: 'This property represents more than just a building - it\'s the heart of our neighborhood\'s future. Transforming it into a community space will bring families together and give our youth a safe place to learn and grow.',
-      author: 'Maria Rodriguez',
-      role: 'Executive Director',
-    },
-    impactStory: {
-      title: 'From Blight to Bright Future',
-      description: 'This historic home has been vacant for 5 years, but its potential is undeniable. Located just two blocks from Lincoln Elementary School and within walking distance of Palmer Park, this property could become a cornerstone of community revitalization.',
+// Calculate price factor for community value score
+const calculatePriceFactor = (property: ApiProperty): number => {
+  if (!property.price) return 0;
+  
+  if (property.price.amount < 100000) return 20;
+  if (property.price.amount < 200000) return 15;
+  if (property.price.amount < 300000) return 10;
+  if (property.price.amount < 500000) return 5;
+  return 0;
+};
+
+// Calculate property type factor for community value score
+const calculatePropertyTypeFactor = (property: ApiProperty): number => {
+  if (property.propertyType === PropertyType.House || property.propertyType === PropertyType.Detached) return 10;
+  if (property.propertyType === PropertyType.Apartment) return 5;
+  return 0;
+};
+
+// Calculate bedrooms factor for community value score
+const calculateBedroomsFactor = (property: ApiProperty): number => {
+  if (!property.bedrooms) return 0;
+  
+  if (property.bedrooms >= 4) return 15;
+  if (property.bedrooms >= 3) return 10;
+  if (property.bedrooms >= 2) return 5;
+  return 0;
+};
+
+// Calculate BER rating factor for community value score
+const calculateBerFactor = (property: ApiProperty): number => {
+  if (!property.ber.rating) return 0;
+  
+  const berScores: Record<Rating, number> = {
+    [Rating.C1]: 8, [Rating.C2]: 6, [Rating.C3]: 4, [Rating.D1]: 2, [Rating.D2]: 0, 
+    [Rating.E1]: -5, [Rating.E2]: -10, [Rating.F]: -15, [Rating.G]: -20,
+    [Rating.BERPending]: 0, [Rating.Si666]: 0
+  };
+  return berScores[property.ber.rating] || 0;
+};
+
+// Calculate media factor for community value score
+const calculateMediaFactor = (property: ApiProperty): number => {
+  if (property.media.totalImages > 10) return 10;
+  if (property.media.totalImages > 5) return 5;
+  return 0;
+};
+
+// Calculate community value score based on various factors
+const calculateCommunityValueScore = (property: ApiProperty): number => {
+  const baseScore = 50;
+  const priceFactor = calculatePriceFactor(property);
+  const propertyTypeFactor = calculatePropertyTypeFactor(property);
+  const bedroomsFactor = calculateBedroomsFactor(property);
+  const berFactor = calculateBerFactor(property);
+  const mediaFactor = calculateMediaFactor(property);
+  
+  const totalScore = baseScore + priceFactor + propertyTypeFactor + bedroomsFactor + berFactor + mediaFactor;
+  return Math.max(0, Math.min(100, totalScore));
+};
+
+// Utility function to transform API data to our Property format
+export const transformApiPropertyToProperty = (apiProperty: ApiProperty): Property => {
+
+  // Calculate estimated renovation cost based on property details
+  const calculateRenovationCost = (property: ApiProperty): number => {
+    let baseCost = 50000; // Base renovation cost
+    
+    if (property.price) {
+      baseCost = property.price.amount * 0.3; // 30% of property value
+    }
+    
+    // Adjust based on property type
+    if (property.propertyType === PropertyType.House || property.propertyType === PropertyType.Detached) {
+      baseCost *= 1.2;
+    } else if (property.propertyType === PropertyType.Apartment) {
+      baseCost *= 0.8;
+    }
+    
+    // Adjust based on size
+    if (property.bedrooms && property.bedrooms > 3) {
+      baseCost *= 1.3;
+    }
+    
+    return Math.round(baseCost);
+  };
+
+  // Determine potential uses based on property characteristics
+  const getPotentialUses = (property: ApiProperty): string[] => {
+    const uses: string[] = [];
+    
+    if (property.propertyType === PropertyType.House || property.propertyType === PropertyType.Detached) {
+      uses.push('Affordable Housing', 'Community Center', 'Family Services');
+    } else if (property.propertyType === PropertyType.Apartment) {
+      uses.push('Affordable Housing', 'Senior Housing', 'Youth Center');
+    } else if (property.propertyType === PropertyType.Site) {
+      uses.push('Community Garden', 'Park', 'Playground');
+    }
+    
+    // Add uses based on size
+    if (property.bedrooms && property.bedrooms >= 4) {
+      uses.push('Multi-Family Housing', 'Community Center');
+    }
+    
+    return uses;
+  };
+
+  // Calculate community impact based on property features
+  const calculateCommunityImpact = (property: ApiProperty) => {
+    const isHistoric = property.metadata.sticker === Sticker.RuralLocation || 
+      (property.dates.dateOfConstruction ? 
+        new Date(property.dates.dateOfConstruction).getFullYear() < 1950 : false);
+    
+    return {
+      blightRemoval: true, // Assume all properties help with blight removal
+      nearSchool: property.extracted.nearbyLocations.closeBy?.some(location => 
+        location.toLowerCase().includes('school') || 
+        location.toLowerCase().includes('education')
+      ) || false,
+      nearPark: property.extracted.nearbyLocations.closeBy?.some(location => 
+        location.toLowerCase().includes('park') || 
+        location.toLowerCase().includes('garden')
+      ) || false,
+      nearTransit: property.extracted.nearbyLocations.closeBy?.some(location => 
+        location.toLowerCase().includes('station') || 
+        location.toLowerCase().includes('bus') ||
+        location.toLowerCase().includes('train')
+      ) || false,
+      historicDistrict: isHistoric,
+      highYouthImpact: Boolean(property.bedrooms && property.bedrooms >= 3),
+      potentialGreenSpace: property.propertyType === PropertyType.Site || 
+        Boolean(property.bedrooms && property.bedrooms >= 4)
+    };
+  };
+
+  // Calculate neighborhood metrics (simplified)
+  const calculateNeighborhoodMetrics = (property: ApiProperty) => {
+    const baseScore = 60;
+    return {
+      renewalScore: Math.min(95, baseScore + (property.analytics.listingViews / 100)),
+      walkabilityScore: property.extracted.nearbyLocations.closeBy?.length ? 75 : 45,
+      safetyScore: property.ber.rating && ['A1', 'A2', 'A3', 'B1', 'B2', 'B3'].includes(property.ber.rating) ? 80 : 60
+    };
+  };
+
+  // Generate impact story
+  const generateImpactStory = (property: ApiProperty) => {
+    const yearBuilt = property.dates.dateOfConstruction ? 
+      new Date(property.dates.dateOfConstruction).getFullYear() : null;
+    
+    const yearBuiltText = yearBuilt ? `Built in ${yearBuilt}, ` : '';
+    const description = `This ${property.propertyType.toLowerCase()} property presents a unique opportunity for community revitalization. ${yearBuiltText}it has the potential to serve as a cornerstone for neighborhood development.`;
+    
+    const familyCount = property.bedrooms ? property.bedrooms * 50 : 100;
+    const energyText = property.ber.rating ? `Energy efficiency rating: ${property.ber.rating}` : 'Potential for energy upgrades';
+    const amenitiesText = property.extracted.nearbyLocations.closeBy?.length ? 
+      `Close to ${property.extracted.nearbyLocations.closeBy.length} amenities` : 
+      'Opportunity for new community amenities';
+    
+    return {
+      title: `Transforming ${property.title}`,
+      description,
       keyPoints: [
-        'Serves 200+ families within walking distance',
-        'Historic designation provides tax incentives',
-        'Strong community support from local organizations',
-        'Potential for mixed-use development',
-      ],
+        `Serves ${familyCount}+ families in the area`,
+        energyText,
+        amenitiesText,
+        'Strong potential for community partnerships'
+      ]
+    };
+  };
+
+  const communityValueScore = calculateCommunityValueScore(apiProperty);
+  const communityImpact = calculateCommunityImpact(apiProperty);
+  const neighborhoodMetrics = calculateNeighborhoodMetrics(apiProperty);
+  const impactStory = generateImpactStory(apiProperty);
+
+  return {
+    ...apiProperty,
+    communityValueScore,
+    estimatedRenovationCost: calculateRenovationCost(apiProperty),
+    potentialUses: getPotentialUses(apiProperty),
+    communityImpact,
+    neighborhoodMetrics,
+    impactStory,
+    // Helper properties for easier access
+    coordinates: {
+      lat: apiProperty.location.coordinates[0],
+      lng: apiProperty.location.coordinates[1]
     },
+    address: apiProperty.title,
+    city: apiProperty.location.areaName || 'Unknown',
+    state: apiProperty.location.isInRepublicOfIreland ? 'Ireland' : 'Unknown',
+    zipCode: apiProperty.location.eircodes[0] || '',
+    beforeImage: apiProperty.media.images[0]?.size1440x960 || apiProperty.media.images[0]?.size1200x1200 || '',
+    propertyType: (() => {
+      const residentialTypes = [PropertyType.House, PropertyType.Detached, PropertyType.SemiD, PropertyType.Terrace, PropertyType.EndOfTerrace, PropertyType.Bungalow, PropertyType.Apartment, PropertyType.Townhouse];
+      if (residentialTypes.includes(apiProperty.propertyType)) return 'residential';
+      if (apiProperty.propertyType === PropertyType.Site) return 'vacant';
+      return 'commercial';
+    })(),
+    size: {
+      squareFeet: apiProperty.bedrooms ? apiProperty.bedrooms * 800 : 1200, // Estimate based on bedrooms
+      acres: apiProperty.propertyType === PropertyType.Site ? 0.25 : undefined
+    },
+    yearBuilt: apiProperty.dates.dateOfConstruction ? 
+      new Date(apiProperty.dates.dateOfConstruction).getFullYear() : undefined,
+    lastOccupied: apiProperty.dates.lastUpdateDate ? 
+      new Date(apiProperty.dates.lastUpdateDate).getFullYear() : undefined
+  };
+};
+
+// Sample API properties (you would replace this with actual API calls)
+const sampleApiProperties: ApiProperty[] = [
+  {
+    id: 1,
+    title: 'Beautiful 3 Bedroom House in Dublin',
+    seoTitle: '3 Bedroom House Dublin',
+    daftShortcode: 'DAFT-001',
+    seoFriendlyPath: '/property/3-bedroom-house-dublin-1',
+    propertyType: PropertyType.House,
+    sections: [Section.House, Section.Residential],
+    price: {
+      amount: 450000,
+      currency: Currency.Eur,
+      formatted: '€450,000'
+    },
+    bedrooms: 3,
+    bathrooms: 2,
+    location: {
+      areaName: 'Dublin 4',
+      primaryAreaId: 1,
+      isInRepublicOfIreland: true,
+      coordinates: [53.3498, -6.2603],
+      eircodes: ['D04 W2F2']
+    },
+    dates: {
+      publishDate: new Date('2024-01-15'),
+      lastUpdateDate: new Date('2024-01-20'),
+      dateOfConstruction: '1995'
+    },
+    media: {
+      images: [
+        {
+          size1440x960: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1440&h=960&fit=crop',
+          size1200x1200: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1200&h=1200&fit=crop',
+          size360x240: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=360&h=240&fit=crop',
+          size72x52: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=72&h=52&fit=crop'
+        }
+      ],
+      totalImages: 12,
+      hasVideo: false,
+      hasVirtualTour: true,
+      hasBrochure: false
+    },
+    seller: {
+      id: 1,
+      name: 'Dublin Properties Ltd',
+      type: SellerType.BrandedAgent,
+      branch: 'Dublin City Center',
+      address: '123 Grafton Street, Dublin 2',
+      phone: '+353 1 234 5678',
+      alternativePhone: null,
+      licenceNumber: 'L12345',
+      available: true,
+      premierPartner: true,
+      images: {
+        profileImage: null,
+        profileRoundedImage: null,
+        standardLogo: null,
+        squareLogo: null
+      },
+      backgroundColour: '#0066CC'
+    },
+    ber: {
+      rating: Rating.C2
+    },
+    description: 'A beautiful 3 bedroom house in the heart of Dublin 4. This property offers excellent potential for community development and affordable housing initiatives.',
+    features: ['Garden', 'Parking', 'Near Schools', 'Public Transport'],
+    extracted: {
+      folios: ['12345F'],
+      utilities: [Utility.MainsWater, Utility.MainsSewage, Utility.Electricity, Utility.Broadband],
+      nearbyLocations: {
+        closeBy: ['Dublin City University', 'Phoenix Park', 'Dublin Bus Station'],
+        shortDrive: ['Dublin Airport', 'Dublin Port'],
+        withinHour: ['Bray', 'Howth', 'Dun Laoghaire']
+      }
+    },
+    metadata: {
+      featuredLevel: FeaturedLevel.Standard,
+      featuredLevelFull: FeaturedLevelFull.Standard,
+      sticker: Sticker.SchoolNearby,
+      sellingType: SellingType.ByPrivateTreaty,
+      category: Category.Buy,
+      state: State.Published,
+      platform: Platform.Web,
+      premierPartner: true,
+      imageRestricted: false
+    },
+    stamps: {
+      stampDutyValue: {
+        amount: 22500,
+        currency: Currency.Eur,
+        formatted: '€22,500'
+      }
+    },
+    branding: {
+      standardLogo: undefined,
+      squareLogo: undefined,
+      backgroundColour: undefined,
+      squareLogos: undefined,
+      rectangleLogo: undefined
+    },
+    analytics: {
+      listingViews: 1250
+    }
   },
   {
-    id: '2',
-    address: '5678 Industrial Boulevard',
-    city: 'Detroit',
-    state: 'MI',
-    zipCode: '48202',
-    coordinates: { lat: 42.3384, lng: -83.0401 },
-    communityValueScore: 72,
-    beforeImage: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&h=600&fit=crop',
-    propertyType: 'industrial',
-    size: { squareFeet: 15000, acres: 2.3 },
-    yearBuilt: 1950,
-    lastOccupied: 2015,
-    estimatedRenovationCost: 450000,
-    potentialUses: ['Community Garden', 'Art Studio', 'Small Business Incubator'],
-    communityImpact: {
-      blightRemoval: true,
-      nearSchool: false,
-      nearPark: true,
-      nearTransit: true,
-      historicDistrict: false,
-      highYouthImpact: false,
-      potentialGreenSpace: true,
+    id: 2,
+    title: 'Spacious Apartment in Cork City Center',
+    seoTitle: 'Apartment Cork City Center',
+    daftShortcode: 'DAFT-002',
+    seoFriendlyPath: '/property/apartment-cork-city-center-2',
+    propertyType: PropertyType.Apartment,
+    sections: [Section.Apartment, Section.Residential],
+    price: {
+      amount: 280000,
+      currency: Currency.Eur,
+      formatted: '€280,000'
     },
-    neighborhoodMetrics: {
-      renewalScore: 65,
-      walkabilityScore: 45,
-      safetyScore: 55,
+    bedrooms: 2,
+    bathrooms: 1,
+    location: {
+      areaName: 'Cork City Center',
+      primaryAreaId: 2,
+      isInRepublicOfIreland: true,
+      coordinates: [51.8985, -8.4756],
+      eircodes: ['T12 XY34']
     },
-    communityVoice: {
-      organization: 'Detroit Urban Agriculture Network',
-      quote: 'This space could become the largest community garden in the city, providing fresh produce and job training opportunities for our residents.',
-      author: 'James Washington',
-      role: 'Program Director',
+    dates: {
+      publishDate: new Date('2024-01-10'),
+      lastUpdateDate: new Date('2024-01-18'),
+      dateOfConstruction: '2010'
     },
-    impactStory: {
-      title: 'Growing Community, One Seed at a Time',
-      description: 'This former manufacturing facility sits on 2.3 acres of prime urban land. With proper remediation, it could become a thriving community garden and urban agriculture hub.',
-      keyPoints: [
-        '2.3 acres of developable land',
-        'Existing infrastructure for utilities',
-        'Close to public transportation',
-        'Environmental remediation opportunities',
+    media: {
+      images: [
+        {
+          size1440x960: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=1440&h=960&fit=crop',
+          size1200x1200: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=1200&h=1200&fit=crop',
+          size360x240: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=360&h=240&fit=crop',
+          size72x52: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=72&h=52&fit=crop'
+        }
       ],
+      totalImages: 8,
+      hasVideo: false,
+      hasVirtualTour: false,
+      hasBrochure: true
     },
+    seller: {
+      id: 2,
+      name: 'Cork Real Estate',
+      type: SellerType.BrandedAgent,
+      branch: 'Cork City',
+      address: '456 Patrick Street, Cork',
+      phone: '+353 21 987 6543',
+      alternativePhone: null,
+      licenceNumber: 'L67890',
+      available: true,
+      premierPartner: false,
+      images: {
+        profileImage: null,
+        profileRoundedImage: null,
+        standardLogo: null,
+        squareLogo: null
+      },
+      backgroundColour: '#CC6600'
+    },
+    ber: {
+      rating: Rating.C3
+    },
+    description: 'Modern 2 bedroom apartment in the heart of Cork city center. Perfect for young professionals or as an investment property for community housing.',
+    features: ['Balcony', 'Lift', 'Near University', 'Shopping Center'],
+    extracted: {
+      folios: ['67890F'],
+      utilities: [Utility.MainsWater, Utility.MainsSewage, Utility.Electricity, Utility.Broadband],
+      nearbyLocations: {
+        closeBy: ['University College Cork', 'Cork City Hall', 'Cork Bus Station'],
+        shortDrive: ['Cork Airport', 'Cork Port'],
+        withinHour: ['Kinsale', 'Cobh', 'Blarney']
+      }
+    },
+    metadata: {
+      featuredLevel: FeaturedLevel.Lite,
+      featuredLevelFull: FeaturedLevelFull.PremierPartnerLite,
+      sticker: null,
+      sellingType: SellingType.ByPrivateTreaty,
+      category: Category.Buy,
+      state: State.Published,
+      platform: Platform.Web,
+      premierPartner: false,
+      imageRestricted: false
+    },
+    stamps: {
+      stampDutyValue: {
+        amount: 14000,
+        currency: Currency.Eur,
+        formatted: '€14,000'
+      }
+    },
+    branding: {
+      standardLogo: undefined,
+      squareLogo: undefined,
+      backgroundColour: undefined,
+      squareLogos: undefined,
+      rectangleLogo: undefined
+    },
+    analytics: {
+      listingViews: 890
+    }
   },
   {
-    id: '3',
-    address: '9012 Main Street',
-    city: 'Detroit',
-    state: 'MI',
-    zipCode: '48203',
-    coordinates: { lat: 42.3256, lng: -83.0512 },
-    communityValueScore: 95,
-    beforeImage: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&h=600&fit=crop',
-    propertyType: 'commercial',
-    size: { squareFeet: 8500, acres: 0.8 },
-    yearBuilt: 1930,
-    lastOccupied: 2020,
-    estimatedRenovationCost: 280000,
-    potentialUses: ['Community Health Center', 'Senior Center', 'Job Training Facility'],
-    communityImpact: {
-      blightRemoval: true,
-      nearSchool: true,
-      nearPark: true,
-      nearTransit: true,
-      historicDistrict: true,
-      highYouthImpact: true,
-      potentialGreenSpace: false,
+    id: 3,
+    title: 'Historic Building in Galway - Development Opportunity',
+    seoTitle: 'Historic Building Galway Development',
+    daftShortcode: 'DAFT-003',
+    seoFriendlyPath: '/property/historic-building-galway-development-3',
+    propertyType: PropertyType.Property,
+    sections: [Section.Property, Section.Residential],
+    price: {
+      amount: 650000,
+      currency: Currency.Eur,
+      formatted: '€650,000'
     },
-    neighborhoodMetrics: {
-      renewalScore: 92,
-      walkabilityScore: 88,
-      safetyScore: 85,
+    bedrooms: 0,
+    bathrooms: 0,
+    location: {
+      areaName: 'Galway City Center',
+      primaryAreaId: 3,
+      isInRepublicOfIreland: true,
+      coordinates: [53.2707, -9.0568],
+      eircodes: ['H91 XY12']
     },
-    communityVoice: {
-      organization: 'Detroit Health Initiative',
-      quote: 'This building is perfectly positioned to serve as a community health hub. Its central location and historic character make it an ideal space for bringing essential services to our neighborhood.',
-      author: 'Dr. Sarah Johnson',
-      role: 'Medical Director',
+    dates: {
+      publishDate: new Date('2024-01-05'),
+      lastUpdateDate: new Date('2024-01-15'),
+      dateOfConstruction: '1890'
     },
-    impactStory: {
-      title: 'A Beacon of Hope for Community Health',
-      description: 'This beautifully preserved Art Deco building has been a landmark in the community for nearly a century. Its central location and accessibility make it perfect for a community health center.',
-      keyPoints: [
-        'Historic Art Deco architecture',
-        'Fully accessible design',
-        'Prime location on Main Street',
-        'Strong community partnerships ready',
+    media: {
+      images: [
+        {
+          size1440x960: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1440&h=960&fit=crop',
+          size1200x1200: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1200&h=1200&fit=crop',
+          size360x240: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=360&h=240&fit=crop',
+          size72x52: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=72&h=52&fit=crop'
+        }
       ],
+      totalImages: 15,
+      hasVideo: true,
+      hasVirtualTour: true,
+      hasBrochure: true
     },
-  },
-  {
-    id: '4',
-    address: '3456 Elm Avenue',
-    city: 'Detroit',
-    state: 'MI',
-    zipCode: '48204',
-    coordinates: { lat: 42.3198, lng: -83.0389 },
-    communityValueScore: 61,
-    beforeImage: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800&h=600&fit=crop',
-    propertyType: 'residential',
-    size: { squareFeet: 1800, acres: 0.12 },
-    yearBuilt: 1960,
-    lastOccupied: 2017,
-    estimatedRenovationCost: 95000,
-    potentialUses: ['Affordable Housing', 'Community Center'],
-    communityImpact: {
-      blightRemoval: true,
-      nearSchool: false,
-      nearPark: false,
-      nearTransit: true,
-      historicDistrict: false,
-      highYouthImpact: false,
-      potentialGreenSpace: false,
+    seller: {
+      id: 3,
+      name: 'Galway Heritage Properties',
+      type: SellerType.BrandedAgent,
+      branch: 'Galway City',
+      address: '789 Shop Street, Galway',
+      phone: '+353 91 123 4567',
+      alternativePhone: null,
+      licenceNumber: 'L11111',
+      available: true,
+      premierPartner: true,
+      images: {
+        profileImage: null,
+        profileRoundedImage: null,
+        standardLogo: null,
+        squareLogo: null
+      },
+      backgroundColour: '#006600'
     },
-    neighborhoodMetrics: {
-      renewalScore: 58,
-      walkabilityScore: 42,
-      safetyScore: 48,
+    ber: {
+      rating: null
     },
-    impactStory: {
-      title: 'Affordable Housing Opportunity',
-      description: 'This modest home could provide much-needed affordable housing in an area with limited options. Its simple design makes renovation straightforward and cost-effective.',
-      keyPoints: [
-        'Low renovation costs',
-        'Good structural condition',
-        'Near public transportation',
-        'Potential for energy efficiency upgrades',
-      ],
+    description: 'Magnificent historic building in the heart of Galway city center. This property offers incredible potential for community development, cultural center, or affordable housing conversion.',
+    features: ['Historic Character', 'Large Windows', 'High Ceilings', 'City Center Location'],
+    extracted: {
+      folios: ['11111F'],
+      utilities: [Utility.MainsWater, Utility.MainsSewage, Utility.Electricity],
+      nearbyLocations: {
+        closeBy: ['Galway University', 'Eyre Square', 'Galway Cathedral'],
+        shortDrive: ['Galway Airport', 'Galway Port'],
+        withinHour: ['Connemara', 'Aran Islands', 'Clifden']
+      }
     },
-  },
-  {
-    id: '5',
-    address: '7890 Pine Street',
-    city: 'Detroit',
-    state: 'MI',
-    zipCode: '48205',
-    coordinates: { lat: 42.3421, lng: -83.0334 },
-    communityValueScore: 78,
-    beforeImage: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&h=600&fit=crop',
-    propertyType: 'commercial',
-    size: { squareFeet: 12000, acres: 1.2 },
-    yearBuilt: 1975,
-    lastOccupied: 2019,
-    estimatedRenovationCost: 320000,
-    potentialUses: ['Youth Recreation Center', 'Community Theater', 'Educational Hub'],
-    communityImpact: {
-      blightRemoval: true,
-      nearSchool: true,
-      nearPark: true,
-      nearTransit: false,
-      historicDistrict: false,
-      highYouthImpact: true,
-      potentialGreenSpace: true,
+    metadata: {
+      featuredLevel: FeaturedLevel.Standard,
+      featuredLevelFull: FeaturedLevelFull.Standard,
+      sticker: Sticker.RuralLocation,
+      sellingType: SellingType.ByPublicAuction,
+      category: Category.Buy,
+      state: State.Published,
+      platform: Platform.Web,
+      premierPartner: true,
+      imageRestricted: false
     },
-    neighborhoodMetrics: {
-      renewalScore: 75,
-      walkabilityScore: 65,
-      safetyScore: 70,
+    stamps: {
+      stampDutyValue: {
+        amount: 32500,
+        currency: Currency.Eur,
+        formatted: '€32,500'
+      }
     },
-    communityVoice: {
-      organization: 'Detroit Youth Development Alliance',
-      quote: 'Our kids need safe spaces to learn, play, and grow. This building could become the heart of youth programming in our community.',
-      author: 'Michael Thompson',
-      role: 'Youth Program Coordinator',
+    branding: {
+      standardLogo: undefined,
+      squareLogo: undefined,
+      backgroundColour: undefined,
+      squareLogos: undefined,
+      rectangleLogo: undefined
     },
-    impactStory: {
-      title: 'Empowering the Next Generation',
-      description: 'This spacious building offers endless possibilities for youth programming. With its large open areas and proximity to schools, it could become a hub for after-school activities and community events.',
-      keyPoints: [
-        'Large open floor plan',
-        'Close to three schools',
-        'Ample parking available',
-        'Potential for outdoor programming space',
-      ],
-    },
-  },
+    analytics: {
+      listingViews: 2100
+    }
+  }
 ];
+
+// Transform API properties to our Property format
+export const mockProperties: Property[] = sampleApiProperties.map(transformApiPropertyToProperty);
 
 export const filterOptions: FilterOption[] = [
   { id: 'all', label: 'All Properties', value: 'all', count: mockProperties.length },

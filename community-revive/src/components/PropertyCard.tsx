@@ -25,10 +25,10 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
 }) => {
   const scoreColor = getScoreColor(property.communityValueScore);
 
-  const formatCurrency = (amount: number) => {
+  const formatCurrency = (amount: number, currency: string = 'EUR') => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD',
+      currency: currency,
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
@@ -81,7 +81,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
               <div className="text-right">
                 <p className="text-xs text-gray-600">Est. Cost</p>
                 <p className="text-xs font-medium text-gray-900">
-                  {formatCurrency(property.estimatedRenovationCost)}
+                  {formatCurrency(property.estimatedRenovationCost, property.price?.currency || 'EUR')}
                 </p>
               </div>
             </div>

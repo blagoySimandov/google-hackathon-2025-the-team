@@ -32,10 +32,10 @@ export const PropertyDetails: React.FC<PropertyDetailsProps> = ({
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
   const scoreColor = getScoreColor(property.communityValueScore);
 
-  const formatCurrency = (amount: number) => {
+  const formatCurrency = (amount: number, currency: string = 'EUR') => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD',
+      currency: currency,
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
@@ -208,10 +208,40 @@ export const PropertyDetails: React.FC<PropertyDetailsProps> = ({
                   </div>
                 )}
 
+                {property.bedrooms && (
+                  <div className="flex items-center space-x-3">
+                    <div className="w-5 h-5 text-gray-400">🛏️</div>
+                    <div>
+                      <p className="text-sm font-medium">{property.bedrooms} bedrooms</p>
+                      <p className="text-xs text-gray-600">Bedrooms</p>
+                    </div>
+                  </div>
+                )}
+
+                {property.bathrooms && (
+                  <div className="flex items-center space-x-3">
+                    <div className="w-5 h-5 text-gray-400">🚿</div>
+                    <div>
+                      <p className="text-sm font-medium">{property.bathrooms} bathrooms</p>
+                      <p className="text-xs text-gray-600">Bathrooms</p>
+                    </div>
+                  </div>
+                )}
+
+                {property.ber.rating && (
+                  <div className="flex items-center space-x-3">
+                    <div className="w-5 h-5 text-gray-400">⚡</div>
+                    <div>
+                      <p className="text-sm font-medium">BER {property.ber.rating}</p>
+                      <p className="text-xs text-gray-600">Energy Rating</p>
+                    </div>
+                  </div>
+                )}
+
                 <div className="flex items-center space-x-3">
                   <DollarSign className="w-5 h-5 text-gray-400" />
                   <div>
-                    <p className="text-sm font-medium">{formatCurrency(property.estimatedRenovationCost)}</p>
+                    <p className="text-sm font-medium">{formatCurrency(property.estimatedRenovationCost, property.price?.currency || 'EUR')}</p>
                     <p className="text-xs text-gray-600">Est. Renovation Cost</p>
                   </div>
                 </div>
@@ -270,6 +300,35 @@ export const PropertyDetails: React.FC<PropertyDetailsProps> = ({
                 </div>
               </CardContent>
             </Card>
+
+            {/* Original Property Information */}
+            {property.price && (
+              <Card>
+                <CardHeader>
+                  <h3 className="text-lg font-semibold">Property Information</h3>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Original Price</span>
+                    <span className="text-lg font-bold text-primary-600">
+                      {property.price.formatted}
+                    </span>
+                  </div>
+                  {property.features && property.features.length > 0 && (
+                    <div>
+                      <p className="text-sm font-medium mb-2">Features</p>
+                      <div className="flex flex-wrap gap-2">
+                        {property.features.map((feature) => (
+                          <span key={feature} className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded">
+                            {feature}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
 
             {/* Potential Uses */}
             <Card>

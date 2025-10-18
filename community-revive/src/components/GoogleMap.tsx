@@ -29,6 +29,9 @@ const MapComponent: React.FC<MapComponentProps> = ({
   const markers = useRef<google.maps.Marker[]>([]);
   const [popoverProperty, setPopoverProperty] = useState<Property | null>(null);
   const [popoverPosition, setPopoverPosition] = useState<{ x: number; y: number } | null>(null);
+  const [hoverProperty, setHoverProperty] = useState<Property | null>(null);
+  const [hoverPosition, setHoverPosition] = useState<{ x: number; y: number } | null>(null);
+  const hoverTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -175,7 +178,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
       });
 
       // Add hover effects
-      marker.addListener('mouseover', () => {
+      marker.addListener('mouseover', (event: google.maps.MapMouseEvent) => {
         marker.setIcon({
           path: google.maps.SymbolPath.CIRCLE,
           scale: 12,
@@ -184,6 +187,26 @@ const MapComponent: React.FC<MapComponentProps> = ({
           strokeColor: '#ffffff',
           strokeWeight: 3,
         });
+        
+        // Clear any existing timeout
+        if (hoverTimeout.current) {
+          clearTimeout(hoverTimeout.current);
+        }
+        
+        // Show hover tooltip with small delay
+        hoverTimeout.current = setTimeout(() => {
+          // Simple positioning - use mouse position relative to map container
+          const mapDiv = mapRef.current;
+          if (mapDiv) {
+            const rect = mapDiv.getBoundingClientRect();
+            const x = rect.width / 2; // Center horizontally
+            const y = rect.height / 2 - 20; // Center vertically, slightly above
+            
+            console.log('Setting hover property:', property);
+            setHoverProperty(property);
+            setHoverPosition({ x, y });
+          }
+        }, 250); // No delay for testing
       });
 
       marker.addListener('mouseout', () => {
@@ -195,6 +218,14 @@ const MapComponent: React.FC<MapComponentProps> = ({
           strokeColor: '#ffffff',
           strokeWeight: 3,
         });
+        
+        // Clear timeout and hide hover tooltip
+        if (hoverTimeout.current) {
+          clearTimeout(hoverTimeout.current);
+          hoverTimeout.current = null;
+        }
+        setHoverProperty(null);
+        setHoverPosition(null);
       });
 
       markers.current.push(marker);
@@ -205,6 +236,8 @@ const MapComponent: React.FC<MapComponentProps> = ({
     <div className={`relative ${className}`}>
       <div ref={mapRef} className="w-full h-full rounded-lg" />
       
+      
+      {/* Click Popover */}
       {popoverProperty && popoverPosition && (
         <PropertyPopover
           property={popoverProperty}
@@ -214,6 +247,66 @@ const MapComponent: React.FC<MapComponentProps> = ({
             setPopoverPosition(null);
           }}
         />
+      )}
+      
+      {/* Hover Tooltip */}
+      {hoverProperty && hoverPosition && (
+        <div
+          className="absolute z-50 pointer-events-none"
+          style={{
+            left: hoverPosition.x,
+            top: hoverPosition.y,
+            transform: 'translateX(-50%) translateY(-100%)',
+          }}
+        >
+          <div className="bg-white rounded-lg shadow-xl border-2 border-accent-500 p-4 w-72 pointer-events-auto">
+            <div className="flex gap-3">
+              {/* Property Image */}
+              <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-200 flex-shrink-0">
+                <img
+                  src={hoverProperty.beforeImage}
+                  alt={hoverProperty.address}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src = 'https://via.placeholder.com/80x80?text=No+Image';
+                  }}
+                />
+              </div>
+              
+              {/* Property Info */}
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-gray-900 text-sm mb-1 truncate">
+                  {hoverProperty.address}
+                </h3>
+                <p className="text-xs text-gray-600 mb-2">
+                  {hoverProperty.city}, {hoverProperty.state} {hoverProperty.zipCode}
+                </p>
+                
+                {/* Score */}
+                <div className="flex items-center space-x-2">
+                  <div
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm"
+                    style={{ backgroundColor: getScoreColor(hoverProperty.communityValueScore) }}
+                  >
+                    {hoverProperty.communityValueScore}
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-gray-900">Community Value</p>
+                    <p className="text-xs text-gray-600">Score</p>
+                  </div>
+                </div>
+                
+                {/* Additional Info */}
+                <div className="mt-2">
+                  <p className="text-xs text-gray-500">
+                    {hoverProperty.propertyType.charAt(0).toUpperCase() + hoverProperty.propertyType.slice(1)} • 
+                    {Math.round(hoverProperty.size.squareFeet / 1000)}k sq ft
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
