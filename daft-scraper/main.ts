@@ -1,6 +1,8 @@
 import puppeteer from "puppeteer";
 import { writeFileSync } from "fs";
 
+//https://www.daft.ie/property-for-sale/ireland?adState=published&terms=derelict
+//
 function parseHydrationData(html: string) {
   const regex = /<script id="__NEXT_DATA__"[^>]*>(.+?)<\/script>/s;
   const match = html.match(regex);
@@ -26,7 +28,7 @@ async function simulateMouseMovement(page: any) {
   }
 }
 
-async function scrape(url: string) {
+async function scrapeDetails(url: string) {
   const browser = await puppeteer.launch({
     headless: true,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
@@ -77,4 +79,4 @@ if (!url) {
   process.exit(1);
 }
 
-scrape(url).catch(console.error);
+scrapeDetails(url).catch(console.error);
