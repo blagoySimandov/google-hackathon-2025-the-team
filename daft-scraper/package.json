@@ -3,13 +3,17 @@
   "module": "index.ts",
   "type": "module",
   "private": true,
-  "devDependencies": {
-    "@types/bun": "latest"
+  "scripts": {
+    "start": "tsx main.ts"
   },
-  "peerDependencies": {
+  "devDependencies": {
+    "@types/node": "^24.8.1",
+    "tsx": "^4.20.6",
     "typescript": "^5"
   },
   "dependencies": {
-    "puppeteer": "^24.25.0"
+    "parse-hydration-data": "^1.0.1",
+    "puppeteer": "^24.25.0",
+    "vm2": "^3.9.19"
   }
 }
