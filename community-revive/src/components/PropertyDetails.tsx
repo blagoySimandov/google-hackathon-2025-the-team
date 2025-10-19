@@ -1,12 +1,244 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { usePropertyById } from '../api';
+import { usePropertyById, useGetValidityData } from '../api';
 import { PhotoCarousel } from './PhotoCarousel';
-import { ArrowLeft, List, Map as MapIcon } from 'lucide-react';
+import { ArrowLeft, List, Map as MapIcon, TrendingUp, DollarSign, Home, Star } from 'lucide-react';
 import { AmenitiesMap } from './AmenitiesMap';
 import { AirQuality } from './AirQuality';
 import { SchoolsSection } from './SchoolsSection';
 import { TransportSection } from './TransportSection';
+import type { ValidityData } from '../api/firestore/types';
+
+// ValidityDataSection Component
+interface ValidityDataSectionProps {
+  validityData: ValidityData | null;
+  loading: boolean;
+  error: Error | null;
+}
+
+const ValidityDataSection: React.FC<ValidityDataSectionProps> = ({ validityData, loading, error }) => {
+  if (loading) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="flex items-center justify-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <span className="ml-3 text-gray-600">Loading validity analysis...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="text-center py-8">
+          <div className="text-red-500 text-4xl mb-4">⚠️</div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Validity Analysis Unavailable</h3>
+          <p className="text-gray-600">{error.message}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!validityData) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="text-center py-8">
+          <div className="text-gray-400 text-4xl mb-4">📊</div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">No Validity Data</h3>
+          <p className="text-gray-600">Validity analysis is not available for this property.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-IE', {
+      style: 'currency',
+      currency: 'EUR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  const getScoreColor = (score: number) => {
+    if (score >= 80) return 'text-green-600 bg-green-50';
+    if (score >= 60) return 'text-yellow-600 bg-yellow-50';
+    if (score >= 40) return 'text-orange-600 bg-orange-50';
+    return 'text-red-600 bg-red-50';
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="flex items-center mb-6">
+        <TrendingUp className="w-6 h-6 text-blue-600 mr-3" />
+        <h2 className="text-2xl font-bold text-gray-900">Investment Validity Analysis</h2>
+      </div>
+
+      {/* Overall Scores */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="text-center p-4 bg-gray-50 rounded-lg">
+          <div className="text-3xl font-bold text-blue-600 mb-2">{validityData.rank}</div>
+          <div className="text-sm text-gray-600">Overall Rank</div>
+        </div>
+        <div className="text-center p-4 bg-gray-50 rounded-lg">
+          <div className="text-3xl font-bold text-green-600 mb-2">{validityData.scores.score}</div>
+          <div className="text-sm text-gray-600">Total Score</div>
+        </div>
+        <div className="text-center p-4 bg-gray-50 rounded-lg">
+          <div className="text-3xl font-bold text-purple-600 mb-2">{validityData.scores.validity_score}</div>
+          <div className="text-sm text-gray-600">Validity Score</div>
+        </div>
+      </div>
+
+      {/* Price Analysis */}
+      <div className="mb-8">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <DollarSign className="w-5 h-5 mr-2" />
+          Price Analysis
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="p-4 border border-gray-200 rounded-lg">
+            <div className="text-sm text-gray-600 mb-1">Listed Price</div>
+            <div className="text-2xl font-bold text-gray-900">{formatCurrency(validityData.listed_price)}</div>
+          </div>
+          <div className="p-4 border border-gray-200 rounded-lg">
+            <div className="text-sm text-gray-600 mb-1">Market Average</div>
+            <div className="text-2xl font-bold text-gray-900">{formatCurrency(validityData.market_average_price)}</div>
+          </div>
+        </div>
+        <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+          <div className="text-sm text-blue-800">
+            <strong>Price Difference:</strong> {formatCurrency(validityData.listed_price - validityData.market_average_price)} 
+            ({((validityData.listed_price - validityData.market_average_price) / validityData.market_average_price * 100).toFixed(1)}%)
+          </div>
+        </div>
+      </div>
+
+      {/* Detailed Scores */}
+      <div className="mb-8">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <Star className="w-5 h-5 mr-2" />
+          Detailed Scores
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="p-4 border border-gray-200 rounded-lg">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-sm text-gray-600">Price Attractiveness</span>
+              <span className={`px-2 py-1 rounded-full text-sm font-medium ${getScoreColor(validityData.scores.price_attractiveness_score)}`}>
+                {validityData.scores.price_attractiveness_score}
+              </span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div 
+                className="bg-blue-600 h-2 rounded-full" 
+                style={{ width: `${validityData.scores.price_attractiveness_score}%` }}
+              ></div>
+            </div>
+          </div>
+          
+          <div className="p-4 border border-gray-200 rounded-lg">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-sm text-gray-600">Amenity Score</span>
+              <span className={`px-2 py-1 rounded-full text-sm font-medium ${getScoreColor(validityData.scores.amenity_score)}`}>
+                {validityData.scores.amenity_score}
+              </span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div 
+                className="bg-green-600 h-2 rounded-full" 
+                style={{ width: `${validityData.scores.amenity_score}%` }}
+              ></div>
+            </div>
+          </div>
+
+          <div className="p-4 border border-gray-200 rounded-lg">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-sm text-gray-600">Sustainability Score</span>
+              <span className={`px-2 py-1 rounded-full text-sm font-medium ${getScoreColor(validityData.scores.sustainability_score)}`}>
+                {validityData.scores.sustainability_score}
+              </span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div 
+                className="bg-purple-600 h-2 rounded-full" 
+                style={{ width: `${validityData.scores.sustainability_score}%` }}
+              ></div>
+            </div>
+          </div>
+
+          <div className="p-4 border border-gray-200 rounded-lg">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-sm text-gray-600">Community Score</span>
+              <span className={`px-2 py-1 rounded-full text-sm font-medium ${getScoreColor(validityData.scores.community_score)}`}>
+                {validityData.scores.community_score}
+              </span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div 
+                className="bg-orange-600 h-2 rounded-full" 
+                style={{ width: `${validityData.scores.community_score}%` }}
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Renovation Analysis */}
+      {validityData.renovation_details && validityData.total_renovation_cost > 0 && (
+        <div className="mb-8">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <Home className="w-5 h-5 mr-2" />
+            Renovation Analysis
+          </h3>
+          <div className="p-4 bg-gray-50 rounded-lg">
+            <div className="text-sm text-gray-600 mb-2">Estimated Renovation Cost</div>
+            <div className="text-2xl font-bold text-gray-900 mb-4">{formatCurrency(validityData.total_renovation_cost)}</div>
+            <div className="text-sm text-gray-600">
+              <strong>Total Investment:</strong> {formatCurrency(validityData.listed_price + validityData.total_renovation_cost)}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Air Quality */}
+      <div className="mb-8">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Air Quality</h3>
+        <div className="p-4 border border-gray-200 rounded-lg">
+          <div className="flex justify-between items-center">
+            <div>
+              <div className="text-sm text-gray-600">Air Quality Index</div>
+              <div className="text-lg font-semibold text-gray-900">{validityData.air_quality_index}</div>
+            </div>
+            <div className="text-right">
+              <div className="text-sm text-gray-600">Category</div>
+              <div className="text-lg font-semibold text-gray-900">{validityData.air_quality_category}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Property Details */}
+      <div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Property Details</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {validityData.area_m2 && (
+            <div className="p-4 border border-gray-200 rounded-lg">
+              <div className="text-sm text-gray-600">Area</div>
+              <div className="text-lg font-semibold text-gray-900">{validityData.area_m2} m²</div>
+            </div>
+          )}
+          {validityData.ber && (
+            <div className="p-4 border border-gray-200 rounded-lg">
+              <div className="text-sm text-gray-600">BER Rating</div>
+              <div className="text-lg font-semibold text-gray-900">{validityData.ber}</div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export const PropertyDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -14,6 +246,7 @@ export const PropertyDetails: React.FC = () => {
   const [view, setView] = useState<'list' | 'map'>('list');
 
   const { property, loading, error } = usePropertyById(id || '');
+  const { validityData, loading: validityLoading, error: validityError } = useGetValidityData(id || '');
 
   if (loading) {
     return (
@@ -208,6 +441,13 @@ export const PropertyDetails: React.FC = () => {
                 </div>
               </div>
             )}
+
+            {/* Validity Data Section */}
+            <ValidityDataSection 
+              validityData={validityData}
+              loading={validityLoading}
+              error={validityError}
+            />
 
             {/* Summary Section */}
             <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-6">
