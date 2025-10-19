@@ -20,6 +20,7 @@ node_modules/.package-lock.json
 node_modules/.package-lock.json
 node_modules/
 
+firebase/functions/lib
 
 .env
 
@@ -68,3 +69,4 @@ htmlcov/
 # Any log files generated during runtime
 *.log
 logs/
+average-pricing-scraper/.claude
