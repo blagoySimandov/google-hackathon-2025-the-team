@@ -1,0 +1,23 @@
+# --- Google Cloud & AI Services ---
+# For connecting to Firestore and using Google Cloud services
+firebase-admin
+# For accessing the Gemini Vision and Language Models
+google-generativeai
+
+# --- Data Handling & Validation ---
+# Core library for data manipulation and the ranking algorithm
+pandas
+# Used for strict data validation and creating data schemas (models)
+pydantic
+
+# --- Web & API Communication ---
+# For making HTTP requests to Google APIs and downloading images
+requests
+
+# --- Geospatial Calculations ---
+# For calculating the distance between the property and amenities
+geopy
+
+# --- Configuration Management ---
+# For loading environment variables from a .env file (API keys, etc.)
+python-dotenv
