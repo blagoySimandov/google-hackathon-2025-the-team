@@ -19,3 +19,52 @@ node_modules/.package-lock.json
 node_modules/.package-lock.json
 node_modules/.package-lock.json
 node_modules/
+
+
+.env
+
+# --- Python ---
+# Byte-compiled / optimized / C-extensions
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+# The virtual environment should be created by each developer and not be in version control.
+# Common names for virtual environment folders:
+venv/
+.venv/
+env/
+.env/
+engine_env/ # Your specific virtual env name from the prompt
+
+# Distribution / packaging
+/dist/
+/build/
+*.egg-info/
+*.egg
+
+# --- IDE & Editor Configuration ---
+# Visual Studio Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# --- Operating System Files ---
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# --- Testing & Coverage ---
+# Test results and coverage reports
+.pytest_cache/
+.coverage
+htmlcov/
+
+# --- Logs ---
+# Any log files generated during runtime
+*.log
+logs/
