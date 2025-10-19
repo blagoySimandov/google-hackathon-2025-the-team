@@ -1,8 +1,23 @@
 import { Property } from '../types';
 import { firebaseService, PaginationOptions, PaginatedResult, MapProperty } from './firebaseService';
 
+// Cache for property data to prevent repeated database requests
+interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+}
+
 // API service for fetching property data from Firebase
 export class ApiService {
+  private readonly propertyCache: Map<number, CacheEntry<Property>> = new Map();
+  private mapPropertiesCache: CacheEntry<MapProperty[]> | null = null;
+  private readonly propertiesCache: Map<string, CacheEntry<PaginatedResult<Property>>> = new Map();
+  private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes cache TTL
+
+  private isCacheValid<T>(entry: CacheEntry<T> | null | undefined): entry is CacheEntry<T> {
+    if (!entry) return false;
+    return Date.now() - entry.timestamp < this.CACHE_TTL;
+  }
   // Fetch properties from Firebase with pagination
   async fetchProperties(params?: {
     area?: string;
@@ -35,10 +50,16 @@ export class ApiService {
   }
 
   // Fetch lightweight properties for map markers
+  // Note: Caching is handled at the Dashboard component level for map properties
+  // because we need to fetch all pages and cache the complete collection
   async fetchMapProperties(options?: PaginationOptions): Promise<PaginatedResult<MapProperty>> {
     try {
       console.log('🔌 ApiService.fetchMapProperties called with:', { options });
-      return await firebaseService.fetchMapProperties(options);
+      
+      // Don't cache paginated map properties - let the component handle it
+      const result = await firebaseService.fetchMapProperties(options);
+      
+      return result;
     } catch (error) {
       console.error('❌ ApiService: Error fetching map properties:', error);
       throw new Error('Failed to fetch map properties');
@@ -48,11 +69,36 @@ export class ApiService {
   // Fetch a single property by ID
   async fetchPropertyById(id: number): Promise<Property | null> {
     try {
-      return await firebaseService.fetchPropertyById(id);
+      // Check cache first
+      const cached = this.propertyCache.get(id);
+      if (this.isCacheValid(cached)) {
+        console.log(`✅ Using cached property for ID ${id}`);
+        return cached.data;
+      }
+      
+      const property = await firebaseService.fetchPropertyById(id);
+      
+      // Cache the result
+      if (property) {
+        this.propertyCache.set(id, {
+          data: property,
+          timestamp: Date.now(),
+        });
+      }
+      
+      return property;
     } catch (error) {
       console.error('Error fetching property:', error);
       throw new Error('Failed to fetch property');
     }
+  }
+
+  // Clear cache (useful for manual refresh)
+  clearCache() {
+    this.propertyCache.clear();
+    this.mapPropertiesCache = null;
+    this.propertiesCache.clear();
+    console.log('🧹 Cache cleared');
   }
 
   // Search properties with filters and pagination

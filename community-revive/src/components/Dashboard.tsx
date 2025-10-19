@@ -14,10 +14,12 @@ interface DashboardProps {
 
 export const Dashboard: React.FC<DashboardProps> = ({ onPropertySelect }) => {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  const [highlightedProperty, setHighlightedProperty] = useState<Property | null>(null); // For "See on map" feature
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [properties, setProperties] = useState<Property[]>([]);
   const [mapProperties, setMapProperties] = useState<MapProperty[]>([]);
+  const [mapPropertiesFetched, setMapPropertiesFetched] = useState(false); // Track if map properties have been fetched
   const [loading, setLoading] = useState(true);
   const [mapLoading, setMapLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -60,6 +62,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ onPropertySelect }) => {
   // Fetch lightweight map properties separately - fetch ALL properties
   useEffect(() => {
     const fetchMapProperties = async () => {
+      // If we already have map properties, don't fetch again
+      if (mapPropertiesFetched && mapProperties.length > 0) {
+        console.log('🗺️ Dashboard: Using existing map properties:', mapProperties.length);
+        setMapLoading(false);
+        return;
+      }
+      
       try {
         console.log('🗺️ Dashboard: Starting to fetch ALL map properties...');
         setMapLoading(true);
@@ -69,7 +78,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onPropertySelect }) => {
         let lastDoc: any = undefined;
         let pageCount = 0;
         
-        // Fetch all properties in batches
+        // Fetch all properties in batches, bypassing cache for pagination
         while (hasMore) {
           pageCount++;
           console.log(`🗺️ Dashboard: Fetching page ${pageCount}...`);
@@ -88,6 +97,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onPropertySelect }) => {
         
         console.log('🗺️ Dashboard: All map properties fetched:', allProperties.length);
         setMapProperties(allProperties);
+        setMapPropertiesFetched(true); // Mark as fetched
       } catch (err) {
         console.error('❌ Dashboard: Error fetching map properties:', err);
         // Don't set error state for map properties, just log it
@@ -98,7 +108,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onPropertySelect }) => {
 
     console.log('🗺️ Dashboard: Map useEffect triggered, calling fetchMapProperties...');
     fetchMapProperties();
-  }, []);
+  }, [mapPropertiesFetched, mapProperties.length]);
 
   // Load more properties
   const loadMoreProperties = useCallback(async () => {
@@ -129,6 +139,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ onPropertySelect }) => {
     
     return properties.filter(property => {
       switch (selectedFilter) {
+        case 'high-score':
+          return property.communityValueScore >= 80;
+        case 'medium-score':
+          return property.communityValueScore >= 60 && property.communityValueScore < 80;
         case 'historic':
           return property.communityImpact.historicDistrict;
         case 'green-space':
@@ -139,6 +153,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ onPropertySelect }) => {
           return property.communityImpact.nearSchool;
         case 'near-park':
           return property.communityImpact.nearPark;
+        case 'near-transit':
+          return property.communityImpact.nearTransit;
+        case 'residential':
+          return property.propertyType === 'residential';
+        case 'commercial':
+          return property.propertyType === 'commercial';
+        case 'vacant':
+          return property.propertyType === 'vacant';
         default:
           return true;
       }
@@ -150,6 +172,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ onPropertySelect }) => {
     onPropertySelect(property);
   };
 
+  const handleViewOnMap = (property: Property) => {
+    setHighlightedProperty(property);
+    // Clear highlight after 5 seconds
+    setTimeout(() => {
+      setHighlightedProperty(null);
+    }, 5000);
+  };
+
   return (
     <div className="h-screen flex flex-col lg:flex-row bg-gray-50">
       {/* Map Section */}
@@ -159,6 +189,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onPropertySelect }) => {
             <GoogleMap
               properties={mapProperties}
               selectedProperty={selectedProperty || undefined}
+              highlightedProperty={highlightedProperty || undefined}
               onPropertySelect={handlePropertySelect}
               className="h-full"
               loading={mapLoading}
@@ -215,6 +246,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onPropertySelect }) => {
                   property={property}
                   isSelected={selectedProperty?.id === property.id}
                   onClick={() => handlePropertySelect(property)}
+                  onViewOnMap={() => handleViewOnMap(property)}
                 />
               ))
             )}
