@@ -12,6 +12,12 @@ const firebaseConfig = {
   appId: process.env.REACT_APP_FIREBASE_APP_ID || "your-app-id"
 };
 
+// Google APIs configuration
+export const googleConfig = {
+  mapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY || "your-google-maps-api-key",
+  airQualityApiKey: process.env.REACT_APP_GOOGLE_AIR_QUALITY_API_KEY || "your-air-quality-api-key"
+};
+
 // Debug Firebase configuration
 console.log('🔥 Firebase Config:', {
   apiKey: firebaseConfig.apiKey ? '✅ Set' : '❌ Missing',

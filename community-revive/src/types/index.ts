@@ -24,6 +24,19 @@ export interface Property extends Omit<ApiProperty, 'propertyType'> {
     walkabilityScore: number;
     safetyScore: number;
   };
+  airQuality?: {
+    score: number;
+    aqi: number;
+    category: string;
+    lastUpdated: string;
+    pollutants: {
+      pm25?: number;
+      pm10?: number;
+      o3?: number;
+      no2?: number;
+      co?: number;
+    };
+  };
   communityVoice?: {
     organization: string;
     quote: string;
