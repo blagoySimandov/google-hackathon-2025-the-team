@@ -3,3 +3,6 @@
 daft-scraper/.claude
 daft-scraper/cleaning/.venv
 daft-scraper/cleaning/.claude
+daft-scraper/all-properties.json
+daft-scraper/80-derelict-properties.json
+daft-scraper/cleaning/cleaned_properties.json

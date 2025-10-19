@@ -109,17 +109,13 @@ def clean_property(item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
             return None
 
         description = listing.get("description", "")
-        images = listing.get("media", {}).get("images", [])
-        floor_plan_images = [
-            image
-            for image in images
-            if image.get("imageLabels", [])
-            and any(
-                label.get("type") == "FLOOR_PLAN"
-                for label in image.get("imageLabels", [])
-            )
-        ]
 
+        images = listing.get("media", {}).get("images", [])
+        floor_plan_images = []
+        for image in images:
+            image_labels = image.get("imageLabels", [])
+            if any(label.get("type") == "FLOOR_PLAN" for label in image_labels):
+                floor_plan_images.append(image)
         cleaned = {
             "id": listing.get("id"),
             "title": listing.get("title"),
@@ -129,7 +125,8 @@ def clean_property(item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
             "floorAreaFormatted": pageProps.get("propertySize"),
             "floorPlanImages": floor_plan_images,
             "daftShortcode": listing.get("daftShortcode"),
-            "canonicalUrl": pageProps.get("canonicalUrl"),
+            "seoFriendlyPath": listing.get("seoFriendlyPath"),
+            "priceHistory": listing.get("priceHistory", []),
             "propertyType": listing.get("propertyType"),
             "sections": listing.get("sections", []),
             "price": extract_price(listing.get("price")),
@@ -149,7 +146,7 @@ def clean_property(item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
                 "dateOfConstruction": listing.get("dateOfConstruction"),
             },
             "media": {
-                "images": images,
+                "images": listing.get("media", {}).get("images", []),
                 "totalImages": listing.get("media", {}).get("totalImages", 0),
                 "hasVideo": listing.get("media", {}).get("hasVideo", False),
                 "hasVirtualTour": listing.get("media", {}).get("hasVirtualTour", False),
