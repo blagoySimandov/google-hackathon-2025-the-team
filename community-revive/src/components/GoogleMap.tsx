@@ -87,7 +87,8 @@ const MapComponent: React.FC<MapComponentProps> = ({
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<google.maps.Map | null>(null);
-  const markers = useRef<google.maps.Marker[]>([]);
+  const markers = useRef<Map<number, google.maps.Marker>>(new Map()); // Use Map for O(1) lookup
+  const [currentZoom, setCurrentZoom] = useState(7);
   const [popoverProperty, setPopoverProperty] = useState<Property | null>(null);
   const [popoverPosition, setPopoverPosition] = useState<{ x: number; y: number } | null>(null);
   const [hoverProperty, setHoverProperty] = useState<MapDisplayProperty | null>(null);
@@ -100,9 +101,11 @@ const MapComponent: React.FC<MapComponentProps> = ({
     if (!mapRef.current) return;
 
     // Initialize map
+    // Note: mapId is NOT included because it conflicts with inline styles
+    // mapId would be required for AdvancedMarkerElement, but we're using classic Markers
     mapInstance.current = new google.maps.Map(mapRef.current, {
       center: { lat: 53.28925, lng: -7.812739}, // Ireland coordinates
-      zoom: 8,
+      zoom: 7,
       styles: [
         {
           featureType: 'all',
@@ -170,6 +173,14 @@ const MapComponent: React.FC<MapComponentProps> = ({
       setHoverPosition(null);
       currentHoveredProperty.current = null;
     });
+
+    // Listen for zoom changes for dynamic marker display
+    mapInstance.current.addListener('zoom_changed', () => {
+      const zoom = mapInstance.current?.getZoom();
+      if (zoom !== undefined) {
+        setCurrentZoom(zoom);
+      }
+    });
   }, []);
 
   // Handle highlighted property - center and zoom to it
@@ -185,11 +196,11 @@ const MapComponent: React.FC<MapComponentProps> = ({
   useEffect(() => {
     if (!mapInstance.current) return;
 
+    console.log('🗺️ Updating markers, zoom:', currentZoom);
+
     // Clear existing markers and timeouts
-    for (const marker of markers.current) {
-      marker.setMap(null);
-    }
-    markers.current = [];
+    markers.current.forEach(marker => marker.setMap(null));
+    markers.current.clear();
     
     // Clear any pending timeouts
     if (hoverTimeout.current) {
@@ -202,26 +213,38 @@ const MapComponent: React.FC<MapComponentProps> = ({
     }
     currentHoveredProperty.current = null;
 
-    // Add markers for each property
+    // Optimization: Simplify markers at low zoom levels (county view)
+    // At high zoom (city/street level), show all details
+    const showSimplifiedMarkers = currentZoom < 10;
+    const markerScale = currentZoom < 8 ? 8 : currentZoom < 10 ? 9 : 10;
+
+    // Add markers for each property with zoom-based optimization
     for (const property of properties) {
       const color = getScoreColor(getPropertyScore(property));
       const coordinates = getPropertyCoordinates(property);
       const title = getPropertyTitle(property);
       const isHighlighted = highlightedProperty?.id === property.id;
       
+      // Skip if coordinates are invalid
+      if (!coordinates || typeof coordinates.lat !== 'number' || typeof coordinates.lng !== 'number') {
+        console.warn('⚠️ Skipping property with invalid coordinates:', property.id, coordinates);
+        continue;
+      }
+      
       const marker = new google.maps.Marker({
         position: { lat: coordinates.lat, lng: coordinates.lng },
-        map: mapInstance.current,
+        map: mapInstance.current, // Add directly to map for visibility
         title: title,
         icon: {
           path: google.maps.SymbolPath.CIRCLE,
-          scale: isHighlighted ? 15 : 10, // Larger if highlighted
-          fillColor: isHighlighted ? '#FF6B6B' : color, // Red if highlighted
-          fillOpacity: 1,
-          strokeColor: isHighlighted ? '#FFE66D' : '#ffffff', // Yellow stroke if highlighted
-          strokeWeight: isHighlighted ? 4 : 3,
+          scale: isHighlighted ? 15 : (showSimplifiedMarkers ? markerScale : 10),
+          fillColor: isHighlighted ? '#FF6B6B' : color,
+          fillOpacity: showSimplifiedMarkers ? 0.7 : 1, // More transparent when zoomed out
+          strokeColor: isHighlighted ? '#FFE66D' : '#ffffff',
+          strokeWeight: isHighlighted ? 4 : (showSimplifiedMarkers ? 2 : 3),
         },
         animation: isHighlighted ? google.maps.Animation.BOUNCE : undefined,
+        optimized: true, // Use optimized rendering for better performance
       });
 
       // Add click listener
@@ -341,8 +364,10 @@ const MapComponent: React.FC<MapComponentProps> = ({
         }, 200); // Increased delay to prevent blinking
       });
 
-      markers.current.push(marker);
+      markers.current.set(property.id, marker);
     }
+    
+    console.log('✅ Rendered', markers.current.size, 'markers at zoom level', currentZoom);
     
     // Cleanup function
     return () => {
@@ -353,7 +378,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
         clearTimeout(hideTimeout.current);
       }
     };
-  }, [properties, highlightedProperty, onPropertySelect]);
+  }, [properties, highlightedProperty, currentZoom, onPropertySelect]);
 
   return (
     <div className={`relative ${className}`}>
