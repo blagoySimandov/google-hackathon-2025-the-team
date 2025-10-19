@@ -343,35 +343,56 @@ export const PropertyDetails: React.FC<PropertyDetailsProps> = ({
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {property.bedrooms && property.bedrooms > 0 && (
-                    <div className="text-center p-4 bg-gray-50 rounded-lg">
+                  {property.bedrooms && property.bedrooms > 0 ?
+                    (<div className="text-center p-4 bg-gray-50 rounded-lg">
                       <div className="text-2xl mb-2">🛏️</div>
                       <p className="text-lg font-semibold">{property.bedrooms}</p>
                       <p className="text-sm text-gray-600">Bedrooms</p>
-                    </div>
-                  )}
+                      
+                    </div>)
+                  : (<div className="text-center p-4 bg-gray-50 rounded-lg">
+                    <div className="text-2xl mb-2">🛏️</div>
+                    <p className="text-lg font-semibold">N/A</p>
+                  </div>)}
 
-                  {property.bathrooms && property.bathrooms > 0 && (
+                  {property.bathrooms && property.bathrooms > 0 ? (
                     <div className="text-center p-4 bg-gray-50 rounded-lg">
                       <div className="text-2xl mb-2">🚿</div>
                       <p className="text-lg font-semibold">{property.bathrooms}</p>
                       <p className="text-sm text-gray-600">Bathrooms</p>
                     </div>
-                  )}
-
-                  {property.ber.rating && (
+                  ) : (
                     <div className="text-center p-4 bg-gray-50 rounded-lg">
-                      <div className="text-2xl mb-2">⚡</div>
-                      <p className="text-lg font-semibold">BER {property.ber.rating}</p>
-                      <p className="text-sm text-gray-600">Energy Rating</p>
+                      <div className="text-2xl mb-2">🚿</div>
+                      <p className="text-lg font-semibold">N/A</p>
+                      
                     </div>
                   )}
 
-                  {yearsSinceLastOccupied && (
+                  {property.ber.rating ? (
+                    <div className="text-center p-4 bg-gray-50 rounded-lg">
+                      <div className="text-2xl mb-2">⚡</div>
+                      <p className="text-sm text-gray-600">Energy Rating</p>
+                      <p className="text-lg font-semibold">BER {property.ber.rating}</p>
+                      
+                    </div>
+                  ): (
+                    <div className="text-center p-4 bg-gray-50 rounded-lg">
+                      <div className="text-2xl mb-2">⚡</div>
+                      <p className="text-lg font-semibold">N/A</p>
+                    </div>
+                  )}
+
+                  {yearsSinceLastOccupied ? (
                     <div className="text-center p-4 bg-gray-50 rounded-lg">
                       <div className="text-2xl mb-2">🏚️</div>
                       <p className="text-lg font-semibold">{yearsSinceLastOccupied} years</p>
                       <p className="text-sm text-gray-600">Vacant</p>
+                    </div>
+                  ) : (
+                    <div className="text-center p-4 bg-gray-50 rounded-lg">
+                      <div className="text-2xl mb-2">🏚️</div>
+                      <p className="text-lg font-semibold">N/A</p>
                     </div>
                   )}
                 </div>
