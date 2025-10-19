@@ -46,133 +46,157 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
     return new Intl.NumberFormat('en-US').format(sqft);
   };
 
+  // Get top 3 community impacts to display
+  const getTopImpacts = () => {
+    const impacts = [];
+    if (property.communityImpact.blightRemoval) {
+      impacts.push({ icon: null, label: 'Blight Removal', bgColor: 'bg-red-50', textColor: 'text-red-700' });
+    }
+    if (property.communityImpact.nearSchool) {
+      impacts.push({ icon: <School className="w-3 h-3" />, label: 'Near School', bgColor: 'bg-blue-50', textColor: 'text-blue-700' });
+    }
+    if (property.communityImpact.nearPark) {
+      impacts.push({ icon: <Trees className="w-3 h-3" />, label: 'Near Park', bgColor: 'bg-green-50', textColor: 'text-green-700' });
+    }
+    if (property.communityImpact.nearTransit) {
+      impacts.push({ icon: <Bus className="w-3 h-3" />, label: 'Near Transit', bgColor: 'bg-purple-50', textColor: 'text-purple-700' });
+    }
+    if (property.communityImpact.historicDistrict) {
+      impacts.push({ icon: <Landmark className="w-3 h-3" />, label: 'Historic', bgColor: 'bg-amber-50', textColor: 'text-amber-700' });
+    }
+    if (property.communityImpact.highYouthImpact) {
+      impacts.push({ icon: <Users className="w-3 h-3" />, label: 'Youth Impact', bgColor: 'bg-pink-50', textColor: 'text-pink-700' });
+    }
+    if (property.communityImpact.potentialGreenSpace) {
+      impacts.push({ icon: <Leaf className="w-3 h-3" />, label: 'Green Space', bgColor: 'bg-emerald-50', textColor: 'text-emerald-700' });
+    }
+    return impacts.slice(0, 3);
+  };
+
+  const topImpacts = getTopImpacts();
+
   return (
     <Card
-      className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
-        isSelected ? 'ring-2 ring-accent-500 shadow-lg' : ''
+      className={`group cursor-pointer transition-all duration-300 overflow-hidden bg-white ${
+        isSelected 
+          ? 'ring-2 ring-accent-500 shadow-soft-lg scale-[1.02]' 
+          : 'hover:shadow-soft-lg hover:-translate-y-1'
       }`}
       onClick={onClick}
     >
-      <CardContent className="p-4">
-        {/* Header with image and score */}
-        <div className="flex gap-3 mb-3">
-          <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-200 flex-shrink-0">
-            <img
-              src={property.beforeImage}
-              alt={property.address}
-              className="w-full h-full object-cover"
-            />
-          </div>
+      <CardContent className="p-0">
+        {/* Full-width Image Header */}
+        <div className="relative h-48 w-full overflow-hidden bg-gray-200">
+          <img
+            src={property.beforeImage}
+            alt={property.address}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            onError={(e) => {
+              e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23f3f4f6" width="400" height="300"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="18" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
+            }}
+          />
           
-          <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-gray-900 text-sm mb-1 truncate">
+          {/* Score Badge - Top Right */}
+          <div className="absolute top-3 right-3">
+            <div className="glass rounded-full px-3 py-1.5 shadow-lg ring-1 ring-white/20">
+              <div className="flex items-center gap-2">
+                <div 
+                  className="w-2.5 h-2.5 rounded-full animate-pulse-slow" 
+                  style={{ backgroundColor: scoreColor }}
+                ></div>
+                <span className="font-bold text-sm text-gray-900">{property.communityValueScore}</span>
+                <span className="text-xs text-gray-600 font-medium">Score</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Price Tag - Bottom Left */}
+          <div className="absolute bottom-3 left-3">
+            <div className="glass-dark text-white px-3 py-1.5 rounded-lg shadow-lg">
+              <span className="text-sm font-bold">
+                {formatCurrency(property.price?.amount || 0, property.price?.currency || 'EUR')}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Content Area */}
+        <div className="p-4 space-y-3">
+          {/* Address & Location */}
+          <div>
+            <h3 className="font-bold text-base text-gray-900 leading-tight line-clamp-1">
               {property.address}
             </h3>
-            <p className="text-xs text-gray-600 mb-2">
+            <p className="text-sm text-gray-600 mt-0.5">
               {property.city && property.city !== property.address && `${property.city}, `}
               {property.state}
-              {property.zipCode && property.zipCode !== property.address && property.zipCode !== property.city && ` ${property.zipCode}`}
             </p>
-            
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <div
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm"
-                  style={{ backgroundColor: scoreColor }}
-                >
-                  {property.communityValueScore}
-                </div>
-                <div>
-                  <p className="text-xs font-medium text-gray-900">Community Value</p>
-                  <p className="text-xs text-gray-600">Score</p>
-                </div>
+          </div>
+
+          {/* Key Stats Grid */}
+          <div className="grid grid-cols-2 gap-3 py-3 border-y border-gray-100">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-primary-50 flex items-center justify-center flex-shrink-0">
+                <Square className="w-4 h-4 text-primary-600" />
               </div>
-              
-              <div className="text-right">
-                <p className="text-xs text-gray-600">Est. Cost</p>
-                <p className="text-xs font-medium text-gray-900">
+              <div className="min-w-0">
+                <p className="text-xs text-gray-500">Size</p>
+                <p className="text-sm font-semibold text-gray-900 truncate">
+                  {formatSquareFeet(property.size.squareFeet)} ft²
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-accent-50 flex items-center justify-center flex-shrink-0">
+                <span className="text-accent-600 font-bold text-sm">€</span>
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs text-gray-500">Renovation</p>
+                <p className="text-sm font-semibold text-gray-900 truncate">
                   {formatCurrency(property.estimatedRenovationCost, property.price?.currency || 'EUR')}
                 </p>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Community Impact Icons */}
-        <div className="flex flex-wrap gap-2 mb-3">
-          {property.communityImpact.blightRemoval && (
-            <div className="flex items-center space-x-1 bg-red-50 text-red-700 px-2 py-1 rounded-full text-xs">
-              <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-              <span>Blight Removal</span>
+          {/* Top 3 Impact Badges */}
+          {topImpacts.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {topImpacts.map((impact) => (
+                <div
+                  key={impact.label}
+                  className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${impact.bgColor} ${impact.textColor}`}
+                >
+                  {impact.icon || <span className="w-1.5 h-1.5 bg-current rounded-full"></span>}
+                  <span>{impact.label}</span>
+                </div>
+              ))}
             </div>
           )}
-          {property.communityImpact.nearSchool && (
-            <div className="flex items-center space-x-1 bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-xs">
-              <School className="w-3 h-3" />
-              <span>Near School</span>
-            </div>
-          )}
-          {property.communityImpact.nearPark && (
-            <div className="flex items-center space-x-1 bg-green-50 text-green-700 px-2 py-1 rounded-full text-xs">
-              <Trees className="w-3 h-3" />
-              <span>Near Park</span>
-            </div>
-          )}
-          {property.communityImpact.nearTransit && (
-            <div className="flex items-center space-x-1 bg-purple-50 text-purple-700 px-2 py-1 rounded-full text-xs">
-              <Bus className="w-3 h-3" />
-              <span>Near Transit</span>
-            </div>
-          )}
-          {property.communityImpact.historicDistrict && (
-            <div className="flex items-center space-x-1 bg-amber-50 text-amber-700 px-2 py-1 rounded-full text-xs">
-              <Landmark className="w-3 h-3" />
-              <span>Historic</span>
-            </div>
-          )}
-          {property.communityImpact.highYouthImpact && (
-            <div className="flex items-center space-x-1 bg-pink-50 text-pink-700 px-2 py-1 rounded-full text-xs">
-              <Users className="w-3 h-3" />
-              <span>Youth Impact</span>
-            </div>
-          )}
-          {property.communityImpact.potentialGreenSpace && (
-            <div className="flex items-center space-x-1 bg-emerald-50 text-emerald-700 px-2 py-1 rounded-full text-xs">
-              <Leaf className="w-3 h-3" />
-              <span>Green Space</span>
-            </div>
-          )}
-        </div>
 
-        {/* Property Details */}
-        <div className="flex items-center justify-between text-xs text-gray-600 mb-2">
-          <div className="flex items-center space-x-1">
-            <Square className="w-3 h-3" />
-            <span>{formatSquareFeet(property.size.squareFeet)} sq ft</span>
+          {/* Potential Uses */}
+          <div>
+            <p className="text-xs text-gray-500 mb-1 font-medium">Potential Uses:</p>
+            <p className="text-xs text-gray-700 line-clamp-2">
+              {property.potentialUses.slice(0, 3).join(' • ')}
+            </p>
           </div>
-          {property.yearBuilt && (
-            <span>Built {property.yearBuilt}</span>
+
+          {/* See on Map Button */}
+          {onViewOnMap && (
+            <button
+              onClick={handleViewOnMap}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 
+                bg-accent-500 hover:bg-accent-600 active:bg-accent-700
+                text-white rounded-lg text-sm font-semibold 
+                transition-all duration-200 button-press
+                shadow-sm hover:shadow-md"
+            >
+              <MapPin className="w-4 h-4" />
+              <span>View on Map</span>
+            </button>
           )}
         </div>
-
-        {/* Potential Uses */}
-        <div className="mb-3">
-          <p className="text-xs text-gray-600 mb-1">Potential Uses:</p>
-          <p className="text-xs font-medium text-gray-900">
-            {property.potentialUses.join(' • ')}
-          </p>
-        </div>
-
-        {/* See on Map Button */}
-        {onViewOnMap && (
-          <button
-            onClick={handleViewOnMap}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-accent-500 hover:bg-accent-600 text-white rounded-lg text-sm font-medium transition-colors"
-          >
-            <MapPin className="w-4 h-4" />
-            See on Map
-          </button>
-        )}
       </CardContent>
     </Card>
   );
