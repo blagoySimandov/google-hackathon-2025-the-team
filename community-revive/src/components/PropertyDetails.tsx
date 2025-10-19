@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader } from './ui/Card';
 import { Button } from './ui/Button';
 import { ImageViewer } from './ImageViewer';
 import { getScoreColor } from '../utils/scoreUtils';
+import { AirQuality } from './AirQuality';
 import { 
   School, 
   Trees, 
@@ -393,6 +394,7 @@ export const PropertyDetails: React.FC<PropertyDetailsProps> = ({
                     <div className="text-center p-4 bg-gray-50 rounded-lg">
                       <div className="text-2xl mb-2">🏚️</div>
                       <p className="text-lg font-semibold">N/A</p>
+
                     </div>
                   )}
                 </div>
@@ -577,6 +579,8 @@ export const PropertyDetails: React.FC<PropertyDetailsProps> = ({
                 </CardContent>
               </Card>
             )}
+
+            <AirQuality property={property} />
           </div>
         </div>
       </div>
