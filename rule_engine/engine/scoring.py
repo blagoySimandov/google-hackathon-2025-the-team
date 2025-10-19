@@ -48,6 +48,26 @@ class ScoringEngine:
             df['community_value_score'] = 0.0
         # ----------------------------------------------
 
+            # ------------------ Sustainability Value------------------
+        # Ensure columns exist (defaults if missing)
+        if 'community_access_score' not in df.columns:
+            df['community_access_score'] = 0.0
+        if 'ber' not in df.columns:
+            df['ber'] = None
+        if 'area_m2' not in df.columns:
+            df['area_m2'] = None
+
+        # Compute sustainability_score per row (0–100)
+        df['sustainability_score'] = df.apply(
+            lambda row: _sustainability_score({
+                "ber": row.get('ber', None),
+                "community_access_score": float(row.get('community_access_score', 0.0) or 0.0),
+                "area_m2": row.get('area_m2', None)
+            }),
+            axis=1
+        )
+        # ----------------------------------------------------
+
         df['viability_score'] = (
             df['price_attractiveness_score'] * self.weights['price_attractiveness'] +
             df['renovation_cost_score'] * self.weights['renovation_cost'] +
@@ -59,6 +79,8 @@ class ScoringEngine:
         df_ranked = df.sort_values('viability_score', ascending=False).reset_index(drop=True)
         df_ranked['rank'] = df_ranked.index + 1
 
+        
+
         # --- Print summary of new scores for debugging ---
         print("\n--- Property Scoring Summary ---")
         for _, row in df_ranked.iterrows():
@@ -67,6 +89,13 @@ class ScoringEngine:
             print(f"  Community Cluster Score: {row['community_cluster_score']:.2f}")
             print(f"  Community Value Score:   {row['community_value_score']:.2f}")
             print(f"  Viability Score:         {row['viability_score']:.2f}")
+            record = {
+            "ber": row.get("ber"),
+            "community_access_score": row.get("community_access_score"),
+            "area_m2": row.get("area_m2")
+        }   
+            sustainability = _sustainability_score(record)
+            print(f"  Sustainability Score:    {sustainability:.2f}")
             print("--------------------------------------------------")
         # -------------------------------------------------
 
@@ -193,3 +222,44 @@ def _amenity_access_score(amenity_details: dict) -> float:
     anchor_bonus = 5.0 if close_types >= 3 else 0.0
 
     return min(100.0, access + anchor_bonus)
+
+
+# ---------------------------------------------------------------------------
+# Sustainability Score Helpers
+# ---------------------------------------------------------------------------
+
+BER_ORDER_WORST_TO_BEST = [
+    "G","F","E2","E1","D2","D1","C3","C2","C1","B3","B2","B1","A3","A2","A1"
+]
+BER_INDEX = {b:i for i,b in enumerate(BER_ORDER_WORST_TO_BEST)}
+TARGET_BER = "C1"
+TARGET_IDX = BER_INDEX[TARGET_BER]
+
+def _energy_potential_from_current_ber(current_ber: str | None) -> float:
+    """Return Energy Efficiency Potential (0–100) using only current BER."""
+    if not current_ber:
+        return 60.0
+    cur = current_ber.strip().upper()
+    if cur not in BER_INDEX:
+        return 60.0
+    current_idx = BER_INDEX[cur]
+    improvement = max(0, TARGET_IDX - current_idx) / TARGET_IDX
+    return round(improvement * 100.0, 2)
+
+def _carbon_savings_score(area_m2: float | None) -> float:
+    """0–100 scaled by CO₂ saved vs rebuild. Defaults area to 100 m²."""
+    a = area_m2 if (area_m2 and area_m2 > 0) else 100.0
+    co2_saved_kg = 350.0 * a  # (500 – 150) × area
+    return round(min(100.0, (co2_saved_kg / 35000.0) * 100.0), 2)
+
+def _sustainability_score(record: dict) -> float:
+    """
+    Compute Sustainability Score (0–100) with only current BER + community_access_score.
+    Expects keys: 'ber', 'community_access_score', 'area_m2' (optional)
+    """
+    C = _carbon_savings_score(record.get("area_m2"))
+    E = _energy_potential_from_current_ber(record.get("ber"))
+    L = float(record.get("community_access_score") or 0.0)
+    score = 0.40*C + 0.35*E + 0.25*L
+    return round(min(100.0, max(0.0, score)), 2)
+

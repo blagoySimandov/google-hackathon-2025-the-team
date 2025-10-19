@@ -1,9 +1,9 @@
-from constants import COLLECTION_NAME, FIELD_NAMES
+from constants import COLLECTION_NAME, FIELD_NAMES_RE
 
 
 def query_no_validity(db):
     docs_without_validity = get_documents_without_a_field(
-        db, COLLECTION_NAME, FIELD_NAMES.VALIDITY_SCORE.value
+        db, COLLECTION_NAME, FIELD_NAMES_RE.VALIDITY_SCORE.value
     )
     return docs_without_validity
 
