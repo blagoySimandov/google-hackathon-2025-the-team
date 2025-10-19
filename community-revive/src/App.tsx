@@ -1,30 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
 import { Dashboard } from './components/Dashboard';
 import { PropertyDetails } from './components/PropertyDetails';
-import { Property } from './types';
 
 function App() {
-  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
-
-  const handlePropertySelect = (property: Property) => {
-    setSelectedProperty(property);
-  };
-
-  const handleBackToMap = () => {
-    setSelectedProperty(null);
-  };
-
   return (
-    <div className="App">
-      {selectedProperty ? (
-        <PropertyDetails
-          property={selectedProperty}
-          onBack={handleBackToMap}
-        />
-      ) : (
-        <Dashboard onPropertySelect={handlePropertySelect} />
-      )}
-    </div>
+
+      <div className="App">
+        <Routes>
+          <Route index element={<Dashboard />} />
+          <Route path="/property/:id" element={<PropertyDetails />} />
+        </Routes>
+      </div>
   );
 }
 

@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { QueryProvider } from './api/QueryProvider';
+import { BrowserRouter } from 'react-router-dom';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -11,7 +12,9 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <QueryProvider>
-      <App />
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </QueryProvider>
   </React.StrictMode>
 );

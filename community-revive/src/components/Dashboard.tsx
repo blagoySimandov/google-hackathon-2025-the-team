@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { GoogleMap } from './GoogleMap';
 import { PropertyCard } from './PropertyCard';
 import { PropertyFilters } from './PropertyFilters';
@@ -9,11 +10,8 @@ import { apiService } from '../services/apiService';
 import { MapProperty } from '../services/firebaseService';
 import { Search, SlidersHorizontal, X, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
 
-interface DashboardProps {
-  onPropertySelect: (property: Property) => void;
-}
-
-export const Dashboard: React.FC<DashboardProps> = ({ onPropertySelect }) => {
+export const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [highlightedProperty, setHighlightedProperty] = useState<Property | null>(null); // For "See on map" feature
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -230,7 +228,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onPropertySelect }) => {
 
   const handlePropertySelect = (property: Property) => {
     setSelectedProperty(property);
-    onPropertySelect(property);
+    navigate(`/property/${property.id}`);
   };
 
   const handleViewOnMap = (property: Property) => {
