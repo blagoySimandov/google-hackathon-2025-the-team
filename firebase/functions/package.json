@@ -1,6 +1,7 @@
 {
   "name": "functions",
   "scripts": {
+    "gcp-build": "node node_modules/puppeteer/install.mjs",
     "lint": "eslint --ext .js,.ts .",
     "build": "tsc",
     "build:watch": "tsc --watch",

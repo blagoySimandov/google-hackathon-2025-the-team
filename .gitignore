@@ -70,3 +70,4 @@ htmlcov/
 *.log
 logs/
 average-pricing-scraper/.claude
+image-downloader/.claude
