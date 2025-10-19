@@ -121,8 +121,8 @@ def clean_property(item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
             "title": listing.get("title"),
             "seoTitle": listing.get("seoTitle"),
             "amenities": pageProps.get("amenities"),
-            "floorArea": pageProps.get("floorArea"),
-            "floorAreaFormatted": pageProps.get("propertySize"),
+            "floorArea": listing.get("floorArea"),
+            "floorAreaFormatted": listing.get("propertySize"),
             "floorPlanImages": floor_plan_images,
             "daftShortcode": listing.get("daftShortcode"),
             "seoFriendlyPath": listing.get("seoFriendlyPath"),
@@ -347,7 +347,7 @@ def generate_summary(properties: List[Dict[str, Any]]):
 
 if __name__ == "__main__":
     input_file = "../all-properties.json"
-    output_file = "cleaned_properties.json"
+    output_file = "./cleaned_properties.json"
 
     clean_properties_data(input_file, output_file)
 
