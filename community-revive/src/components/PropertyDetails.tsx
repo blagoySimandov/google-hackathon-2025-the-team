@@ -3,7 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { PropertyListing } from '../api/firestore/types';
 import { getPropertyById } from '../api/firestore/index';
 import { PhotoCarousel } from './PhotoCarousel';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, List, Map as MapIcon } from 'lucide-react';
+import { AmenitiesMap } from './AmenitiesMap';
+import { AirQuality } from './AirQuality';
+import { SchoolsSection } from './SchoolsSection';
+import { TransportSection } from './TransportSection';
 
 export const PropertyDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -11,6 +15,7 @@ export const PropertyDetails: React.FC = () => {
   const [property, setProperty] = useState<PropertyListing | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [view, setView] = useState<'list' | 'map'>('list');
 
   useEffect(() => {
     const fetchProperty = async () => {
@@ -77,6 +82,15 @@ export const PropertyDetails: React.FC = () => {
     height: 960
   }));
 
+  // Extract property location from coordinates
+  const propertyLocation = property.location.coordinates.length === 2
+    ? { lat: property.location.coordinates[1], lng: property.location.coordinates[0] }
+    : undefined;
+
+  // Get amenities data
+  const { primarySchools, secondarySchools, publicTransports } = property.amenities;
+  const hasAmenities = primarySchools.length > 0 || secondarySchools.length > 0 || publicTransports.length > 0;
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header with back button */}
@@ -93,9 +107,9 @@ export const PropertyDetails: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* Title Section */}
-        <div className="mb-6">
+        <div>
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
             {property.title}
           </h1>
@@ -118,6 +132,150 @@ export const PropertyDetails: React.FC = () => {
         <div className="bg-white rounded-lg shadow-sm p-6">
           <PhotoCarousel images={carouselImages} />
         </div>
+
+        {/* Amenities Section */}
+        {hasAmenities && (
+          <div>
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                Nearby Amenities
+              </h2>
+              
+              {/* View Toggle */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setView('list')}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                    view === 'list'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  <List className="w-5 h-5" />
+                  List View
+                </button>
+                <button
+                  onClick={() => setView('map')}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                    view === 'map'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  <MapIcon className="w-5 h-5" />
+                  Map View
+                </button>
+              </div>
+            </div>
+
+            {view === 'list' ? (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {(primarySchools.length > 0 || secondarySchools.length > 0) && (
+                  <div>
+                    <SchoolsSection
+                      primarySchools={primarySchools}
+                      secondarySchools={secondarySchools}
+                    />
+                  </div>
+                )}
+
+                {publicTransports.length > 0 && (
+                  <div>
+                    <TransportSection publicTransports={publicTransports} />
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">Amenities Map View</h3>
+                <div className="h-[600px]">
+                  <AmenitiesMap
+                    primarySchools={primarySchools}
+                    secondarySchools={secondarySchools}
+                    publicTransports={publicTransports}
+                    propertyLocation={propertyLocation}
+                  />
+                </div>
+                <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-600">
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded-full bg-blue-600"></div>
+                    <span>Property</span>
+                  </div>
+                  {primarySchools.length > 0 && (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-blue-500"></div>
+                      <span>Primary Schools</span>
+                    </div>
+                  )}
+                  {secondarySchools.length > 0 && (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-purple-600"></div>
+                      <span>Secondary Schools</span>
+                    </div>
+                  )}
+                  {publicTransports.some(t => t.type === 'Bus') && (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-green-600"></div>
+                      <span>Bus</span>
+                    </div>
+                  )}
+                  {publicTransports.some(t => t.type === 'Rail') && (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-orange-600"></div>
+                      <span>Rail</span>
+                    </div>
+                  )}
+                  {publicTransports.some(t => t.type === 'Tram') && (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-indigo-600"></div>
+                      <span>Tram</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Summary Section */}
+            <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-6">
+              <h3 className="font-semibold text-blue-900 mb-2">Amenities Summary</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-blue-800">
+                {(primarySchools.length > 0 || secondarySchools.length > 0) && (
+                  <div>
+                    <p className="font-medium">Schools Nearby</p>
+                    {primarySchools.length > 0 && (
+                      <p className="text-blue-600">
+                        {primarySchools.length} Primary School{primarySchools.length === 1 ? '' : 's'}
+                      </p>
+                    )}
+                    {secondarySchools.length > 0 && (
+                      <p className="text-blue-600">
+                        {secondarySchools.length} Secondary School{secondarySchools.length === 1 ? '' : 's'}
+                      </p>
+                    )}
+                  </div>
+                )}
+                {publicTransports.length > 0 && (
+                  <div>
+                    <p className="font-medium">Public Transport: {publicTransports.length}</p>
+                    <p className="text-blue-600">
+                      {publicTransports.filter(t => t.type === 'Bus').length} Bus •{' '}
+                      {publicTransports.filter(t => t.type === 'Rail').length} Rail •{' '}
+                      {publicTransports.filter(t => t.type === 'Tram').length} Tram
+                    </p>
+                  </div>
+                )}
+                {propertyLocation && (
+                  <div>
+                    <p className="font-medium">Property Location</p>
+                    <p className="text-blue-600 text-xs">
+                      {propertyLocation.lat.toFixed(4)}, {propertyLocation.lng.toFixed(4)}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
