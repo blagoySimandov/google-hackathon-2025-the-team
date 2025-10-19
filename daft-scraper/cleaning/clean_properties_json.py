@@ -103,18 +103,33 @@ def parse_date(date_str: Optional[str]) -> Optional[str]:
 def clean_property(item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     try:
         listing = item.get("props", {}).get("pageProps", {}).get("listing", {})
+        pageProps = item.get("props", {}).get("pageProps", {})
 
         if not listing:
             return None
 
         description = listing.get("description", "")
+        images = listing.get("media", {}).get("images", [])
+        floor_plan_images = [
+            image
+            for image in images
+            if image.get("imageLabels", [])
+            and any(
+                label.get("type") == "FLOOR_PLAN"
+                for label in image.get("imageLabels", [])
+            )
+        ]
 
         cleaned = {
             "id": listing.get("id"),
             "title": listing.get("title"),
             "seoTitle": listing.get("seoTitle"),
+            "amenities": pageProps.get("amenities"),
+            "floorArea": pageProps.get("floorArea"),
+            "floorAreaFormatted": pageProps.get("propertySize"),
+            "floorPlanImages": floor_plan_images,
             "daftShortcode": listing.get("daftShortcode"),
-            "seoFriendlyPath": listing.get("seoFriendlyPath"),
+            "canonicalUrl": pageProps.get("canonicalUrl"),
             "propertyType": listing.get("propertyType"),
             "sections": listing.get("sections", []),
             "price": extract_price(listing.get("price")),
@@ -134,7 +149,7 @@ def clean_property(item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
                 "dateOfConstruction": listing.get("dateOfConstruction"),
             },
             "media": {
-                "images": listing.get("media", {}).get("images", []),
+                "images": images,
                 "totalImages": listing.get("media", {}).get("totalImages", 0),
                 "hasVideo": listing.get("media", {}).get("hasVideo", False),
                 "hasVirtualTour": listing.get("media", {}).get("hasVirtualTour", False),
