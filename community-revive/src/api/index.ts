@@ -11,11 +11,12 @@ export async function getAllProperties(limit?: number): Promise<PropertyListing[
   }
 }
 
-export type { PropertyListing } from './firestore/types';
+export type { PropertyListing, ValidityData } from './firestore/types';
 
 export {
-  getPropertyListings
+  getPropertyListings,
+  getValidityDataById
 } from './firestore';
 
-export { useGetAllProperties, PROPERTIES_QUERY_KEY } from './hooks';
+export { useGetAllProperties, useGetValidityData, PROPERTIES_QUERY_KEY, VALIDITY_DATA_QUERY_KEY } from './hooks';
 export { QueryProvider, queryClient } from './QueryProvider';

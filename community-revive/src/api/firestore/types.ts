@@ -273,3 +273,76 @@ export interface PropertySeller {
 export interface PropertyStamps {
   stampDutyValue: Price | null;
 }
+
+export interface Amenity {
+  name: string;
+  type: string;
+  distance_km: number;
+}
+
+export interface PotentialGrant {
+  name: string;
+  amount: number;
+  reason: string;
+}
+
+export interface InvestmentAnalysis {
+  total_project_cost: number;
+  net_project_cost: number;
+  estimated_after_repair_value: number;
+  potential_profit: number;
+  return_on_investment_percent: number;
+  total_grant_amount: number;
+  estimated_labour_cost: number;
+  potential_grants: PotentialGrant[];
+}
+
+export interface RenovationItem {
+  item: string;
+  reason: string;
+  price: number;
+  amount: string;
+  material: string;
+}
+
+export interface RenovationDetails {
+  total_cost: number;
+  items: RenovationItem[];
+}
+
+export interface PropertyScores {
+  score: number;
+  viability_score: number;
+  validity_score: number;
+  price_attractiveness_score: number;
+  renovation_cost_score: number;
+  sustainability_score: number;
+  amenity_score: number;
+  community_score: number;
+  community_value_score: number;
+  community_access_score: number;
+  community_cluster_score: number;
+}
+
+export interface ValidityData {
+  id: string;
+  property_id: string;
+  rank: number;
+  url: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  listed_price: number;
+  market_average_price: number;
+  image_urls: string[];
+  area_m2: number | null;
+  ber: string | null;
+  air_quality_index: number;
+  air_quality_score: number;
+  air_quality_category: string;
+  found_amenities: Amenity[];
+  investment_analysis: InvestmentAnalysis;
+  renovation_details: RenovationDetails;
+  total_renovation_cost: number;
+  scores: PropertyScores;
+}
