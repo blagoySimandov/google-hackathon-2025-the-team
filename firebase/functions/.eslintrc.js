@@ -4,6 +4,13 @@ module.exports = {
     es6: true,
     node: true,
   },
+  settings: {
+    "import/resolver": {
+      node: {
+        extensions: [".js", ".jsx", ".ts", ".tsx"],
+      },
+    },
+  },
   extends: [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
@@ -33,6 +40,7 @@ module.exports = {
     "no-mixed-spaces-and-tabs": "off",
 
     "import/order": "off",
+    "import/no-unresolved": "off",
 
     "no-console": "off",
   },
