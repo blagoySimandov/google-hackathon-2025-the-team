@@ -1,10 +1,12 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { GoogleMap } from './GoogleMap';
 import { PropertyCard } from './PropertyCard';
 import { PropertyFilters } from './PropertyFilters';
 import { MobileDrawer } from './MobileDrawer';
-import { mockProperties, filterOptions } from '../data/mockData';
+import { filterOptions } from '../data/mockData';
 import { Property } from '../types';
+import { apiService } from '../services/apiService';
+import { MapProperty } from '../services/firebaseService';
 
 interface DashboardProps {
   onPropertySelect: (property: Property) => void;
@@ -14,11 +16,85 @@ export const Dashboard: React.FC<DashboardProps> = ({ onPropertySelect }) => {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [mapProperties, setMapProperties] = useState<MapProperty[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [mapLoading, setMapLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [pagination, setPagination] = useState<{
+    lastDoc?: any;
+    hasMore: boolean;
+  }>({ hasMore: true });
+
+  // Fetch properties from Firebase on component mount
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const result = await apiService.fetchProperties({}, { pageSize: 20 });
+        setProperties(result.data);
+        setPagination({
+          lastDoc: result.lastDoc,
+          hasMore: result.hasMore,
+        });
+      } catch (err) {
+        console.error('Error fetching properties:', err);
+        setError('Failed to load properties. Please check your Firebase configuration.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProperties();
+  }, []);
+
+  // Fetch lightweight map properties separately
+  useEffect(() => {
+    const fetchMapProperties = async () => {
+      try {
+        setMapLoading(true);
+        const result = await apiService.fetchMapProperties({ pageSize: 50 });
+        setMapProperties(result.data);
+      } catch (err) {
+        console.error('Error fetching map properties:', err);
+        // Don't set error state for map properties, just log it
+      } finally {
+        setMapLoading(false);
+      }
+    };
+
+    fetchMapProperties();
+  }, []);
+
+  // Load more properties
+  const loadMoreProperties = useCallback(async () => {
+    if (!pagination.hasMore || loading) return;
+
+    try {
+      setLoading(true);
+      const result = await apiService.fetchProperties({}, {
+        pageSize: 20,
+        lastDoc: pagination.lastDoc,
+      });
+      
+      setProperties(prev => [...prev, ...result.data]);
+      setPagination({
+        lastDoc: result.lastDoc,
+        hasMore: result.hasMore,
+      });
+    } catch (err) {
+      console.error('Error loading more properties:', err);
+      setError('Failed to load more properties.');
+    } finally {
+      setLoading(false);
+    }
+  }, [pagination, loading]);
 
   const filteredProperties = useMemo(() => {
-    if (selectedFilter === 'all') return mockProperties;
+    if (selectedFilter === 'all') return properties;
     
-    return mockProperties.filter(property => {
+    return properties.filter(property => {
       switch (selectedFilter) {
         case 'historic':
           return property.communityImpact.historicDistrict;
@@ -34,7 +110,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onPropertySelect }) => {
           return true;
       }
     });
-  }, [selectedFilter]);
+  }, [selectedFilter, properties]);
 
   const handlePropertySelect = (property: Property) => {
     setSelectedProperty(property);
@@ -48,10 +124,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ onPropertySelect }) => {
         <div className="h-full p-4">
           <div className="bg-white rounded-lg shadow-sm h-full">
             <GoogleMap
-              properties={filteredProperties}
+              properties={mapProperties}
               selectedProperty={selectedProperty || undefined}
               onPropertySelect={handlePropertySelect}
               className="h-full"
+              loading={mapLoading}
             />
           </div>
         </div>
@@ -79,7 +156,22 @@ export const Dashboard: React.FC<DashboardProps> = ({ onPropertySelect }) => {
 
           {/* Properties List */}
           <div className="flex-1 overflow-y-auto space-y-3">
-            {filteredProperties.length === 0 ? (
+            {loading ? (
+              <div className="text-center py-8 text-gray-500">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <p>Loading properties...</p>
+              </div>
+            ) : error ? (
+              <div className="text-center py-8 text-red-500">
+                <p className="mb-2">{error}</p>
+                <button 
+                  onClick={() => globalThis.location.reload()} 
+                  className="text-blue-600 hover:text-blue-800 underline"
+                >
+                  Retry
+                </button>
+              </div>
+            ) : filteredProperties.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
                 <p>No properties match the selected filter.</p>
               </div>
@@ -94,6 +186,19 @@ export const Dashboard: React.FC<DashboardProps> = ({ onPropertySelect }) => {
               ))
             )}
           </div>
+
+          {/* Load More Button */}
+          {pagination.hasMore && (
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <button
+                onClick={loadMoreProperties}
+                disabled={loading}
+                className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? 'Loading...' : 'Load More Properties'}
+              </button>
+            </div>
+          )}
 
           {/* Footer Stats */}
           <div className="mt-4 pt-4 border-t border-gray-200">

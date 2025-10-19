@@ -1,64 +1,56 @@
-import { Schema as ApiProperty } from '../backend/scheme_of_api';
 import { Property } from '../types';
+import { firebaseService, PaginationOptions, PaginatedResult, MapProperty } from './firebaseService';
 
-// API service for fetching property data
+// API service for fetching property data from Firebase
 export class ApiService {
-  private readonly baseUrl: string;
-
-  constructor(baseUrl: string = 'https://api.daft.ie/v1') {
-    this.baseUrl = baseUrl;
-  }
-
-  // Fetch properties from the API
+  // Fetch properties from Firebase with pagination
   async fetchProperties(params?: {
     area?: string;
     propertyType?: string;
     minPrice?: number;
     maxPrice?: number;
     bedrooms?: number;
-  }): Promise<Property[]> {
+  }, options?: PaginationOptions): Promise<PaginatedResult<Property>> {
     try {
-      // In a real implementation, you would make an actual API call here
-      // For now, we'll return the mock data transformed to show the structure
-      const mockApiProperties: ApiProperty[] = [
-        // This would be replaced with actual API call
-        // const response = await fetch(`${this.baseUrl}/properties`, {
-        //   method: 'GET',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //     'Authorization': `Bearer ${apiKey}`
-        //   },
-        //   body: JSON.stringify(params)
-        // });
-        // const data = await response.json();
-        // return data.map(transformApiPropertyToProperty);
-      ];
-
-      // For demonstration, return empty array
-      // In production, you would replace this with actual API call
-      return [];
+      // Use Firebase service to fetch properties
+      if (params && Object.keys(params).length > 0) {
+        return await firebaseService.searchProperties({
+          area: params.area,
+          propertyType: params.propertyType,
+          minPrice: params.minPrice,
+          maxPrice: params.maxPrice,
+          bedrooms: params.bedrooms,
+        }, options);
+      }
+      
+      return await firebaseService.fetchProperties(options);
     } catch (error) {
       console.error('Error fetching properties:', error);
       throw new Error('Failed to fetch properties');
     }
   }
 
+  // Fetch lightweight properties for map markers
+  async fetchMapProperties(options?: PaginationOptions): Promise<PaginatedResult<MapProperty>> {
+    try {
+      return await firebaseService.fetchMapProperties(options);
+    } catch (error) {
+      console.error('Error fetching map properties:', error);
+      throw new Error('Failed to fetch map properties');
+    }
+  }
+
   // Fetch a single property by ID
   async fetchPropertyById(id: number): Promise<Property | null> {
     try {
-      // In a real implementation, you would make an actual API call here
-      // const response = await fetch(`${this.baseUrl}/properties/${id}`);
-      // const data = await response.json();
-      // return transformApiPropertyToProperty(data);
-      
-      return null;
+      return await firebaseService.fetchPropertyById(id);
     } catch (error) {
       console.error('Error fetching property:', error);
       throw new Error('Failed to fetch property');
     }
   }
 
-  // Search properties with filters
+  // Search properties with filters and pagination
   async searchProperties(searchParams: {
     query?: string;
     area?: string;
@@ -68,30 +60,43 @@ export class ApiService {
     bedrooms?: number;
     bathrooms?: number;
     berRating?: string;
-  }): Promise<Property[]> {
+    minCommunityScore?: number;
+  }, options?: PaginationOptions): Promise<PaginatedResult<Property>> {
     try {
-      // In a real implementation, you would construct query parameters
-      // and make an API call to the search endpoint
-      const queryParams = new URLSearchParams();
-      
-      if (searchParams.query) queryParams.append('q', searchParams.query);
-      if (searchParams.area) queryParams.append('area', searchParams.area);
-      if (searchParams.propertyType) queryParams.append('property_type', searchParams.propertyType);
-      if (searchParams.minPrice) queryParams.append('min_price', searchParams.minPrice.toString());
-      if (searchParams.maxPrice) queryParams.append('max_price', searchParams.maxPrice.toString());
-      if (searchParams.bedrooms) queryParams.append('bedrooms', searchParams.bedrooms.toString());
-      if (searchParams.bathrooms) queryParams.append('bathrooms', searchParams.bathrooms.toString());
-      if (searchParams.berRating) queryParams.append('ber_rating', searchParams.berRating);
-
-      // In a real implementation, you would make an actual API call here
-      // const response = await fetch(`${this.baseUrl}/search?${queryParams.toString()}`);
-      // const data = await response.json();
-      // return data.map(transformApiPropertyToProperty);
-      
-      return [];
+      return await firebaseService.searchProperties(searchParams, options);
     } catch (error) {
       console.error('Error searching properties:', error);
       throw new Error('Failed to search properties');
+    }
+  }
+
+  // Get high-value properties for community impact with pagination
+  async getHighValueProperties(minScore: number = 70, options?: PaginationOptions): Promise<PaginatedResult<Property>> {
+    try {
+      return await firebaseService.getHighValueProperties(minScore, options);
+    } catch (error) {
+      console.error('Error fetching high value properties:', error);
+      throw new Error('Failed to fetch high value properties');
+    }
+  }
+
+  // Get properties by area with pagination
+  async getPropertiesByArea(area: string, options?: PaginationOptions): Promise<PaginatedResult<Property>> {
+    try {
+      return await firebaseService.getPropertiesByArea(area, options);
+    } catch (error) {
+      console.error('Error fetching properties by area:', error);
+      throw new Error('Failed to fetch properties by area');
+    }
+  }
+
+  // Get map properties by area (lightweight)
+  async getMapPropertiesByArea(area: string, options?: PaginationOptions): Promise<PaginatedResult<MapProperty>> {
+    try {
+      return await firebaseService.getMapPropertiesByArea(area, options);
+    } catch (error) {
+      console.error('Error fetching map properties by area:', error);
+      throw new Error('Failed to fetch map properties by area');
     }
   }
 }

@@ -1,28 +1,76 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Wrapper, Status } from '@googlemaps/react-wrapper';
 import { Property } from '../types';
+import { MapProperty } from '../services/firebaseService';
 import { getScoreColor } from '../data/mockData';
 import { PropertyPopover } from './PropertyPopover';
 
+// Union type for properties that can be displayed on the map
+type MapDisplayProperty = Property | MapProperty;
+
 interface GoogleMapProps {
-  properties: Property[];
+  properties: MapDisplayProperty[];
   selectedProperty?: Property;
   onPropertySelect: (property: Property) => void;
   className?: string;
+  loading?: boolean;
 }
 
 interface MapComponentProps {
-  properties: Property[];
+  properties: MapDisplayProperty[];
   selectedProperty?: Property;
   onPropertySelect: (property: Property) => void;
   className?: string;
+  loading?: boolean;
 }
+
+// Helper function to check if a property is a full Property or MapProperty
+const isFullProperty = (property: MapDisplayProperty): property is Property => {
+  return 'communityImpact' in property;
+};
+
+// Helper function to get coordinates from either property type
+const getPropertyCoordinates = (property: MapDisplayProperty) => {
+  if (isFullProperty(property)) {
+    return property.coordinates;
+  } else {
+    return property.coordinates;
+  }
+};
+
+// Helper function to get community value score from either property type
+const getPropertyScore = (property: MapDisplayProperty) => {
+  if (isFullProperty(property)) {
+    return property.communityValueScore;
+  } else {
+    return property.communityValueScore;
+  }
+};
+
+// Helper function to get property title from either property type
+const getPropertyTitle = (property: MapDisplayProperty) => {
+  if (isFullProperty(property)) {
+    return property.title;
+  } else {
+    return property.title;
+  }
+};
+
+// Helper function to get property price from either property type
+const getPropertyPrice = (property: MapDisplayProperty) => {
+  if (isFullProperty(property)) {
+    return property.price;
+  } else {
+    return property.price;
+  }
+};
 
 const MapComponent: React.FC<MapComponentProps> = ({
   properties,
   selectedProperty,
   onPropertySelect,
   className = '',
+  loading = false,
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<google.maps.Map | null>(null);
@@ -38,8 +86,8 @@ const MapComponent: React.FC<MapComponentProps> = ({
 
     // Initialize map
     mapInstance.current = new google.maps.Map(mapRef.current, {
-      center: { lat: 42.3314, lng: -83.0458 }, // Detroit coordinates
-      zoom: 11,
+      center: { lat: 53.28925, lng: -7.812739}, // Ireland coordinates
+      zoom: 8,
       styles: [
         {
           featureType: 'all',
@@ -117,12 +165,14 @@ const MapComponent: React.FC<MapComponentProps> = ({
 
     // Add markers for each property
     for (const property of properties) {
-      const color = getScoreColor(property.communityValueScore);
+      const color = getScoreColor(getPropertyScore(property));
+      const coordinates = getPropertyCoordinates(property);
+      const title = getPropertyTitle(property);
       
       const marker = new google.maps.Marker({
-        position: { lat: property.coordinates.lat, lng: property.coordinates.lng },
+        position: { lat: coordinates.lat, lng: coordinates.lng },
         map: mapInstance.current,
-        title: property.address,
+        title: title,
         icon: {
           path: google.maps.SymbolPath.CIRCLE,
           scale: 10,
@@ -135,7 +185,10 @@ const MapComponent: React.FC<MapComponentProps> = ({
 
       // Add click listener
       marker.addListener('click', (event: google.maps.MapMouseEvent) => {
-        onPropertySelect(property);
+        // Only allow selection if it's a full property
+        if (isFullProperty(property)) {
+          onPropertySelect(property);
+        }
         
         // Show popover
         if (event.latLng) {
@@ -168,7 +221,10 @@ const MapComponent: React.FC<MapComponentProps> = ({
                   const x = (pixelPoint.x - sw.lng()) * scaleX;
                   const y = (ne.lat() - pixelPoint.y) * scaleY;
                   
-                  setPopoverProperty(property);
+                  // Only set popover for full properties
+                  if (isFullProperty(property)) {
+                    setPopoverProperty(property);
+                  }
                   setPopoverPosition({ x, y });
                 }
               }
@@ -203,7 +259,10 @@ const MapComponent: React.FC<MapComponentProps> = ({
             const y = rect.height / 2 - 20; // Center vertically, slightly above
             
             console.log('Setting hover property:', property);
-            setHoverProperty(property);
+            // Only set hover for full properties
+            if (isFullProperty(property)) {
+              setHoverProperty(property);
+            }
             setHoverPosition({ x, y });
           }
         }, 250); // No delay for testing
@@ -337,7 +396,7 @@ const render = (status: Status): React.ReactElement => {
   }
 };
 
-export const GoogleMap: React.FC<GoogleMapProps> = (props) => {
+export const GoogleMap: React.FC<GoogleMapProps> = ({ loading, ...props }) => {
   const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || '';
 
   if (!apiKey) {
@@ -346,6 +405,17 @@ export const GoogleMap: React.FC<GoogleMapProps> = (props) => {
         <div className="text-center">
           <p className="text-red-600 mb-2">Google Maps API key not found</p>
           <p className="text-gray-600 text-sm">Please add REACT_APP_GOOGLE_MAPS_API_KEY to your environment variables</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading map properties...</p>
         </div>
       </div>
     );

@@ -345,60 +345,6 @@ export const PropertyDetails: React.FC<PropertyDetailsProps> = ({
                 </div>
               </CardContent>
             </Card>
-
-            {/* Call to Action */}
-            <Card>
-              <CardContent className="pt-6">
-                <Dialog.Root open={isReportDialogOpen} onOpenChange={setIsReportDialogOpen}>
-                  <Dialog.Trigger asChild>
-                    <Button className="w-full" size="lg">
-                      <Download className="w-4 h-4 mr-2" />
-                      Download Impact Report
-                    </Button>
-                  </Dialog.Trigger>
-                  <Dialog.Portal>
-                    <Dialog.Overlay className="fixed inset-0 bg-black/50 z-50" />
-                    <Dialog.Content className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg p-6 w-96 z-50">
-                      <Dialog.Title className="text-lg font-semibold mb-4">
-                        Generating Impact Report
-                      </Dialog.Title>
-                      <div className="space-y-4">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-accent-100 rounded-full flex items-center justify-center">
-                            <Download className="w-4 h-4 text-accent-600" />
-                          </div>
-                          <div>
-                            <p className="font-medium">Report is being generated...</p>
-                            <p className="text-sm text-gray-600">
-                              This may take a few moments
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex justify-end space-x-2">
-                          <Button
-                            variant="outline"
-                            onClick={() => setIsReportDialogOpen(false)}
-                          >
-                            Cancel
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              // Simulate report generation
-                              setTimeout(() => {
-                                setIsReportDialogOpen(false);
-                                alert('Report generated successfully!');
-                              }, 2000);
-                            }}
-                          >
-                            Continue
-                          </Button>
-                        </div>
-                      </div>
-                    </Dialog.Content>
-                  </Dialog.Portal>
-                </Dialog.Root>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </div>
