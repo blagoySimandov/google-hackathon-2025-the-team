@@ -10,7 +10,6 @@ def initialize_firebase():
         print(f"Authenticating with Google Cloud Project: {PROJECT_ID} using ADC...")
         cred = credentials.ApplicationDefault()
         firebase_admin.initialize_app(cred, {'projectId': PROJECT_ID})
-        print("Firebase Admin SDK initialized successfully.")
         return firestore.client()
     except Exception as e:
         print(f"FATAL ERROR: Could not initialize Firebase Admin SDK. {e}")
@@ -31,6 +30,42 @@ def load_from_firestore(db, doc_id: str) -> dict:
         price = float(data['price']['amount'])
         if price <= 0:
             raise ValueError("Firestore document contains a non-positive price.")
+        
+        area_m2 = None
+        # Prefer structured floorArea in METRES_SQUARED (ignore ACRES – that’s site size)
+        fa = data.get("floorArea")
+        if isinstance(fa, dict):
+            unit = (fa.get("unit") or "").upper()
+            val = fa.get("value")
+            if unit == "METRES_SQUARED" and val is not None:
+                try:
+                    area_val = float(val)
+                    # light sanity: ignore extreme outliers
+                    if area_val > 0:
+                        area_m2 = round(area_val, 2)
+                except Exception:
+                    pass
+
+        # Fallback: parse floorAreaFormatted like "120 m²"
+        if area_m2 is None:
+            faf = data.get("floorAreaFormatted")
+            if isinstance(faf, str):
+                import re
+                m = re.search(r"(\d+(?:\.\d+)?)\s*(m²|m2|sqm|sq\.?\s*m)", faf, flags=re.I)
+                if m:
+                    try:
+                        area_val = float(m.group(1))
+                        if area_val > 0:
+                            area_m2 = round(area_val, 2)
+                    except Exception:
+                        pass
+
+        # BER normalize – ignore placeholders
+        ber_rating = None
+        ber_obj = data.get("ber") or {}
+        raw_ber = (ber_obj.get("rating") or "").strip().upper().replace(" ", "")
+        if raw_ber and raw_ber not in {"BER_PENDING", "SI_666"}:
+            ber_rating = raw_ber  # e.g., "C1","F","G"
 
         # --- THE FIX: Point to the 'storageImages' field ---
         # This new field contains direct, public URLs to Firebase Storage,
@@ -47,7 +82,10 @@ def load_from_firestore(db, doc_id: str) -> dict:
             "address": data["title"],
             "latitude": data["location"]["coordinates"][1],
             "longitude": data["location"]["coordinates"][0],
-            "image_urls": image_urls # <-- Use the direct storage URLs
+            "image_urls": [img["size1200x1200"] for img in data["media"]["images"] if img.get("size1200x1200")],
+            "area_m2": area_m2,  
+            "ber": ber_rating
+
         }
     except (KeyError, TypeError) as e:
         raise ValueError(f"Could not transform Firestore document '{doc_id}'. Invalid or missing key: {e}")

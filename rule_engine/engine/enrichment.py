@@ -15,6 +15,8 @@ class DataEnricher:
         """Processes a single property to add all calculated scores and details."""
         prop = PropertyListing.model_validate(property_data)
         enriched_data = prop.model_dump(mode='json')
+        enriched_data['area_m2'] = property_data.get('area_m2')
+        enriched_data['ber'] = property_data.get('ber')
         lat, lon = prop.latitude, prop.longitude
 
         print(f"Enriching property ID: {prop.property_id} ({prop.address})...")
