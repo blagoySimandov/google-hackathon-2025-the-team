@@ -59,3 +59,20 @@ class AmenityResult(BaseModel):
     """Holds the full results of the amenity search."""
     score: float
     found_amenities: List[Amenity]
+
+class AppliedGrant(BaseModel):
+    """Represents a potential grant applied to the project."""
+    name: str
+    amount: float
+    reason: str
+
+class InvestmentAnalysis(BaseModel):
+    """Holds all the calculated financial metrics for the investment."""
+    estimated_labour_cost: float
+    total_project_cost: float
+    potential_grants: List[AppliedGrant]
+    total_grant_amount: float
+    net_project_cost: float
+    estimated_after_repair_value: float
+    potential_profit: float
+    return_on_investment_percent: float
