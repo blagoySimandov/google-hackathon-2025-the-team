@@ -2,7 +2,8 @@ import requests
 import json
 import re
 from typing import List
-
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 # New imports for the Gemini service
 import google.generativeai as genai
 from geopy.distance import great_circle
@@ -204,9 +205,11 @@ def get_amenity_details(latitude: float, longitude: float, api_key: str) -> Amen
         # using a linear decay.
         amenity_score = 100 * (1 - (min(amenity.distance_km, MAX_RADIUS_KM) / MAX_RADIUS_KM))
         total_score_points += amenity_score
-        
+    print("Found amenities: ", found_amenities_list)  
+    print("Total score: ", total_score_points)  
     # Average the score across all *searched* amenity types. This correctly
     # penalizes the score if some amenity types were not found.
+    print("Number of searched types: ", num_searched_types)  
     final_score = round(total_score_points / num_searched_types, 2)
     
     return AmenityResult(score=final_score, found_amenities=found_amenities_list)
@@ -216,19 +219,52 @@ def get_air_quality_score(latitude: float, longitude: float, api_key: str) -> fl
     # ... (no change)
     url = "https://airquality.googleapis.com/v1/currentConditions:lookup"
     payload = {"location": {"latitude": latitude, "longitude": longitude}}
+
+    historical_url = "https://airquality.googleapis.com/v1/history:lookup"
+
+    # Current date and time in Ireland timezone
+    ireland_tz = ZoneInfo("Europe/Dublin")
+    now_utc = datetime.now(ireland_tz).replace(microsecond=0)
+
+    # Datetime 7 days before current in UTC
+    one_days_ago = now_utc - timedelta(days=1)
+    one_days_ago_iso = one_days_ago.isoformat().replace("+01:00", "Z")
+    seven_days_ago = now_utc - timedelta(days=7)
+    seven_days_ago_iso = seven_days_ago.isoformat().replace("+01:00", "Z")
+    historical_payload = {"location": {"latitude": latitude, "longitude": longitude}, "period": {
+        "startTime":seven_days_ago_iso,
+        "endTime":one_days_ago_iso
+    }}
+    # print(payload)
+    
     
     try:
         response = requests.post(f"{url}?key={api_key}", json=payload)
         response.raise_for_status()
         data = response.json()
+        print("Air quality data: ", data)
         uaqi = next((idx['aqi'] for idx in data['indexes'] if idx['code'] == 'uaqi'), 75)
+
+        historical_response = requests.post(f"{historical_url}?key={api_key}", json=historical_payload)
+        historical_data = historical_response.json()
+        print("Air quality data: ", historical_data)
+
+        historical_hour_data = historical_data['hoursInfo']
+        list_aqi = [hour['indexes'][0]['aqi'] for hour in historical_hour_data]
+        list_categories = [hour['indexes'][0]['category'] for hour in historical_hour_data]
+        most_frequent_category = max(list_categories, key=list_categories.count)
+
+        list_aqi.append(uaqi)
+        avg_aqi = sum(list_aqi) / len(list_aqi)
+
         max_aqi = 500
-        if uaqi < 0:
-            uaqi = 0
-        elif uaqi > max_aqi:
-            uaqi = max_aqi
-        score = (1 - uaqi / max_aqi) * 100
+        if avg_aqi < 0:
+            avg_aqi = 0
+        elif avg_aqi > max_aqi:
+            avg_aqi = max_aqi
+        score = (1 - avg_aqi / max_aqi) * 100
         # score = 100 - (min(uaqi, 150) / 150 * 100)
-        return round(score, 2)
+        # historical_data = requests.post(f"https://airquality.googleapis.com/v1/historicalConditions:lookup?key={api_key}&location={latitude},{longitude}&startDate=2024-01-01&endDate=2024-12-31")
+        return round(score, 2), round(avg_aqi, 2), most_frequent_category
     except requests.exceptions.RequestException:
-        return 50.0
+        return 50.0, 100, "Good air quality"

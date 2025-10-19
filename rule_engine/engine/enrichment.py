@@ -31,7 +31,11 @@ class DataEnricher:
             prop.listed_price, market_average
         )
         
-        enriched_data['air_quality_score'] = external_services.get_air_quality_score(lat, lon, MAPS_API_KEY)
+        # enriched_data['air_quality_score'] = external_services.get_air_quality_score(lat, lon, MAPS_API_KEY)
+        air_quality_score, air_quality_index, air_quality_category = external_services.get_air_quality_score(lat, lon, MAPS_API_KEY)
+        enriched_data['air_quality_score'] = air_quality_score
+        enriched_data['air_quality_index'] = air_quality_index
+        enriched_data['air_quality_category'] = air_quality_category
         
         renovation_details = external_services.get_renovation_cost(
             enriched_data['image_urls']
