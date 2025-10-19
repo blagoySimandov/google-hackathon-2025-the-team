@@ -8,31 +8,33 @@
 // match the expected interface, even if the JSON is valid.
 
 export interface Schema {
-    id:              number;
-    title:           string;
-    seoTitle:        string;
-    amenities:       Amenities;
-    floorPlanImages: Image[];
-    daftShortcode:   string;
-    seoFriendlyPath: string;
-    priceHistory:    PriceHistory[];
-    propertyType:    PropertyType;
-    sections:        Section[];
-    price?:          Price;
-    bedrooms?:       number;
-    bathrooms?:      number;
-    location:        SchemaLocation;
-    dates:           Dates;
-    media:           Media;
-    seller:          Seller;
-    ber:             BER;
-    description:     string;
-    features:        string[];
-    extracted:       Extracted;
-    metadata:        Metadata;
-    stamps:          Stamps;
-    branding:        Branding;
-    analytics:       Analytics;
+    id:                  number;
+    title:               string;
+    seoTitle:            string;
+    amenities:           Amenities;
+    floorArea?:          FloorArea;
+    floorAreaFormatted?: string;
+    floorPlanImages:     Image[];
+    daftShortcode:       string;
+    seoFriendlyPath:     string;
+    priceHistory:        PriceHistory[];
+    propertyType:        PropertyType;
+    sections:            Section[];
+    price?:              Price;
+    bedrooms?:           number;
+    bathrooms?:          number;
+    location:            SchemaLocation;
+    dates:               Dates;
+    media:               Media;
+    seller:              Seller;
+    ber:                 BER;
+    description:         string;
+    features:            string[];
+    extracted:           Extracted;
+    metadata:            Metadata;
+    stamps:              Stamps;
+    branding:            Branding;
+    analytics:           Analytics;
 }
 
 export interface Amenities {
@@ -50,10 +52,10 @@ export interface ArySchool {
 
 export interface Distance {
     value: number;
-    unit:  Unit;
+    unit:  DistanceUnit;
 }
 
-export enum Unit {
+export enum DistanceUnit {
     KM = "km",
 }
 
@@ -133,6 +135,16 @@ export enum Utility {
     MainsWater = "mains water",
     PhoneLine = "phone line",
     SepticTank = "septic tank",
+}
+
+export interface FloorArea {
+    unit:  FloorAreaUnit;
+    value: string;
+}
+
+export enum FloorAreaUnit {
+    Acres = "ACRES",
+    MetresSquared = "METRES_SQUARED",
 }
 
 export interface Image {
@@ -492,6 +504,8 @@ const typeMap: any = {
         { json: "title", js: "title", typ: "" },
         { json: "seoTitle", js: "seoTitle", typ: "" },
         { json: "amenities", js: "amenities", typ: r("Amenities") },
+        { json: "floorArea", js: "floorArea", typ: u(undefined, r("FloorArea")) },
+        { json: "floorAreaFormatted", js: "floorAreaFormatted", typ: u(undefined, "") },
         { json: "floorPlanImages", js: "floorPlanImages", typ: a(r("Image")) },
         { json: "daftShortcode", js: "daftShortcode", typ: "" },
         { json: "seoFriendlyPath", js: "seoFriendlyPath", typ: "" },
@@ -527,7 +541,7 @@ const typeMap: any = {
     ], false),
     "Distance": o([
         { json: "value", js: "value", typ: 3.14 },
-        { json: "unit", js: "unit", typ: r("Unit") },
+        { json: "unit", js: "unit", typ: r("DistanceUnit") },
     ], false),
     "PrimarySchoolLocation": o([
         { json: "lat", js: "lat", typ: "" },
@@ -569,6 +583,10 @@ const typeMap: any = {
         { json: "closeBy", js: "closeBy", typ: u(undefined, a("")) },
         { json: "shortDrive", js: "shortDrive", typ: u(undefined, a("")) },
         { json: "withinHour", js: "withinHour", typ: u(undefined, a("")) },
+    ], false),
+    "FloorArea": o([
+        { json: "unit", js: "unit", typ: r("FloorAreaUnit") },
+        { json: "value", js: "value", typ: "" },
     ], false),
     "Image": o([
         { json: "size1440x960", js: "size1440x960", typ: "" },
@@ -641,7 +659,7 @@ const typeMap: any = {
     "Stamps": o([
         { json: "stampDutyValue", js: "stampDutyValue", typ: u(r("Price"), null) },
     ], false),
-    "Unit": [
+    "DistanceUnit": [
         "km",
     ],
     "PublicTransportType": [
@@ -669,6 +687,10 @@ const typeMap: any = {
         "mains water",
         "phone line",
         "septic tank",
+    ],
+    "FloorAreaUnit": [
+        "ACRES",
+        "METRES_SQUARED",
     ],
     "Label": [
         "Balcony",
