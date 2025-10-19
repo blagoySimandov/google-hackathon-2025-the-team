@@ -1,11 +1,15 @@
-import { onRequest } from "firebase-functions/v2/https";
+import { HttpsOptions, onRequest } from "firebase-functions/v2/https";
 import { logger } from "firebase-functions/v2";
 
 import axios from "axios";
 import { getCloudflareCookieFromCache } from "./cookieManager";
 import { getHeaders } from "./getHeaders";
 
-export const getImage = onRequest(async (req, res) => {
+const options: HttpsOptions = {
+  memory: "1GiB",
+};
+
+export const getImage = onRequest(options, async (req, res) => {
   const { url } = req.query as { url: string };
 
   if (!url) {

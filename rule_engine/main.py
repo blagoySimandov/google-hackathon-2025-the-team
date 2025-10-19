@@ -31,5 +31,5 @@ def run_single_property_analysis(doc_id: str):
     print(json.dumps(result, indent=2))
 
 if __name__ == "__main__":
-    DOCUMENT_ID_TO_TEST = "5762962"
+    DOCUMENT_ID_TO_TEST = "3819913"
     run_single_property_analysis(DOCUMENT_ID_TO_TEST)

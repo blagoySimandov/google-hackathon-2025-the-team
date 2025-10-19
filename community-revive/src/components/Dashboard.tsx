@@ -7,7 +7,7 @@ import { filterOptions } from '../utils/scoreUtils';
 import { Property } from '../types';
 import { apiService } from '../services/apiService';
 import { MapProperty } from '../services/firebaseService';
-import { Search, SlidersHorizontal, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { Search, SlidersHorizontal, X, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
 
 interface DashboardProps {
   onPropertySelect: (property: Property) => void;
@@ -272,99 +272,126 @@ export const Dashboard: React.FC<DashboardProps> = ({ onPropertySelect }) => {
       {/* Desktop Properties List Section - Full Height Column */}
       <div className="hidden lg:flex lg:w-2/5 h-full flex-col overflow-hidden">
         <div className="h-full bg-white border-l border-gray-200 flex flex-col overflow-hidden">
-          {/* Fixed Header */}
-          <div className="flex-shrink-0 p-4 border-b border-gray-200">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              Community Revive
-            </h1>
-            <p className="text-gray-600 text-sm mb-4">
-              Discover properties with high community impact potential
-            </p>
+          {/* Fixed Header - Enhanced */}
+          <div className="flex-shrink-0 bg-gradient-to-br from-primary-600 to-primary-700 text-white">
+            <div className="p-6 pb-4">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <h1 className="text-3xl font-bold mb-1 tracking-tight">
+                    Community Revive
+                  </h1>
+                  <p className="text-primary-100 text-sm">
+                    Transforming vacant properties into community assets
+                  </p>
+                </div>
+              </div>
 
-            {/* Search Bar */}
-            <div className="mb-3 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search by address, city, or description..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              )}
-            </div>
+              {/* Search Bar */}
+              <div className="mb-3 relative">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 z-10" />
+                <input
+                  type="text"
+                  placeholder="Search by location or property type..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-12 pr-10 py-3.5 bg-white/95 backdrop-blur-sm border-0 rounded-xl 
+                    shadow-lg focus:outline-none focus:ring-2 focus:ring-white/50 text-gray-900 
+                    placeholder:text-gray-500 transition-all font-medium"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 
+                      hover:text-gray-600 transition-colors z-10 button-press"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                )}
+              </div>
 
-            {/* Sort Dropdown */}
-            <div className="mb-3">
-              <div className="relative">
-                <SlidersHorizontal className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as 'score' | 'price' | 'newest')}
-                  className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 text-sm appearance-none bg-white"
-                >
-                  <option value="score">Sort by Impact Score</option>
-                  <option value="price">Sort by Price (Low to High)</option>
-                  <option value="newest">Sort by Newest</option>
-                </select>
+              {/* Sort Dropdown */}
+              <div className="mb-0">
+                <div className="relative">
+                  <SlidersHorizontal className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 z-10" />
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as 'score' | 'price' | 'newest')}
+                    className="w-full pl-11 pr-4 py-3 bg-white/95 backdrop-blur-sm border-0 rounded-xl 
+                      shadow-lg focus:outline-none focus:ring-2 focus:ring-white/50 text-sm 
+                      appearance-none text-gray-900 font-medium cursor-pointer transition-all"
+                  >
+                    <option value="score">Sort by Impact Score</option>
+                    <option value="price">Sort by Price (Low to High)</option>
+                    <option value="newest">Sort by Newest</option>
+                  </select>
+                </div>
               </div>
             </div>
 
             {/* Collapsible Filters */}
-            <div className="border border-gray-200 rounded-lg overflow-hidden">
+            <div className="mx-6 mb-4 bg-white/10 backdrop-blur-sm rounded-xl overflow-hidden border border-white/20">
               <button
                 onClick={() => setFiltersExpanded(!filtersExpanded)}
-                className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors"
+                className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/10 transition-all duration-200"
               >
                 <div className="flex items-center gap-2">
-                  <SlidersHorizontal className="w-4 h-4 text-gray-600" />
-                  <span className="font-medium text-gray-700">Filters & Options</span>
+                  <SlidersHorizontal className="w-4 h-4 text-white" />
+                  <span className="font-semibold text-white">Filters & Options</span>
                   {hasActiveFilters && (
-                    <span className="bg-accent-500 text-white text-xs px-2 py-0.5 rounded-full">
+                    <span className="bg-white text-primary-700 text-xs px-2 py-0.5 rounded-full font-bold animate-pulse-slow">
                       Active
                     </span>
                   )}
                 </div>
                 {filtersExpanded ? (
-                  <ChevronUp className="w-5 h-5 text-gray-600" />
+                  <ChevronUp className="w-5 h-5 text-white" />
                 ) : (
-                  <ChevronDown className="w-5 h-5 text-gray-600" />
+                  <ChevronDown className="w-5 h-5 text-white" />
                 )}
               </button>
               
               {filtersExpanded && (
-                <div className="p-4 bg-white border-t border-gray-200 space-y-4">
+                <div className="p-4 bg-white space-y-4 slide-up">
                   {/* Price Range Filters */}
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-2">Price Range (€)</label>
+                    <div className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
+                      Price Range (€)
+                    </div>
                     <div className="grid grid-cols-2 gap-2">
-                      <input
-                        type="number"
-                        placeholder="Min"
-                        value={minPrice}
-                        onChange={(e) => setMinPrice(e.target.value ? Number(e.target.value) : '')}
-                        className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 text-sm"
-                      />
-                      <input
-                        type="number"
-                        placeholder="Max"
-                        value={maxPrice}
-                        onChange={(e) => setMaxPrice(e.target.value ? Number(e.target.value) : '')}
-                        className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 text-sm"
-                      />
+                      <div>
+                        <label htmlFor="min-price" className="sr-only">Minimum Price</label>
+                        <input
+                          id="min-price"
+                          type="number"
+                          placeholder="Min"
+                          value={minPrice}
+                          onChange={(e) => setMinPrice(e.target.value ? Number(e.target.value) : '')}
+                          className="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none 
+                            focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm font-medium
+                            transition-all"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="max-price" className="sr-only">Maximum Price</label>
+                        <input
+                          id="max-price"
+                          type="number"
+                          placeholder="Max"
+                          value={maxPrice}
+                          onChange={(e) => setMaxPrice(e.target.value ? Number(e.target.value) : '')}
+                          className="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none 
+                            focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm font-medium
+                            transition-all"
+                        />
+                      </div>
                     </div>
                   </div>
 
                   {/* Category Filters */}
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-2">Categories</label>
+                    <div className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
+                      Categories
+                    </div>
                     <PropertyFilters
                       filters={filterOptions.map(f => ({ ...f, count: filterCounts[f.id] || 0 }))}
                       selectedFilter={selectedFilter}
@@ -376,7 +403,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ onPropertySelect }) => {
                   {hasActiveFilters && (
                     <button
                       onClick={clearAllFilters}
-                      className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg text-sm font-medium transition-colors"
+                      className="w-full flex items-center justify-center gap-2 px-4 py-2.5 
+                        bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-semibold 
+                        transition-all duration-200 button-press shadow-sm hover:shadow-md"
                     >
                       <X className="w-4 h-4" />
                       Clear All Filters
@@ -385,62 +414,106 @@ export const Dashboard: React.FC<DashboardProps> = ({ onPropertySelect }) => {
                 </div>
               )}
             </div>
+          </div>
 
-            {/* Results Count */}
-            <div className="mt-3 text-sm text-gray-600">
-              Showing <span className="font-semibold text-gray-900">{filteredAndSortedProperties.length}</span> of {properties.length} properties
+          {/* Results Count */}
+          <div className="flex-shrink-0 px-6 py-3 bg-gray-50 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-gray-600">
+                Showing <span className="font-bold text-primary-600">{filteredAndSortedProperties.length}</span> of {properties.length} properties
+              </div>
+              {loading && (
+                <div className="flex items-center gap-2 text-xs text-gray-500">
+                  <div className="w-3 h-3 border-2 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
+                  <span>Loading...</span>
+                </div>
+              )}
             </div>
           </div>
 
           {/* Scrollable Properties List - Takes all remaining space */}
           <div className="flex-1 overflow-y-auto p-4 space-y-3"  style={{ height: 0 }}>
-            {loading ? (
-              <div className="text-center py-8 text-gray-500">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                <p>Loading properties...</p>
+            {loading && properties.length === 0 ? (
+              <div className="space-y-3">
+                {/* Loading Skeletons */}
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="bg-white rounded-xl overflow-hidden shadow-sm animate-pulse">
+                    <div className="h-48 bg-gray-200 shimmer"></div>
+                    <div className="p-4 space-y-3">
+                      <div className="space-y-2">
+                        <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                        <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="h-12 bg-gray-200 rounded-lg"></div>
+                        <div className="h-12 bg-gray-200 rounded-lg"></div>
+                      </div>
+                      <div className="flex gap-2">
+                        <div className="h-6 bg-gray-200 rounded-full w-20"></div>
+                        <div className="h-6 bg-gray-200 rounded-full w-24"></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : error ? (
-              <div className="text-center py-8 text-red-500">
-                <p className="mb-2">{error}</p>
+              <div className="flex flex-col items-center justify-center py-16 px-4">
+                <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                  <X className="w-10 h-10 text-red-500" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Something went wrong</h3>
+                <p className="text-gray-600 text-center max-w-sm mb-4">{error}</p>
                 <button 
                   onClick={() => globalThis.location.reload()} 
-                  className="text-blue-600 hover:text-blue-800 underline"
+                  className="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg 
+                    font-semibold transition-all duration-200 button-press shadow-sm hover:shadow-md"
                 >
                   Retry
                 </button>
               </div>
             ) : filteredAndSortedProperties.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                <p className="mb-2">No properties match your filters.</p>
+              <div className="flex flex-col items-center justify-center py-16 px-4">
+                <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                  <MapPin className="w-10 h-10 text-gray-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">No properties found</h3>
+                <p className="text-gray-600 text-center max-w-sm mb-4">
+                  Try adjusting your filters or search terms to see more results
+                </p>
                 {hasActiveFilters && (
                   <button 
                     onClick={clearAllFilters}
-                    className="text-accent-600 hover:text-accent-800 underline text-sm"
+                    className="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg 
+                      font-semibold transition-all duration-200 button-press shadow-sm hover:shadow-md"
                   >
-                    Clear all filters
+                    Clear All Filters
                   </button>
                 )}
               </div>
             ) : (
-              filteredAndSortedProperties.map((property) => (
-                <PropertyCard
-                  key={property.id}
-                  property={property}
-                  isSelected={selectedProperty?.id === property.id}
-                  onClick={() => handlePropertySelect(property)}
-                  onViewOnMap={() => handleViewOnMap(property)}
-                />
+              filteredAndSortedProperties.map((property, index) => (
+                <div key={property.id} className="fade-in" style={{ animationDelay: `${index * 0.05}s` }}>
+                  <PropertyCard
+                    property={property}
+                    isSelected={selectedProperty?.id === property.id}
+                    onClick={() => handlePropertySelect(property)}
+                    onViewOnMap={() => handleViewOnMap(property)}
+                  />
+                </div>
               ))
             )}
           </div>
 
           {/* Load More Button - Fixed at bottom */}
-          {pagination.hasMore && !loading && (
-            <div className="flex-shrink-0 p-4 border-t border-gray-200">
+          {pagination.hasMore && !loading && filteredAndSortedProperties.length > 0 && (
+            <div className="flex-shrink-0 p-4 bg-gray-50 border-t border-gray-200">
               <button
                 onClick={loadMoreProperties}
                 disabled={loading}
-                className="w-full py-2 px-4 bg-accent-600 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full py-3 px-4 bg-gradient-to-r from-primary-600 to-primary-700 
+                  text-white rounded-xl font-semibold hover:from-primary-700 hover:to-primary-800 
+                  disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 
+                  shadow-sm hover:shadow-md button-press"
               >
                 Load More Properties
               </button>

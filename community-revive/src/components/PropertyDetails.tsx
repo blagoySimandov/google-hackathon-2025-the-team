@@ -62,25 +62,25 @@ export const PropertyDetails: React.FC<PropertyDetailsProps> = ({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-8xl mx-auto px-6 py-6">
-          <div className="flex items-center space-x-6">
+      {/* Header - Enhanced */}
+      <div className="bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg">
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <div className="flex items-start gap-6">
             <Button
               variant="ghost"
               size="sm"
               onClick={onBack}
-              className="flex items-center space-x-2"
+              className="flex items-center gap-2 text-white hover:bg-white/20 shadow-none mt-1"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Back to Map</span>
             </Button>
             <div className="flex-1">
-              <h1 className="text-3xl font-bold text-gray-900">{property.title}</h1>
-              <div className="flex items-center space-x-4 mt-2">
-                <div className="flex items-center space-x-1 text-gray-600">
-                  <MapPin className="w-4 h-4" />
-                  <span>
+              <h1 className="text-4xl font-bold mb-3 leading-tight">{property.title}</h1>
+              <div className="flex flex-wrap items-center gap-4 text-primary-100">
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-5 h-5" />
+                  <span className="font-medium">
                     {property.address}
                     {property.city && property.city !== property.address && `, ${property.city}`}
                     {property.state && `, ${property.state}`}
@@ -88,21 +88,21 @@ export const PropertyDetails: React.FC<PropertyDetailsProps> = ({
                   </span>
                 </div>
                 {property.propertyType && (
-                  <div className="flex items-center space-x-1 text-gray-500">
+                  <div className="flex items-center gap-2 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full">
                     <Home className="w-4 h-4" />
-                    <span className="capitalize">{property.propertyType}</span>
+                    <span className="capitalize font-medium">{property.propertyType}</span>
                   </div>
                 )}
               </div>
             </div>
-            <div className="text-right">
+            <div className="text-center">
               <div
-                className="w-20 h-20 rounded-full flex items-center justify-center text-white font-bold text-2xl shadow-lg"
+                className="w-24 h-24 rounded-2xl flex items-center justify-center text-white font-bold text-3xl shadow-2xl ring-4 ring-white/20"
                 style={{ backgroundColor: scoreColor }}
               >
                 {property.communityValueScore}
               </div>
-              <p className="text-sm text-gray-600 mt-2 font-medium">Community Value Score</p>
+              <p className="text-sm text-primary-100 mt-3 font-semibold">Community Score</p>
             </div>
           </div>
         </div>
@@ -155,28 +155,45 @@ export const PropertyDetails: React.FC<PropertyDetailsProps> = ({
             className="w-full"
           />
           
-          {/* Impact Story Overlay */}
-          <div className="mt-4 p-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg text-white">
-            <h2 className="text-2xl font-bold mb-2">{property.impactStory.title}</h2>
-            <p className="text-lg opacity-90">{property.impactStory.description}</p>
+          {/* Impact Story Overlay - Enhanced */}
+          <div className="mt-6 p-8 bg-gradient-to-r from-primary-600 via-primary-700 to-secondary-600 rounded-2xl text-white shadow-soft-lg">
+            <div className="flex items-start gap-4 mb-4">
+              <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
+                <Star className="w-6 h-6" />
+              </div>
+              <div>
+                <h2 className="text-3xl font-bold mb-2">{property.impactStory.title}</h2>
+                <p className="text-lg text-primary-100 leading-relaxed">{property.impactStory.description}</p>
+              </div>
+            </div>
+            {property.impactStory.keyPoints && property.impactStory.keyPoints.length > 0 && (
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                {property.impactStory.keyPoints.map((point) => (
+                  <div key={point} className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-3 rounded-xl">
+                    <CheckCircle className="w-5 h-5 flex-shrink-0" />
+                    <span className="text-sm font-medium">{point}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
           {/* Main Content - Takes up 3 columns */}
           <div className="xl:col-span-3 space-y-8">
-            {/* Key Statistics Grid */}
+            {/* Key Statistics Grid - Enhanced */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Price Information */}
-              <Card className="bg-gradient-to-br from-blue-50 to-blue-100">
+              <Card className="bg-gradient-to-br from-primary-50 to-primary-100 border-0 shadow-soft hover:shadow-soft-lg transition-shadow duration-200">
                 <CardContent className="p-6">
-                  <div className="flex items-center space-x-3">
-                    <div className="p-3 bg-blue-500 rounded-lg">
+                  <div className="flex flex-col gap-3">
+                    <div className="w-12 h-12 bg-primary-500 rounded-xl flex items-center justify-center shadow-sm">
                       <DollarSign className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Current Price</p>
-                      <p className="text-2xl font-bold text-gray-900">
+                      <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Current Price</p>
+                      <p className="text-2xl font-bold text-gray-900 mt-1">
                         {property.price ? formatCurrency(property.price.amount, property.price.currency || 'EUR') : 'N/A'}
                       </p>
                     </div>
@@ -185,19 +202,19 @@ export const PropertyDetails: React.FC<PropertyDetailsProps> = ({
               </Card>
 
               {/* Building Size */}
-              <Card className="bg-gradient-to-br from-green-50 to-green-100">
+              <Card className="bg-gradient-to-br from-secondary-50 to-secondary-100 border-0 shadow-soft hover:shadow-soft-lg transition-shadow duration-200">
                 <CardContent className="p-6">
-                  <div className="flex items-center space-x-3">
-                    <div className="p-3 bg-green-500 rounded-lg">
+                  <div className="flex flex-col gap-3">
+                    <div className="w-12 h-12 bg-secondary-500 rounded-xl flex items-center justify-center shadow-sm">
                       <Square className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Size</p>
-                      <p className="text-2xl font-bold text-gray-900">
-                        {formatSquareFeet(property.size.squareFeet)} sq ft
+                      <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Size</p>
+                      <p className="text-2xl font-bold text-gray-900 mt-1">
+                        {formatSquareFeet(property.size.squareFeet)} ft²
                       </p>
                       {pricePerSqFt && (
-                        <p className="text-xs text-gray-500">€{pricePerSqFt}/sq ft</p>
+                        <p className="text-xs text-gray-600 font-medium mt-1">€{pricePerSqFt}/sq ft</p>
                       )}
                     </div>
                   </div>
@@ -205,19 +222,19 @@ export const PropertyDetails: React.FC<PropertyDetailsProps> = ({
               </Card>
 
               {/* Building Age */}
-              <Card className="bg-gradient-to-br from-purple-50 to-purple-100">
+              <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-0 shadow-soft hover:shadow-soft-lg transition-shadow duration-200">
                 <CardContent className="p-6">
-                  <div className="flex items-center space-x-3">
-                    <div className="p-3 bg-purple-500 rounded-lg">
+                  <div className="flex flex-col gap-3">
+                    <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center shadow-sm">
                       <Building className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Building Age</p>
-                      <p className="text-2xl font-bold text-gray-900">
+                      <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Building Age</p>
+                      <p className="text-2xl font-bold text-gray-900 mt-1">
                         {buildingAge ? `${buildingAge} years` : 'Unknown'}
                       </p>
                       {property.yearBuilt && (
-                        <p className="text-xs text-gray-500">Built in {property.yearBuilt}</p>
+                        <p className="text-xs text-gray-600 font-medium mt-1">Built in {property.yearBuilt}</p>
                       )}
                     </div>
                   </div>
@@ -225,19 +242,19 @@ export const PropertyDetails: React.FC<PropertyDetailsProps> = ({
               </Card>
 
               {/* Renovation Cost */}
-              <Card className="bg-gradient-to-br from-orange-50 to-orange-100">
+              <Card className="bg-gradient-to-br from-accent-50 to-accent-100 border-0 shadow-soft hover:shadow-soft-lg transition-shadow duration-200">
                 <CardContent className="p-6">
-                  <div className="flex items-center space-x-3">
-                    <div className="p-3 bg-orange-500 rounded-lg">
+                  <div className="flex flex-col gap-3">
+                    <div className="w-12 h-12 bg-accent-500 rounded-xl flex items-center justify-center shadow-sm">
                       <TrendingUp className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Renovation Cost</p>
-                      <p className="text-2xl font-bold text-gray-900">
+                      <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Renovation Cost</p>
+                      <p className="text-2xl font-bold text-gray-900 mt-1">
                         {formatCurrency(property.estimatedRenovationCost, property.price?.currency || 'EUR')}
                       </p>
                       {renovationROI && (
-                        <p className="text-xs text-gray-500">{renovationROI}% potential ROI</p>
+                        <p className="text-xs text-gray-600 font-medium mt-1">{renovationROI}% potential ROI</p>
                       )}
                     </div>
                   </div>
@@ -326,35 +343,56 @@ export const PropertyDetails: React.FC<PropertyDetailsProps> = ({
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {property.bedrooms && property.bedrooms > 0 && (
-                    <div className="text-center p-4 bg-gray-50 rounded-lg">
+                  {property.bedrooms && property.bedrooms > 0 ?
+                    (<div className="text-center p-4 bg-gray-50 rounded-lg">
                       <div className="text-2xl mb-2">🛏️</div>
                       <p className="text-lg font-semibold">{property.bedrooms}</p>
                       <p className="text-sm text-gray-600">Bedrooms</p>
-                    </div>
-                  )}
+                      
+                    </div>)
+                  : (<div className="text-center p-4 bg-gray-50 rounded-lg">
+                    <div className="text-2xl mb-2">🛏️</div>
+                    <p className="text-lg font-semibold">N/A</p>
+                  </div>)}
 
-                  {property.bathrooms && property.bathrooms > 0 && (
+                  {property.bathrooms && property.bathrooms > 0 ? (
                     <div className="text-center p-4 bg-gray-50 rounded-lg">
                       <div className="text-2xl mb-2">🚿</div>
                       <p className="text-lg font-semibold">{property.bathrooms}</p>
                       <p className="text-sm text-gray-600">Bathrooms</p>
                     </div>
-                  )}
-
-                  {property.ber.rating && (
+                  ) : (
                     <div className="text-center p-4 bg-gray-50 rounded-lg">
-                      <div className="text-2xl mb-2">⚡</div>
-                      <p className="text-lg font-semibold">BER {property.ber.rating}</p>
-                      <p className="text-sm text-gray-600">Energy Rating</p>
+                      <div className="text-2xl mb-2">🚿</div>
+                      <p className="text-lg font-semibold">N/A</p>
+                      
                     </div>
                   )}
 
-                  {yearsSinceLastOccupied && (
+                  {property.ber.rating ? (
+                    <div className="text-center p-4 bg-gray-50 rounded-lg">
+                      <div className="text-2xl mb-2">⚡</div>
+                      <p className="text-sm text-gray-600">Energy Rating</p>
+                      <p className="text-lg font-semibold">BER {property.ber.rating}</p>
+                      
+                    </div>
+                  ): (
+                    <div className="text-center p-4 bg-gray-50 rounded-lg">
+                      <div className="text-2xl mb-2">⚡</div>
+                      <p className="text-lg font-semibold">N/A</p>
+                    </div>
+                  )}
+
+                  {yearsSinceLastOccupied ? (
                     <div className="text-center p-4 bg-gray-50 rounded-lg">
                       <div className="text-2xl mb-2">🏚️</div>
                       <p className="text-lg font-semibold">{yearsSinceLastOccupied} years</p>
                       <p className="text-sm text-gray-600">Vacant</p>
+                    </div>
+                  ) : (
+                    <div className="text-center p-4 bg-gray-50 rounded-lg">
+                      <div className="text-2xl mb-2">🏚️</div>
+                      <p className="text-lg font-semibold">N/A</p>
                     </div>
                   )}
                 </div>
