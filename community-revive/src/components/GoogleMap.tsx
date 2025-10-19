@@ -105,6 +105,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
     mapInstance.current = new google.maps.Map(mapRef.current, {
       center: { lat: 53.28925, lng: -7.812739}, // Ireland coordinates
       zoom: 7,
+      mapId: process.env.REACT_APP_GOOGLE_MAPS_MAP_ID || 'DEMO_MAP_ID', // Add mapId to silence Advanced Markers warning
       styles: [
         {
           featureType: 'all',
