@@ -80,7 +80,12 @@ export const PropertyDetails: React.FC<PropertyDetailsProps> = ({
               <div className="flex items-center space-x-4 mt-2">
                 <div className="flex items-center space-x-1 text-gray-600">
                   <MapPin className="w-4 h-4" />
-                  <span>{property.address}, {property.city}, {property.state}</span>
+                  <span>
+                    {property.address}
+                    {property.city && property.city !== property.address && `, ${property.city}`}
+                    {property.state && `, ${property.state}`}
+                    {property.zipCode && property.zipCode !== property.address && property.zipCode !== property.city && ` ${property.zipCode}`}
+                  </span>
                 </div>
                 {property.propertyType && (
                   <div className="flex items-center space-x-1 text-gray-500">

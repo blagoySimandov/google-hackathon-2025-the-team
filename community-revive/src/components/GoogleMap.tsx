@@ -65,6 +65,15 @@ const getPropertyPrice = (property: MapDisplayProperty) => {
   }
 };
 
+// Helper function to get property beforeImage from either property type
+const getPropertyBeforeImage = (property: MapDisplayProperty) => {
+  if (isFullProperty(property)) {
+    return property.beforeImage;
+  } else {
+    return property.beforeImage;
+  }
+};
+
 const MapComponent: React.FC<MapComponentProps> = ({
   properties,
   selectedProperty,
@@ -77,7 +86,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
   const markers = useRef<google.maps.Marker[]>([]);
   const [popoverProperty, setPopoverProperty] = useState<Property | null>(null);
   const [popoverPosition, setPopoverPosition] = useState<{ x: number; y: number } | null>(null);
-  const [hoverProperty, setHoverProperty] = useState<Property | null>(null);
+  const [hoverProperty, setHoverProperty] = useState<MapDisplayProperty | null>(null);
   const [hoverPosition, setHoverPosition] = useState<{ x: number; y: number } | null>(null);
   const hoverTimeout = useRef<NodeJS.Timeout | null>(null);
 
@@ -259,10 +268,8 @@ const MapComponent: React.FC<MapComponentProps> = ({
             const y = rect.height / 2 - 20; // Center vertically, slightly above
             
             console.log('Setting hover property:', property);
-            // Only set hover for full properties
-            if (isFullProperty(property)) {
-              setHoverProperty(property);
-            }
+            // Set hover for both full properties and map properties
+            setHoverProperty(property);
             setHoverPosition({ x, y });
           }
         }, 250); // No delay for testing
@@ -323,8 +330,8 @@ const MapComponent: React.FC<MapComponentProps> = ({
               {/* Property Image */}
               <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-200 flex-shrink-0">
                 <img
-                  src={hoverProperty.beforeImage}
-                  alt={hoverProperty.address}
+                  src={getPropertyBeforeImage(hoverProperty)}
+                  alt={getPropertyTitle(hoverProperty)}
                   className="w-full h-full object-cover"
                   onError={(e) => {
                     e.currentTarget.src = 'https://via.placeholder.com/80x80?text=No+Image';
@@ -335,19 +342,21 @@ const MapComponent: React.FC<MapComponentProps> = ({
               {/* Property Info */}
               <div className="flex-1 min-w-0">
                 <h3 className="font-semibold text-gray-900 text-sm mb-1 truncate">
-                  {hoverProperty.address || hoverProperty.title}
+                  {getPropertyTitle(hoverProperty)}
                 </h3>
-                <p className="text-xs text-gray-600 mb-2">
-                  {hoverProperty.city}, {hoverProperty.state} {hoverProperty.zipCode}
-                </p>
+                {isFullProperty(hoverProperty) && (
+                  <p className="text-xs text-gray-600 mb-2">
+                    {hoverProperty.city}, {hoverProperty.state} {hoverProperty.zipCode}
+                  </p>
+                )}
                 
                 {/* Score */}
                 <div className="flex items-center space-x-2">
                   <div
                     className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm"
-                    style={{ backgroundColor: getScoreColor(hoverProperty.communityValueScore) }}
+                    style={{ backgroundColor: getScoreColor(getPropertyScore(hoverProperty)) }}
                   >
-                    {hoverProperty.communityValueScore}
+                    {getPropertyScore(hoverProperty)}
                   </div>
                   <div>
                     <p className="text-xs font-medium text-gray-900">Community Value</p>
@@ -356,12 +365,23 @@ const MapComponent: React.FC<MapComponentProps> = ({
                 </div>
                 
                 {/* Additional Info */}
-                <div className="mt-2">
-                  <p className="text-xs text-gray-500">
-                    {hoverProperty.propertyType.charAt(0).toUpperCase() + hoverProperty.propertyType.slice(1)} • 
-                    {Math.round(hoverProperty.size.squareFeet / 1000)}k sq ft
-                  </p>
-                </div>
+                {isFullProperty(hoverProperty) ? (
+                  <div className="mt-2">
+                    <p className="text-xs text-gray-500">
+                      {hoverProperty.propertyType.charAt(0).toUpperCase() + hoverProperty.propertyType.slice(1)} • 
+                      {Math.round(hoverProperty.size.squareFeet / 1000)}k sq ft
+                    </p>
+                  </div>
+                ) : (
+                  <div className="mt-2">
+                    <p className="text-xs text-gray-500">
+                      {hoverProperty.propertyType}
+                      {getPropertyPrice(hoverProperty) && (
+                        <> • {getPropertyPrice(hoverProperty)!.formatted}</>
+                      )}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>

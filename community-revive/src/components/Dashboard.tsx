@@ -57,19 +57,37 @@ export const Dashboard: React.FC<DashboardProps> = ({ onPropertySelect }) => {
     fetchProperties();
   }, []);
 
-  // Fetch lightweight map properties separately
+  // Fetch lightweight map properties separately - fetch ALL properties
   useEffect(() => {
     const fetchMapProperties = async () => {
       try {
-        console.log('🗺️ Dashboard: Starting to fetch map properties...');
+        console.log('🗺️ Dashboard: Starting to fetch ALL map properties...');
         setMapLoading(true);
         
-        console.log('🗺️ Dashboard: Calling apiService.fetchMapProperties...');
-        const result = await apiService.fetchMapProperties({ pageSize: 50 });
-        console.log('🗺️ Dashboard: Received map result from API:', result);
+        let allProperties: MapProperty[] = [];
+        let hasMore = true;
+        let lastDoc: any = undefined;
+        let pageCount = 0;
         
-        setMapProperties(result.data);
-        console.log('🗺️ Dashboard: Map properties set successfully:', result.data.length);
+        // Fetch all properties in batches
+        while (hasMore) {
+          pageCount++;
+          console.log(`🗺️ Dashboard: Fetching page ${pageCount}...`);
+          
+          const result = await apiService.fetchMapProperties({ 
+            pageSize: 100, // Larger batch size
+            lastDoc 
+          });
+          
+          console.log(`🗺️ Dashboard: Page ${pageCount} received ${result.data.length} properties`);
+          allProperties = [...allProperties, ...result.data];
+          
+          hasMore = result.hasMore;
+          lastDoc = result.lastDoc;
+        }
+        
+        console.log('🗺️ Dashboard: All map properties fetched:', allProperties.length);
+        setMapProperties(allProperties);
       } catch (err) {
         console.error('❌ Dashboard: Error fetching map properties:', err);
         // Don't set error state for map properties, just log it

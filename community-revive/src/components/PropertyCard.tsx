@@ -61,7 +61,9 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
               {property.address}
             </h3>
             <p className="text-xs text-gray-600 mb-2">
-              {property.city}, {property.state} {property.zipCode}
+              {property.city && property.city !== property.address && `${property.city}, `}
+              {property.state}
+              {property.zipCode && property.zipCode !== property.address && property.zipCode !== property.city && ` ${property.zipCode}`}
             </p>
             
             <div className="flex items-center justify-between">
