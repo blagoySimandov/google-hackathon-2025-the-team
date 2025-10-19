@@ -32,7 +32,7 @@ module.exports = {
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
 
-    "object-curly-spacing": ["warn", "never"],
+    "object-curly-spacing": "off",
     indent: ["warn", 2],
     quotes: ["off"],
     semi: ["off"],
