@@ -17,3 +17,82 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Custom scrollbar styles for image viewer thumbnails */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f3f4f6;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* PhotoSwipe custom styles */
+.pswp__bg {
+  background: rgba(0, 0, 0, 0.95) !important;
+}
+
+.pswp__ui--fit .pswp__top-bar,
+.pswp__ui--fit .pswp__caption {
+}
+
+/* Better close button styling */
+.pswp__button--close {
+  top: 20px !important;
+  right: 20px !important;
+  transition: all 0.3s ease !important;
+}
+
+.pswp__button--close:hover {
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  transform: scale(1.1) !important;
+}
+
+/* Hide the default close icon and replace with custom X */
+.pswp__button--close svg {
+  display: none !important;
+}
+
+.pswp__button--close::after {
+  content: '×' !important;
+  color: white !important;
+  font-size: 24px !important;
+  font-weight: bold !important;
+  line-height: 1 !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+.pswp__button--arrow--left,
+.pswp__button--arrow--right {
+  background: rgba(0, 0, 0, 0.7) !important;
+  border-radius: 50% !important;
+  width: 50px !important;
+  height: 50px !important;
+  border: 2px solid rgba(255, 255, 255, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.pswp__button--arrow--left:hover,
+.pswp__button--arrow--right:hover {
+  background: rgba(0, 0, 0, 0.9) !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  transform: scale(1.1) !important;
+}

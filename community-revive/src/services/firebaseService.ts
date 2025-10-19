@@ -14,7 +14,7 @@ import {
   DocumentSnapshot
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
-import { Schema as ApiProperty, Currency } from '../backend/scheme_of_api';
+import { Listing as ApiProperty, Currency } from '../backend/scheme_of_api';
 import { Property } from '../types';
 
 // Collection name for properties in Firestore
@@ -65,20 +65,29 @@ function transformFirestoreToProperty(doc: QueryDocumentSnapshot<DocumentData>):
     stampDutyValue: data.stampDutyValue
   });
   
-  // Transform coordinates from your Firebase structure
+  // Transform coordinates from the new API schema structure
   let transformedCoordinates = { lat: 53.3498, lng: -6.2603 }; // Default to Dublin
-  if (data.point && Array.isArray(data.point) && data.point.length >= 2) {
+  
+  // Check for coordinates in the new schema format (location.coordinates array)
+  if (data.location?.coordinates && Array.isArray(data.location.coordinates) && data.location.coordinates.length >= 2) {
+    transformedCoordinates = {
+      lat: data.location.coordinates[1], // API stores as [lng, lat]
+      lng: data.location.coordinates[0]
+    };
+  }
+  // Fallback to old point format for backward compatibility
+  else if (data.point && Array.isArray(data.point) && data.point.length >= 2) {
     transformedCoordinates = {
       lat: data.point[1], // Your data stores as [lng, lat]
       lng: data.point[0]
     };
   }
 
-  // Create address from your data structure
-  const address = data.areaName || 'Unknown Address';
-  const city = data.areaName || 'Unknown City';
-  const state = data.isInRepublicOfIreland ? 'Ireland' : 'Unknown';
-  const zipCode = ''; // Not available in your structure
+  // Create address from the new API schema structure
+  const address = data.location?.areaName || data.areaName || 'Unknown Address';
+  const city = data.location?.areaName || data.areaName || 'Unknown City';
+  const state = data.location?.isInRepublicOfIreland ? 'Ireland' : 'Unknown';
+  const zipCode = data.location?.eircodes?.[0] || ''; // Use first eircode if available
 
   // Map your data structure to expected fields
   const mappedData = {
@@ -89,6 +98,13 @@ function transformFirestoreToProperty(doc: QueryDocumentSnapshot<DocumentData>):
     seoFriendlyPath: data.seoFriendlyPath || '',
     propertyType: data.propertyType || 'Property',
     sections: data.sections || ['Residential'],
+    amenities: data.amenities || {
+      primarySchools: [],
+      secondarySchools: [],
+      publicTransports: []
+    },
+    floorPlanImages: data.floorPlanImages || [],
+    priceHistory: data.priceHistory || [],
     price: (() => {
       // Helper function to parse price from string
       const parsePriceFromString = (priceStr: string): number | null => {
@@ -229,11 +245,11 @@ function transformFirestoreToProperty(doc: QueryDocumentSnapshot<DocumentData>):
     bedrooms: data.numBedrooms || 0,
     bathrooms: data.numBathrooms || 0,
     location: {
-      areaName: data.areaName || null,
-      primaryAreaId: data.primaryAreaId || null,
-      isInRepublicOfIreland: data.isInRepublicOfIreland || true,
-      coordinates: [data.point?.[0] || -6.2603, data.point?.[1] || 53.3498],
-      eircodes: []
+      areaName: data.location?.areaName || data.areaName || null,
+      primaryAreaId: data.location?.primaryAreaId || data.primaryAreaId || null,
+      isInRepublicOfIreland: data.location?.isInRepublicOfIreland ?? data.isInRepublicOfIreland ?? true,
+      coordinates: data.location?.coordinates || [data.point?.[0] || -6.2603, data.point?.[1] || 53.3498],
+      eircodes: data.location?.eircodes || []
     },
     dates: {
       publishDate: data.publishDate ? new Date(data.publishDate) : new Date(),
@@ -487,9 +503,18 @@ function transformFirestoreToMapProperty(doc: QueryDocumentSnapshot<DocumentData
   
   console.log('🗺️ Transforming map document:', doc.id, 'Data keys:', Object.keys(data));
   
-  // Transform coordinates from your Firebase structure
+  // Transform coordinates from the new API schema structure
   let transformedCoordinates = { lat: 53.3498, lng: -6.2603 }; // Default to Dublin
-  if (data.point && Array.isArray(data.point) && data.point.length >= 2) {
+  
+  // Check for coordinates in the new schema format (location.coordinates array)
+  if (data.location?.coordinates && Array.isArray(data.location.coordinates) && data.location.coordinates.length >= 2) {
+    transformedCoordinates = {
+      lat: data.location.coordinates[1], // API stores as [lng, lat]
+      lng: data.location.coordinates[0]
+    };
+  }
+  // Fallback to old point format for backward compatibility
+  else if (data.point && Array.isArray(data.point) && data.point.length >= 2) {
     transformedCoordinates = {
       lat: data.point[1], // Your data stores as [lng, lat]
       lng: data.point[0]

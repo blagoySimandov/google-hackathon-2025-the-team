@@ -335,7 +335,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
               {/* Property Info */}
               <div className="flex-1 min-w-0">
                 <h3 className="font-semibold text-gray-900 text-sm mb-1 truncate">
-                  {hoverProperty.address}
+                  {hoverProperty.address || hoverProperty.title}
                 </h3>
                 <p className="text-xs text-gray-600 mb-2">
                   {hoverProperty.city}, {hoverProperty.state} {hoverProperty.zipCode}

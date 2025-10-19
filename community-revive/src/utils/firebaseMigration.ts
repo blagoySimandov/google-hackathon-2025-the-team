@@ -1,7 +1,7 @@
 // Utility script to help migrate data to Firebase
 // This is a helper script that can be used to transform and upload data to Firestore
 
-import { Schema as ApiProperty } from '../backend/scheme_of_api';
+import { Listing as ApiProperty } from '../backend/scheme_of_api';
 
 // Example function to transform your existing data to Firebase format
 export function transformDataForFirebase(data: any[]): ApiProperty[] {
@@ -13,6 +13,13 @@ export function transformDataForFirebase(data: any[]): ApiProperty[] {
     seoFriendlyPath: item.seoFriendlyPath || `/property-${index + 1}`,
     propertyType: item.propertyType || 'House',
     sections: item.sections || ['Residential'],
+    amenities: item.amenities || {
+      primarySchools: [],
+      secondarySchools: [],
+      publicTransports: []
+    },
+    floorPlanImages: item.floorPlanImages || [],
+    priceHistory: item.priceHistory || [],
     price: item.price || {
       amount: 250000,
       currency: 'EUR',
