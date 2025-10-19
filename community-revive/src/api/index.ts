@@ -15,8 +15,16 @@ export type { PropertyListing, ValidityData } from './firestore/types';
 
 export {
   getPropertyListings,
+  getPropertyById,
   getValidityDataById
 } from './firestore';
 
-export { useGetAllProperties, useGetValidityData, PROPERTIES_QUERY_KEY, VALIDITY_DATA_QUERY_KEY } from './hooks';
+export {
+  useGetAllProperties,
+  useGetValidityData,
+  usePropertyById,
+  PROPERTIES_QUERY_KEY,
+  PROPERTY_BY_ID_QUERY_KEY,
+  VALIDITY_DATA_QUERY_KEY
+} from './hooks';
 export { QueryProvider, queryClient } from './QueryProvider';

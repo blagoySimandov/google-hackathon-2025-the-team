@@ -99,6 +99,27 @@ export const getPropertyListings = async (
   }
 };
 
+export const getPropertyById = async (
+  propertyId: string,
+): Promise<PropertyListing | null> => {
+  try {
+    const db = getFirestoreInstance();
+    const docRef = doc(db, PROPERTIES_COLLECTION, propertyId);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      return null;
+    }
+
+    return parsePropertyData(docSnap.data());
+  } catch (error) {
+    console.error("Error fetching property:", error);
+    throw new Error(
+      `Failed to fetch property: ${error instanceof Error ? error.message : "Unknown error"}`,
+    );
+  }
+};
+
 export const getValidityDataById = async (
   propertyId: string,
 ): Promise<ValidityData | null> => {
