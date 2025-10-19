@@ -19,19 +19,26 @@ class RenovationItem(BaseModel):
     reason: str
     material: str
     amount: str
-    price: str
+    price: float  # The field will now correctly store the final float value
 
-    @property
-    def model_validate(self):
-        match = re.search(r"[\d,.]+", self.price)
-
+    @field_validator('price', mode='before')
+    @classmethod
+    def clean_and_convert_price(cls, v: str) -> float:
+        """
+        Catches the incoming price string (e.g., "€1,500.50"), extracts
+        the numeric part, and converts it to a float.
+        """
+        if not isinstance(v, str):
+            # Allow floats to pass through if data is already clean
+            if isinstance(v, (int, float)):
+                return float(v)
+            raise ValueError("Price must be a string or number.")
+            
+        match = re.search(r'[\d,.]+', v)
         if match:
-            # Replace commas if used as thousand separators, then convert to float
-            self.price = float(match.group().replace(",", ""))
-            print("Price in numbers: ", self.price)  # Output: 750.00
-        else:
-            raise ValueError("No numeric value found in price string")
+            return float(match.group(0).replace(',', ''))
         
+        raise ValueError(f"Could not extract a valid number from price string: '{v}'")
 
 
     @property

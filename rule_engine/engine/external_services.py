@@ -14,7 +14,7 @@ from config import GEMINI_API_KEY, DAFT_COOKIE # <-- Import the new key
 
 # This is more efficient than creating a client on every call
 genai.configure(api_key=GEMINI_API_KEY)
-gemini_model = genai.GenerativeModel('gemini-1.5-pro')
+gemini_model = genai.GenerativeModel('gemini-2.5-flash-preview-09-2025')
 
 # --- NEW: Cloud Function Configuration ---
 GET_HOUSE_PRICE_URL = "https://gethouseprice-gp7bcz6nya-uc.a.run.app/"
@@ -36,57 +36,53 @@ def _clean_and_parse_json(raw_text: str) -> list:
     
     return json.loads(clean_str)
 
-
 def get_renovation_cost(image_urls: List[str]) -> RenovationCost:
     """Calls the Gemini vision model to get renovation cost details from images."""
     print("   -> [LIVE] Calling Gemini Vision API for renovation analysis...")
     image_parts = []
 
+    # Use a session for efficient downloading
     with requests.Session() as session:
-        # Configure the session with a standard browser User-Agent
         session.headers.update({
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         })
-        # Set the necessary cookies for the session
-        # This assumes the cookie name is 'cf_clearance' as is common.
-        if DAFT_COOKIE and '=' in DAFT_COOKIE:
-            cookie_name, cookie_value = DAFT_COOKIE.split('=', 1)
-            session.cookies.update({cookie_name: cookie_value})
 
-        # Download image data using the configured session
-        for url in image_urls:
+        # Process a maximum of 10 images to balance detail and speed/cost
+        for url in image_urls[:10]:
             try:
-                # Use session.get() which automatically includes the headers and cookies
-                response = session.get(url, stream=True, timeout=10) # Added timeout
+                response = session.get(url, stream=True, timeout=15)
                 response.raise_for_status()
-                # Use Part.from_uri for URLs when possible or from data
-                image_parts.append({'mime_type': 'image/jpeg', 'data': response.content})
+                image_parts.append({
+                    "mime_type": "image/jpeg",
+                    "data": response.content
+                })
             except requests.exceptions.RequestException as e:
                 print(f"   WARNING: Could not download image {url}. Skipping. Error: {e}")
                 continue
-    # -----------------------------------------------------------------
 
     if not image_parts:
         print("   -> ERROR: No valid images could be loaded. Returning zero cost.")
         return RenovationCost(items=[], total_cost=0.0)
 
-    prompt = "Play a role as an expert property evaluator. Analyze the uploaded photos and provide a list of broken or degraded items that require renovation. Return a JSON list where each object has 'item', 'reason', 'material', 'amount', and 'price' (estimated in GBP, e.g., '£1500'). Focus only on damaged items. For outdoor photos, evaluate only the building's exterior (walls, roof, windows, doors). Do not include landscaping. The final output must be only the raw JSON list, without any extra text or markdown."
+    prompt = "Play a role as an expert property evaluator. Analyze the uploaded photos and provide a list of broken or degraded items that require renovation. Return a JSON list where each object has 'item', 'reason', 'material', 'amount', and 'price' (estimated in EUR, e.g., '€1500'). Focus only on damaged items. For outdoor photos, evaluate only the building's exterior (walls, roof, windows, doors). Do not include landscaping. The final output must be only the raw JSON list, without any extra text or markdown."
     
-    # Construct the contents list for the API call
-    contents = [prompt] + [genai.types.Part(inline_data=part['data'], mime_type=part['mime_type']) for part in image_parts]
-
+    contents = [prompt, *image_parts]
 
     try:
         response = gemini_model.generate_content(contents)
         parsed_data = _clean_and_parse_json(response.text)
-        validated_items = [RenovationItem.model_validate(item) for item in parsed_data]
-        total_cost = sum(item.cost for item in validated_items)
         
-        print(f"   -> SUCCESS: Gemini analysis complete. Estimated Renovation Cost: £{total_cost:.2f}")
+        # This assumes you have updated the RenovationItem model as I previously recommended
+        validated_items = [RenovationItem.model_validate(item) for item in parsed_data]
+        total_cost = sum(item.price for item in validated_items)
+        
+        print(f"   -> SUCCESS: Gemini analysis complete. Estimated Renovation Cost: €{total_cost:,.2f}")
         return RenovationCost(items=validated_items, total_cost=total_cost)
 
     except (json.JSONDecodeError, ValueError) as e:
         print(f"   -> ERROR: Failed to parse or validate JSON response from Gemini. Error: {e}")
+        # Also print the raw response text to see what the model returned
+        print(f"   [RAW RESPONSE]: {response.text if 'response' in locals() else 'No response object'}")
     except Exception as e:
         print(f"   -> ERROR: An unexpected error occurred during Gemini API call. Error: {e}")
     
