@@ -1,5 +1,5 @@
 // Import the API schema types
-import { Schema as ApiProperty } from '../backend/scheme_of_api';
+import { Listing as ApiProperty } from '../backend/scheme_of_api';
 
 // Extended Property interface that combines API data with community-specific data
 export interface Property extends Omit<ApiProperty, 'propertyType'> {

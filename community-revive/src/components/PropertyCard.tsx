@@ -9,21 +9,29 @@ import {
   Landmark, 
   Users, 
   Leaf,
-  Square
+  Square,
+  MapPin
 } from 'lucide-react';
 
 interface PropertyCardProps {
   property: Property;
   isSelected?: boolean;
   onClick: () => void;
+  onViewOnMap?: () => void;
 }
 
 export const PropertyCard: React.FC<PropertyCardProps> = ({
   property,
   isSelected = false,
   onClick,
+  onViewOnMap,
 }) => {
   const scoreColor = getScoreColor(property.communityValueScore);
+
+  const handleViewOnMap = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click
+    onViewOnMap?.();
+  };
 
   const formatCurrency = (amount: number, currency: string = 'EUR') => {
     return new Intl.NumberFormat('en-US', {
@@ -61,7 +69,9 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
               {property.address}
             </h3>
             <p className="text-xs text-gray-600 mb-2">
-              {property.city}, {property.state} {property.zipCode}
+              {property.city && property.city !== property.address && `${property.city}, `}
+              {property.state}
+              {property.zipCode && property.zipCode !== property.address && property.zipCode !== property.city && ` ${property.zipCode}`}
             </p>
             
             <div className="flex items-center justify-between">
@@ -146,12 +156,23 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
         </div>
 
         {/* Potential Uses */}
-        <div>
+        <div className="mb-3">
           <p className="text-xs text-gray-600 mb-1">Potential Uses:</p>
           <p className="text-xs font-medium text-gray-900">
             {property.potentialUses.join(' • ')}
           </p>
         </div>
+
+        {/* See on Map Button */}
+        {onViewOnMap && (
+          <button
+            onClick={handleViewOnMap}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-accent-500 hover:bg-accent-600 text-white rounded-lg text-sm font-medium transition-colors"
+          >
+            <MapPin className="w-4 h-4" />
+            See on Map
+          </button>
+        )}
       </CardContent>
     </Card>
   );

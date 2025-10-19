@@ -14,7 +14,7 @@ import {
   DocumentSnapshot
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
-import { Schema as ApiProperty, Currency } from '../backend/scheme_of_api';
+import { Listing as ApiProperty, Currency } from '../backend/scheme_of_api';
 import { Property } from '../types';
 
 // Collection name for properties in Firestore
@@ -65,20 +65,113 @@ function transformFirestoreToProperty(doc: QueryDocumentSnapshot<DocumentData>):
     stampDutyValue: data.stampDutyValue
   });
   
-  // Transform coordinates from your Firebase structure
+  // Transform coordinates from the new API schema structure
   let transformedCoordinates = { lat: 53.3498, lng: -6.2603 }; // Default to Dublin
-  if (data.point && Array.isArray(data.point) && data.point.length >= 2) {
+  
+  // Check for coordinates in the new schema format (location.coordinates array)
+  if (data.location?.coordinates && Array.isArray(data.location.coordinates) && data.location.coordinates.length >= 2) {
+    transformedCoordinates = {
+      lat: data.location.coordinates[1], // API stores as [lng, lat]
+      lng: data.location.coordinates[0]
+    };
+  }
+  // Fallback to old point format for backward compatibility
+  else if (data.point && Array.isArray(data.point) && data.point.length >= 2) {
     transformedCoordinates = {
       lat: data.point[1], // Your data stores as [lng, lat]
       lng: data.point[0]
     };
   }
 
-  // Create address from your data structure
-  const address = data.areaName || 'Unknown Address';
-  const city = data.areaName || 'Unknown City';
-  const state = data.isInRepublicOfIreland ? 'Ireland' : 'Unknown';
-  const zipCode = ''; // Not available in your structure
+  // Create address from the new API schema structure
+  const eircode = data.location?.eircodes?.[0] || data.eircodes?.[0] || '';
+  const areaName = data.location?.areaName || data.areaName || null;
+  
+  // Extract county from areaName if it contains county information
+  const extractCounty = (area: string): string | null => {
+    const areaLower = area.toLowerCase();
+    
+    // Irish counties list for matching
+    const irishCounties = [
+      'antrim', 'armagh', 'carlow', 'cavan', 'clare', 'cork', 'derry', 'donegal',
+      'down', 'dublin', 'fermanagh', 'galway', 'kerry', 'kildare', 'kilkenny',
+      'laois', 'leitrim', 'limerick', 'longford', 'louth', 'mayo', 'meath',
+      'monaghan', 'offaly', 'roscommon', 'sligo', 'tipperary', 'tyrone', 'waterford',
+      'westmeath', 'wexford', 'wicklow'
+    ];
+    
+    // Pattern 1: Look for "Co. {county}" format
+    const coMatch = areaLower.match(/co\.\s*([a-z]+)/);
+    if (coMatch && irishCounties.includes(coMatch[1])) {
+      return coMatch[1].charAt(0).toUpperCase() + coMatch[1].slice(1);
+    }
+    
+    // Pattern 2: Look for county names directly in the address
+    for (const county of irishCounties) {
+      if (areaLower.includes(county)) {
+        return county.charAt(0).toUpperCase() + county.slice(1);
+      }
+    }
+    
+    // Pattern 3: Look for hyphenated patterns like "ballinakill-laois"
+    const countyMatch = areaLower.match(/-([a-z]+)$/);
+    if (countyMatch && irishCounties.includes(countyMatch[1])) {
+      return countyMatch[1].charAt(0).toUpperCase() + countyMatch[1].slice(1);
+    }
+    
+    return null;
+  };
+  
+  // For city, extract the main area name (before the county part)
+  let city = areaName || eircode || 'Location';
+  let county: string | null = null;
+  
+  if (areaName) {
+    const extractedCounty = extractCounty(areaName);
+    if (extractedCounty) {
+      county = extractedCounty;
+      
+      // Clean the city name by removing county information
+      let cleanCity = areaName;
+      
+      // Remove "Co. {county}" pattern
+      cleanCity = cleanCity.replace(new RegExp(`\\bco\\.\\s*${extractedCounty.toLowerCase()}\\b`, 'gi'), '');
+      
+      // Remove county name if it appears at the end with hyphen
+      cleanCity = cleanCity.replace(new RegExp(`-${extractedCounty.toLowerCase()}$`, 'i'), '');
+      
+      // Remove county name if it appears anywhere (but be careful not to remove it from other words)
+      cleanCity = cleanCity.replace(new RegExp(`\\b${extractedCounty.toLowerCase()}\\b`, 'gi'), '');
+      
+      // Clean up extra commas and spaces
+      cleanCity = cleanCity.replace(/,\s*,/g, ',').replace(/,\s*$/, '').replace(/^\s*,/, '').trim();
+      
+      // If the clean city is empty or too short, try to get a meaningful part
+      if (!cleanCity || cleanCity.length < 3) {
+        // For cases like "Cork City" -> "City", use the first meaningful word
+        const words = areaName.split(/[,\s]+/).filter((word: string) => 
+          word.length > 2 && 
+          !word.toLowerCase().includes(extractedCounty.toLowerCase()) &&
+          word.toLowerCase() !== 'co.' &&
+          !word.match(/^[A-Z]\d+$/) // Don't use eircodes as city names
+        );
+        cleanCity = words[0] || areaName;
+      }
+      
+      // If we have a clean city name, use it; otherwise keep the original
+      if (cleanCity && cleanCity.length > 0) {
+        city = cleanCity;
+      }
+      
+      // Capitalize first letter of each word
+      city = city.split(' ').map((word: string) => 
+        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+      ).join(' ');
+    }
+  }
+  
+  const state = county ? `Co. ${county}, Ireland` : 'Ireland';
+  const zipCode = eircode;
 
   // Map your data structure to expected fields
   const mappedData = {
@@ -89,6 +182,13 @@ function transformFirestoreToProperty(doc: QueryDocumentSnapshot<DocumentData>):
     seoFriendlyPath: data.seoFriendlyPath || '',
     propertyType: data.propertyType || 'Property',
     sections: data.sections || ['Residential'],
+    amenities: data.amenities || {
+      primarySchools: [],
+      secondarySchools: [],
+      publicTransports: []
+    },
+    floorPlanImages: data.floorPlanImages || [],
+    priceHistory: data.priceHistory || [],
     price: (() => {
       // Helper function to parse price from string
       const parsePriceFromString = (priceStr: string): number | null => {
@@ -229,11 +329,11 @@ function transformFirestoreToProperty(doc: QueryDocumentSnapshot<DocumentData>):
     bedrooms: data.numBedrooms || 0,
     bathrooms: data.numBathrooms || 0,
     location: {
-      areaName: data.areaName || null,
-      primaryAreaId: data.primaryAreaId || null,
-      isInRepublicOfIreland: data.isInRepublicOfIreland || true,
-      coordinates: [data.point?.[0] || -6.2603, data.point?.[1] || 53.3498],
-      eircodes: []
+      areaName: data.location?.areaName || data.areaName || null,
+      primaryAreaId: data.location?.primaryAreaId || data.primaryAreaId || null,
+      isInRepublicOfIreland: data.location?.isInRepublicOfIreland ?? data.isInRepublicOfIreland ?? true,
+      coordinates: data.location?.coordinates || [data.point?.[0] || -6.2603, data.point?.[1] || 53.3498],
+      eircodes: data.location?.eircodes || []
     },
     dates: {
       publishDate: data.publishDate ? new Date(data.publishDate) : new Date(),
@@ -322,7 +422,7 @@ function transformFirestoreToProperty(doc: QueryDocumentSnapshot<DocumentData>):
     neighborhoodMetrics,
     impactStory,
     coordinates: transformedCoordinates,
-    address,
+    address: city, // Use the cleaned city name as the main address
     city,
     state,
     zipCode,
@@ -487,9 +587,18 @@ function transformFirestoreToMapProperty(doc: QueryDocumentSnapshot<DocumentData
   
   console.log('🗺️ Transforming map document:', doc.id, 'Data keys:', Object.keys(data));
   
-  // Transform coordinates from your Firebase structure
+  // Transform coordinates from the new API schema structure
   let transformedCoordinates = { lat: 53.3498, lng: -6.2603 }; // Default to Dublin
-  if (data.point && Array.isArray(data.point) && data.point.length >= 2) {
+  
+  // Check for coordinates in the new schema format (location.coordinates array)
+  if (data.location?.coordinates && Array.isArray(data.location.coordinates) && data.location.coordinates.length >= 2) {
+    transformedCoordinates = {
+      lat: data.location.coordinates[1], // API stores as [lng, lat]
+      lng: data.location.coordinates[0]
+    };
+  }
+  // Fallback to old point format for backward compatibility
+  else if (data.point && Array.isArray(data.point) && data.point.length >= 2) {
     transformedCoordinates = {
       lat: data.point[1], // Your data stores as [lng, lat]
       lng: data.point[0]
