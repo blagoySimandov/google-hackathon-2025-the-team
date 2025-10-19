@@ -1,5 +1,7 @@
 export interface PropertyListing {
   id: number;
+  validityScore: number;
+  communityScore: number;
   title: string;
   seoTitle: string;
   amenities: Amenities;
