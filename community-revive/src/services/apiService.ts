@@ -12,8 +12,11 @@ export class ApiService {
     bedrooms?: number;
   }, options?: PaginationOptions): Promise<PaginatedResult<Property>> {
     try {
+      console.log('🔌 ApiService.fetchProperties called with:', { params, options });
+      
       // Use Firebase service to fetch properties
       if (params && Object.keys(params).length > 0) {
+        console.log('🔌 ApiService: Using searchProperties with params');
         return await firebaseService.searchProperties({
           area: params.area,
           propertyType: params.propertyType,
@@ -23,9 +26,10 @@ export class ApiService {
         }, options);
       }
       
+      console.log('🔌 ApiService: Using fetchProperties without params');
       return await firebaseService.fetchProperties(options);
     } catch (error) {
-      console.error('Error fetching properties:', error);
+      console.error('❌ ApiService: Error fetching properties:', error);
       throw new Error('Failed to fetch properties');
     }
   }
@@ -33,9 +37,10 @@ export class ApiService {
   // Fetch lightweight properties for map markers
   async fetchMapProperties(options?: PaginationOptions): Promise<PaginatedResult<MapProperty>> {
     try {
+      console.log('🔌 ApiService.fetchMapProperties called with:', { options });
       return await firebaseService.fetchMapProperties(options);
     } catch (error) {
-      console.error('Error fetching map properties:', error);
+      console.error('❌ ApiService: Error fetching map properties:', error);
       throw new Error('Failed to fetch map properties');
     }
   }

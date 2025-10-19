@@ -30,22 +30,30 @@ export const Dashboard: React.FC<DashboardProps> = ({ onPropertySelect }) => {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
+        console.log('📋 Dashboard: Starting to fetch properties...');
         setLoading(true);
         setError(null);
+        
+        console.log('📋 Dashboard: Calling apiService.fetchProperties...');
         const result = await apiService.fetchProperties({}, { pageSize: 20 });
+        console.log('📋 Dashboard: Received result from API:', result);
+        
         setProperties(result.data);
         setPagination({
           lastDoc: result.lastDoc,
           hasMore: result.hasMore,
         });
+        
+        console.log('📋 Dashboard: Properties set successfully:', result.data.length);
       } catch (err) {
-        console.error('Error fetching properties:', err);
+        console.error('❌ Dashboard: Error fetching properties:', err);
         setError('Failed to load properties. Please check your Firebase configuration.');
       } finally {
         setLoading(false);
       }
     };
 
+    console.log('📋 Dashboard: useEffect triggered, calling fetchProperties...');
     fetchProperties();
   }, []);
 
@@ -53,17 +61,24 @@ export const Dashboard: React.FC<DashboardProps> = ({ onPropertySelect }) => {
   useEffect(() => {
     const fetchMapProperties = async () => {
       try {
+        console.log('🗺️ Dashboard: Starting to fetch map properties...');
         setMapLoading(true);
+        
+        console.log('🗺️ Dashboard: Calling apiService.fetchMapProperties...');
         const result = await apiService.fetchMapProperties({ pageSize: 50 });
+        console.log('🗺️ Dashboard: Received map result from API:', result);
+        
         setMapProperties(result.data);
+        console.log('🗺️ Dashboard: Map properties set successfully:', result.data.length);
       } catch (err) {
-        console.error('Error fetching map properties:', err);
+        console.error('❌ Dashboard: Error fetching map properties:', err);
         // Don't set error state for map properties, just log it
       } finally {
         setMapLoading(false);
       }
     };
 
+    console.log('🗺️ Dashboard: Map useEffect triggered, calling fetchMapProperties...');
     fetchMapProperties();
   }, []);
 

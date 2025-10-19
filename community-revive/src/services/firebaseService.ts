@@ -52,32 +52,128 @@ export interface MapProperty {
 
 // Transform Firestore document to Property type
 function transformFirestoreToProperty(doc: QueryDocumentSnapshot<DocumentData>): Property {
-  const data = doc.data() as ApiProperty;
+  const data = doc.data() as any; // Use any since the structure is different
   
-  // Transform coordinates from [lng, lat] to {lat, lng}
-  const coordinates = data.location.coordinates;
-  const transformedCoordinates = {
-    lat: coordinates[1], // Firebase stores as [lng, lat]
-    lng: coordinates[0]
+  console.log('🔄 Transforming document:', doc.id, 'Data keys:', Object.keys(data));
+  
+  // Transform coordinates from your Firebase structure
+  let transformedCoordinates = { lat: 53.3498, lng: -6.2603 }; // Default to Dublin
+  if (data.point && Array.isArray(data.point) && data.point.length >= 2) {
+    transformedCoordinates = {
+      lat: data.point[1], // Your data stores as [lng, lat]
+      lng: data.point[0]
+    };
+  }
+
+  // Create address from your data structure
+  const address = data.areaName || 'Unknown Address';
+  const city = data.areaName || 'Unknown City';
+  const state = data.isInRepublicOfIreland ? 'Ireland' : 'Unknown';
+  const zipCode = ''; // Not available in your structure
+
+  // Map your data structure to expected fields
+  const mappedData = {
+    id: data.id || doc.id,
+    title: data.title || 'Untitled Property',
+    seoTitle: data.seoTitle || data.title || 'Untitled Property',
+    daftShortcode: data.daftShortcode || '',
+    seoFriendlyPath: data.seoFriendlyPath || '',
+    propertyType: data.propertyType || 'Property',
+    sections: data.sections || ['Residential'],
+    price: data.price ? {
+      amount: data.price.amount || 0,
+      currency: data.price.currency || 'EUR',
+      formatted: data.price.formatted || '€0'
+    } : undefined,
+    bedrooms: data.numBedrooms || 0,
+    bathrooms: data.numBathrooms || 0,
+    location: {
+      areaName: data.areaName || null,
+      primaryAreaId: data.primaryAreaId || null,
+      isInRepublicOfIreland: data.isInRepublicOfIreland || true,
+      coordinates: [data.point?.[0] || -6.2603, data.point?.[1] || 53.3498],
+      eircodes: []
+    },
+    dates: {
+      publishDate: data.publishDate ? new Date(data.publishDate) : new Date(),
+      lastUpdateDate: data.lastUpdateDate ? new Date(data.lastUpdateDate) : new Date(),
+      dateOfConstruction: data.dateOfConstruction || null
+    },
+    media: {
+      images: data.media?.images || [],
+      totalImages: data.media?.totalImages || 0,
+      hasVideo: data.media?.hasVideo || false,
+      hasVirtualTour: data.media?.hasVirtualTour || false,
+      hasBrochure: data.media?.hasBrochure || false
+    },
+    seller: data.seller || {
+      id: 0,
+      name: 'Unknown',
+      type: 'UNBRANDED_AGENT',
+      branch: null,
+      address: null,
+      phone: null,
+      alternativePhone: null,
+      licenceNumber: null,
+      available: true,
+      premierPartner: false,
+      images: {
+        profileImage: null,
+        profileRoundedImage: null,
+        standardLogo: null,
+        squareLogo: null
+      },
+      backgroundColour: null
+    },
+    ber: data.ber || { rating: null },
+    description: data.description || '',
+    features: [],
+    extracted: {
+      folios: [],
+      utilities: [],
+      nearbyLocations: {
+        closeBy: [],
+        shortDrive: [],
+        withinHour: []
+      }
+    },
+    metadata: {
+      featuredLevel: data.featuredLevel || 'STANDARD',
+      featuredLevelFull: data.featuredLevelFull || 'STANDARD',
+      sticker: null,
+      sellingType: data.sellingType || 'By Private Treaty',
+      category: data.category || 'Buy',
+      state: data.state || 'PUBLISHED',
+      platform: data.platform || 'WEB',
+      premierPartner: data.premierPartner || false,
+      imageRestricted: data.imageRestricted || false
+    },
+    stamps: {
+      stampDutyValue: data.stampDutyValue || undefined
+    },
+    branding: {
+      standardLogo: undefined,
+      squareLogo: undefined,
+      backgroundColour: undefined,
+      squareLogos: undefined,
+      rectangleLogo: undefined
+    },
+    analytics: {
+      listingViews: 0
+    }
   };
 
-  // Create address from location data
-  const address = data.location.areaName || 'Unknown Address';
-  const city = data.location.areaName || 'Unknown City';
-  const state = data.location.isInRepublicOfIreland ? 'Ireland' : 'Unknown';
-  const zipCode = data.location.eircodes?.[0] || '';
-
   // Calculate community-specific values
-  const communityValueScore = calculateCommunityValueScore(data);
-  const estimatedRenovationCost = calculateRenovationCost(data);
-  const potentialUses = calculatePotentialUses(data);
-  const communityImpact = calculateCommunityImpact(data);
-  const neighborhoodMetrics = calculateNeighborhoodMetrics(data);
-  const impactStory = generateImpactStory(data);
+  const communityValueScore = calculateCommunityValueScore(mappedData);
+  const estimatedRenovationCost = calculateRenovationCost(mappedData);
+  const potentialUses = calculatePotentialUses(mappedData);
+  const communityImpact = calculateCommunityImpact(mappedData);
+  const neighborhoodMetrics = calculateNeighborhoodMetrics(mappedData);
+  const impactStory = generateImpactStory(mappedData);
 
   return {
-    ...data,
-    propertyType: mapPropertyType(data.propertyType),
+    ...mappedData,
+    propertyType: mapPropertyType(mappedData.propertyType),
     communityValueScore,
     estimatedRenovationCost,
     potentialUses,
@@ -89,12 +185,12 @@ function transformFirestoreToProperty(doc: QueryDocumentSnapshot<DocumentData>):
     city,
     state,
     zipCode,
-    beforeImage: data.media.images[0]?.size1440x960 || '',
+    beforeImage: mappedData.media.images[0]?.size1440x960 || '',
     size: {
-      squareFeet: data.extracted?.utilities?.length ? 1500 : 1200, // Estimate based on utilities
+      squareFeet: 1200, // Default estimate
     },
-    yearBuilt: data.dates.dateOfConstruction ? Number.parseInt(data.dates.dateOfConstruction) : undefined,
-    lastOccupied: data.dates.lastUpdateDate ? new Date(data.dates.lastUpdateDate).getFullYear() : undefined,
+    yearBuilt: mappedData.dates.dateOfConstruction ? Number.parseInt(mappedData.dates.dateOfConstruction) : undefined,
+    lastOccupied: mappedData.dates.lastUpdateDate ? new Date(mappedData.dates.lastUpdateDate).getFullYear() : undefined,
   };
 }
 
@@ -246,29 +342,48 @@ function generateImpactStory(data: ApiProperty) {
 
 // Transform Firestore document to lightweight MapProperty type
 function transformFirestoreToMapProperty(doc: QueryDocumentSnapshot<DocumentData>): MapProperty {
-  const data = doc.data() as ApiProperty;
+  const data = doc.data() as any; // Use any since the structure is different
   
-  // Transform coordinates from [lng, lat] to {lat, lng}
-  const coordinates = data.location.coordinates;
-  const transformedCoordinates = {
-    lat: coordinates[1], // Firebase stores as [lng, lat]
-    lng: coordinates[0]
-  };
+  console.log('🗺️ Transforming map document:', doc.id, 'Data keys:', Object.keys(data));
+  
+  // Transform coordinates from your Firebase structure
+  let transformedCoordinates = { lat: 53.3498, lng: -6.2603 }; // Default to Dublin
+  if (data.point && Array.isArray(data.point) && data.point.length >= 2) {
+    transformedCoordinates = {
+      lat: data.point[1], // Your data stores as [lng, lat]
+      lng: data.point[0]
+    };
+  }
 
-  // Calculate community value score
-  const communityValueScore = calculateCommunityValueScore(data);
+  // Calculate community value score using your data structure
+  let communityValueScore = 50; // Base score
+  
+  // Adjust based on property type
+  if (data.propertyType === 'Site') communityValueScore += 20; // Vacant lots have high potential
+  if (data.propertyType === 'House' || data.propertyType === 'Detached') communityValueScore += 15;
+  
+  // Adjust based on size (bedrooms as proxy)
+  if (data.numBedrooms && data.numBedrooms >= 3) communityValueScore += 10;
+  
+  // Adjust based on BER rating
+  if (data.ber?.rating && data.ber.rating !== 'F' && data.ber.rating !== 'G') communityValueScore += 5;
+  
+  // Adjust based on location
+  if (data.areaName) communityValueScore += 10;
+  
+  communityValueScore = Math.min(100, Math.max(0, communityValueScore));
 
   return {
-    id: data.id,
+    id: data.id || doc.id,
     coordinates: transformedCoordinates,
-    title: data.title,
+    title: data.title || 'Untitled Property',
     price: data.price ? {
-      amount: data.price.amount,
-      formatted: data.price.formatted
+      amount: data.price.amount || 0,
+      formatted: data.price.formatted || '€0'
     } : undefined,
-    propertyType: data.propertyType,
+    propertyType: data.propertyType || 'Property',
     communityValueScore,
-    beforeImage: data.media.images[0]?.size1440x960 || '',
+    beforeImage: data.media?.images?.[0]?.size1440x960 || '',
   };
 }
 
@@ -276,24 +391,58 @@ export class FirebaseService {
   // Fetch properties with pagination
   async fetchProperties(options: PaginationOptions = {}): Promise<PaginatedResult<Property>> {
     try {
+      console.log('🔥 FirebaseService.fetchProperties called with options:', options);
+      
       const { pageSize = 20, lastDoc } = options;
+      console.log('🔥 Creating collection reference for:', PROPERTIES_COLLECTION);
+      
       const propertiesRef = collection(db, PROPERTIES_COLLECTION);
+      console.log('🔥 Collection reference created:', propertiesRef);
       
       const constraints: QueryConstraint[] = [
-        orderBy('analytics.listingViews', 'desc'),
+        orderBy('id', 'desc'), // Use id field since analytics.listingViews might not exist
         limit(pageSize)
       ];
       
       if (lastDoc) {
+        console.log('🔥 Adding startAfter constraint with lastDoc:', lastDoc);
         constraints.push(startAfter(lastDoc));
       }
       
+      console.log('🔥 Query constraints:', constraints);
       const q = query(propertiesRef, ...constraints);
-      const snapshot = await getDocs(q);
+      console.log('🔥 Query created:', q);
       
-      const properties = snapshot.docs.map(doc => transformFirestoreToProperty(doc));
+      console.log('🔥 Executing Firestore query...');
+      const snapshot = await getDocs(q);
+      console.log('🔥 Query executed successfully. Snapshot:', {
+        size: snapshot.size,
+        empty: snapshot.empty,
+        docs: snapshot.docs.length
+      });
+      
+      if (snapshot.empty) {
+        console.log('⚠️ No documents found in collection');
+        return {
+          data: [],
+          hasMore: false,
+        };
+      }
+      
+      console.log('🔥 Transforming documents...');
+      const properties = snapshot.docs.map(doc => {
+        console.log('🔥 Transforming doc:', doc.id, doc.data());
+        return transformFirestoreToProperty(doc);
+      });
+      
       const hasMore = snapshot.docs.length === pageSize;
       const newLastDoc = snapshot.docs.at(-1);
+      
+      console.log('🔥 Fetch completed:', {
+        propertiesCount: properties.length,
+        hasMore,
+        newLastDoc: newLastDoc?.id
+      });
       
       return {
         data: properties,
@@ -301,7 +450,12 @@ export class FirebaseService {
         hasMore,
       };
     } catch (error) {
-      console.error('Error fetching properties:', error);
+      console.error('❌ Error fetching properties:', error);
+      console.error('❌ Error details:', {
+        name: error instanceof Error ? error.name : 'Unknown',
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : 'No stack trace'
+      });
       throw new Error(`Failed to fetch properties from Firebase: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -309,24 +463,58 @@ export class FirebaseService {
   // Fetch lightweight properties for map markers only
   async fetchMapProperties(options: PaginationOptions = {}): Promise<PaginatedResult<MapProperty>> {
     try {
+      console.log('🗺️ FirebaseService.fetchMapProperties called with options:', options);
+      
       const { pageSize = 50, lastDoc } = options;
+      console.log('🗺️ Creating collection reference for map properties:', PROPERTIES_COLLECTION);
+      
       const propertiesRef = collection(db, PROPERTIES_COLLECTION);
+      console.log('🗺️ Collection reference created:', propertiesRef);
       
       const constraints: QueryConstraint[] = [
-        orderBy('analytics.listingViews', 'desc'),
+        orderBy('id', 'desc'), // Use id field since analytics.listingViews might not exist
         limit(pageSize)
       ];
       
       if (lastDoc) {
+        console.log('🗺️ Adding startAfter constraint with lastDoc:', lastDoc);
         constraints.push(startAfter(lastDoc));
       }
       
+      console.log('🗺️ Query constraints:', constraints);
       const q = query(propertiesRef, ...constraints);
-      const snapshot = await getDocs(q);
+      console.log('🗺️ Query created:', q);
       
-      const properties = snapshot.docs.map(doc => transformFirestoreToMapProperty(doc));
+      console.log('🗺️ Executing Firestore query for map properties...');
+      const snapshot = await getDocs(q);
+      console.log('🗺️ Map query executed successfully. Snapshot:', {
+        size: snapshot.size,
+        empty: snapshot.empty,
+        docs: snapshot.docs.length
+      });
+      
+      if (snapshot.empty) {
+        console.log('⚠️ No documents found in collection for map');
+        return {
+          data: [],
+          hasMore: false,
+        };
+      }
+      
+      console.log('🗺️ Transforming documents for map...');
+      const properties = snapshot.docs.map(doc => {
+        console.log('🗺️ Transforming map doc:', doc.id);
+        return transformFirestoreToMapProperty(doc);
+      });
+      
       const hasMore = snapshot.docs.length === pageSize;
       const newLastDoc = snapshot.docs.at(-1);
+      
+      console.log('🗺️ Map fetch completed:', {
+        propertiesCount: properties.length,
+        hasMore,
+        newLastDoc: newLastDoc?.id
+      });
       
       return {
         data: properties,
@@ -334,7 +522,12 @@ export class FirebaseService {
         hasMore,
       };
     } catch (error) {
-      console.error('Error fetching map properties:', error);
+      console.error('❌ Error fetching map properties:', error);
+      console.error('❌ Map error details:', {
+        name: error instanceof Error ? error.name : 'Unknown',
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : 'No stack trace'
+      });
       throw new Error(`Failed to fetch map properties from Firebase: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -376,7 +569,7 @@ export class FirebaseService {
       // Add filters based on search parameters - be more careful with compound queries
       // Firestore has limitations on compound queries, so we'll use simpler queries
       if (searchParams.area) {
-        constraints.push(where('location.areaName', '==', searchParams.area));
+        constraints.push(where('areaName', '==', searchParams.area));
       }
       
       if (searchParams.propertyType) {
@@ -386,11 +579,11 @@ export class FirebaseService {
       // For price range, we'll filter in memory to avoid compound query issues
       
       if (searchParams.bedrooms) {
-        constraints.push(where('bedrooms', '==', searchParams.bedrooms));
+        constraints.push(where('numBedrooms', '==', searchParams.bedrooms));
       }
       
       if (searchParams.bathrooms) {
-        constraints.push(where('bathrooms', '==', searchParams.bathrooms));
+        constraints.push(where('numBathrooms', '==', searchParams.bathrooms));
       }
       
       if (searchParams.berRating) {
@@ -398,7 +591,7 @@ export class FirebaseService {
       }
 
       // Always order by a field that exists and is indexed
-      constraints.push(orderBy('analytics.listingViews', 'desc'), limit(pageSize));
+      constraints.push(orderBy('id', 'desc'), limit(pageSize));
       
       if (lastDoc) {
         constraints.push(startAfter(lastDoc));
@@ -482,8 +675,8 @@ export class FirebaseService {
       const propertiesRef = collection(db, PROPERTIES_COLLECTION);
       
       const constraints: QueryConstraint[] = [
-        where('location.areaName', '==', area),
-        orderBy('analytics.listingViews', 'desc'),
+        where('areaName', '==', area),
+        orderBy('id', 'desc'),
         limit(pageSize)
       ];
       
