@@ -22,6 +22,19 @@ class RenovationItem(BaseModel):
     price: str
 
     @property
+    def model_validate(self):
+        match = re.search(r"[\d,.]+", self.price)
+
+        if match:
+            # Replace commas if used as thousand separators, then convert to float
+            self.price = float(match.group().replace(",", ""))
+            print("Price in numbers: ", self.price)  # Output: 750.00
+        else:
+            raise ValueError("No numeric value found in price string")
+        
+
+
+    @property
     def cost(self) -> float:
         """Extracts the numerical cost from the price string."""
         # Use regex to find numbers in the string (handles £, €, etc.)
@@ -46,3 +59,20 @@ class AmenityResult(BaseModel):
     """Holds the full results of the amenity search."""
     score: float
     found_amenities: List[Amenity]
+
+class AppliedGrant(BaseModel):
+    """Represents a potential grant applied to the project."""
+    name: str
+    amount: float
+    reason: str
+
+class InvestmentAnalysis(BaseModel):
+    """Holds all the calculated financial metrics for the investment."""
+    estimated_labour_cost: float
+    total_project_cost: float
+    potential_grants: List[AppliedGrant]
+    total_grant_amount: float
+    net_project_cost: float
+    estimated_after_repair_value: float
+    potential_profit: float
+    return_on_investment_percent: float

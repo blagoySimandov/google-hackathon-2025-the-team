@@ -1,4 +1,3 @@
-# engine/external_services.py
 import requests
 import json
 import re
@@ -12,10 +11,13 @@ from geopy.distance import great_circle
 from .models import RenovationItem, RenovationCost, Amenity, AmenityResult
 from config import GEMINI_API_KEY, DAFT_COOKIE # <-- Import the new key
 
-# --- Configure the Gemini Client ---
 # This is more efficient than creating a client on every call
 genai.configure(api_key=GEMINI_API_KEY)
-gemini_model = genai.GenerativeModel('gemini-2.5-pro')
+gemini_model = genai.GenerativeModel('gemini-1.5-pro')
+
+# --- NEW: Cloud Function Configuration ---
+GET_HOUSE_PRICE_URL = "https://gethouseprice-gp7bcz6nya-uc.a.run.app/"
+DEFAULT_MARKET_PRICE = 300000.0
 
 
 def _clean_and_parse_json(raw_text: str) -> list:
@@ -39,7 +41,6 @@ def get_renovation_cost(image_urls: List[str]) -> RenovationCost:
     print("   -> [LIVE] Calling Gemini Vision API for renovation analysis...")
     image_parts = []
 
-    # --- FIX: Use a requests.Session for persistent headers and cookies ---
     with requests.Session() as session:
         # Configure the session with a standard browser User-Agent
         session.headers.update({
@@ -90,25 +91,66 @@ def get_renovation_cost(image_urls: List[str]) -> RenovationCost:
     
     return RenovationCost(items=[], total_cost=0.0)
 
-# --- The rest of the functions in this file remain the same ---
+
+def _parse_price_string(price_str: str) -> float:
+    """
+    A helper function to remove currency symbols and commas from a price string
+    and convert it to a float. Returns 0.0 on failure.
+    """
+    if not isinstance(price_str, str):
+        return 0.0
+    # Remove any character that is not a digit or a decimal point
+    cleaned_str = re.sub(r'[^\d.]', '', price_str)
+    try:
+        return float(cleaned_str)
+    except (ValueError, TypeError):
+        return 0.0
 
 def get_market_average(latitude: float, longitude: float) -> float:
-    # ... (no change)
-    return 300000 + (latitude * 100) + (longitude * 100)
+    """
+    Fetches the average market price from the external GetHousePrice Cloud Function.
+    Falls back to a default value if the API call fails.
+    """
+    print(f"   -> [LIVE] Calling GetHousePrice API for market average...")
+    params = {"lat": latitude, "lon": longitude}
+    try:
+        response = requests.get(GET_HOUSE_PRICE_URL, params=params, timeout=10)
+        response.raise_for_status()
+
+        data = response.json()
+        
+        # --- THE FIX ---
+        # Try to get the price from a key named 'price' first. If that fails,
+        # fall back to trying 'median'.
+        price_str = data.get("price") or data.get("median")
+
+        if price_str:
+            price = _parse_price_string(price_str)
+            if price > 0:
+                print(f"   -> SUCCESS: Market average found: €{price:,.2f}")
+                return price
+        
+        print(f"   -> WARNING: API returned an invalid price string ('{price_str}'). Falling back to default.")
+        return DEFAULT_MARKET_PRICE
+
+    except requests.exceptions.RequestException as e:
+        print(f"   -> ERROR: Could not connect to GetHousePrice API: {e}. Falling back to default price.")
+        return DEFAULT_MARKET_PRICE
+    except json.JSONDecodeError:
+        print(f"   -> ERROR: Failed to parse JSON from GetHousePrice API. Falling back to default price.")
+        return DEFAULT_MARKET_PRICE
+
 
 def get_amenity_details(latitude: float, longitude: float, api_key: str) -> AmenityResult:
     """
     Finds nearby amenities, calculates their distance, and returns a score and detailed list.
+    The score is now distance-weighted: closer amenities result in a higher score.
     """
     print("   -> Checking for amenities using Places API...")
     
-    # Define the types of amenities we are interested in
-    amenity_types = ['supermarket', 'school', 'bus_station', 'train_station', 'park']
-    
-    # Store the results
+    amenity_types = ['supermarket', 'school', 'bus_station', 'train_station', 'park', 'hospital', 'pharmacy']
     found_amenities_list = []
     
-    # Update the FieldMask to request the data we need: name, type, and location
     headers = {
         'Content-Type': 'application/json',
         'X-Goog-Api-Key': api_key,
@@ -116,6 +158,9 @@ def get_amenity_details(latitude: float, longitude: float, api_key: str) -> Amen
     }
     
     property_coords = (latitude, longitude)
+    
+    # Define a max search radius, which will also be our scoring boundary
+    MAX_RADIUS_KM = 5.0
 
     for place_type in amenity_types:
         payload = {
@@ -124,7 +169,7 @@ def get_amenity_details(latitude: float, longitude: float, api_key: str) -> Amen
             "locationRestriction": {
                 "circle": {
                     "center": {"latitude": latitude, "longitude": longitude},
-                    "radius": 5000.0 # Search within a 2km radius
+                    "radius": MAX_RADIUS_KM * 1000 # API expects radius in meters
                 }
             }
         }
@@ -133,11 +178,9 @@ def get_amenity_details(latitude: float, longitude: float, api_key: str) -> Amen
             if response.ok and response.json().get('places'):
                 place = response.json()['places'][0]
                 
-                # Calculate distance
                 place_coords = (place['location']['latitude'], place['location']['longitude'])
                 distance_km = round(great_circle(property_coords, place_coords).kilometers, 2)
                 
-                # Create the Amenity object
                 amenity = Amenity(
                     name=place['displayName']['text'],
                     type=place_type.replace('_', ' '),
@@ -149,11 +192,24 @@ def get_amenity_details(latitude: float, longitude: float, api_key: str) -> Amen
             # Silently fail on API error to not stop the whole process
             continue
             
-    # Calculate the final score based on how many types were found
-    score = round((len(found_amenities_list) / len(amenity_types)) * 100, 2)
+    # --- NEW DISTANCE-WEIGHTED SCORING LOGIC ---
+    if not found_amenities_list:
+        return AmenityResult(score=0.0, found_amenities=[])
+
+    total_score_points = 0
+    num_searched_types = len(amenity_types)
+
+    for amenity in found_amenities_list:
+        # Calculate a score for this amenity (100 for 0km, 0 for MAX_RADIUS_KM)
+        # using a linear decay.
+        amenity_score = 100 * (1 - (min(amenity.distance_km, MAX_RADIUS_KM) / MAX_RADIUS_KM))
+        total_score_points += amenity_score
+        
+    # Average the score across all *searched* amenity types. This correctly
+    # penalizes the score if some amenity types were not found.
+    final_score = round(total_score_points / num_searched_types, 2)
     
-    # Return the comprehensive result object
-    return AmenityResult(score=score, found_amenities=found_amenities_list)
+    return AmenityResult(score=final_score, found_amenities=found_amenities_list)
 
 
 def get_air_quality_score(latitude: float, longitude: float, api_key: str) -> float:
@@ -166,7 +222,13 @@ def get_air_quality_score(latitude: float, longitude: float, api_key: str) -> fl
         response.raise_for_status()
         data = response.json()
         uaqi = next((idx['aqi'] for idx in data['indexes'] if idx['code'] == 'uaqi'), 75)
-        score = 100 - (min(uaqi, 150) / 150 * 100)
+        max_aqi = 500
+        if uaqi < 0:
+            uaqi = 0
+        elif uaqi > max_aqi:
+            uaqi = max_aqi
+        score = (1 - uaqi / max_aqi) * 100
+        # score = 100 - (min(uaqi, 150) / 150 * 100)
         return round(score, 2)
     except requests.exceptions.RequestException:
         return 50.0

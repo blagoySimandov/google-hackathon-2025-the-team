@@ -8,6 +8,7 @@ from .scoring import ScoringEngine
 class ViabilityEngine:
     """Orchestrates validation, enrichment, and ranking."""
     def __init__(self, weights: Dict[str, float]):
+        print("Weights: ", weights)
         self.enricher = DataEnricher()
         self.scorer = ScoringEngine(weights)
         print("Viability Engine Initialized.")
