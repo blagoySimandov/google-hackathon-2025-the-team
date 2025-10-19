@@ -4,7 +4,6 @@ import { usePropertyById } from '../api';
 import { PhotoCarousel } from './PhotoCarousel';
 import { ArrowLeft, List, Map as MapIcon } from 'lucide-react';
 import { AmenitiesMap } from './AmenitiesMap';
-import { AirQuality } from './AirQuality';
 import { SchoolsSection } from './SchoolsSection';
 import { TransportSection } from './TransportSection';
 

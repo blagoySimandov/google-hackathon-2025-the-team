@@ -225,7 +225,7 @@ export const AmenitiesMap: React.FC<AmenitiesMapProps> = (props) => {
   }
 
   return (
-    <Wrapper apiKey={apiKey} render={render}>
+    <Wrapper apiKey={apiKey} libraries={['marker']} render={render}>
       <MapComponent {...props} />
     </Wrapper>
   );

@@ -50,26 +50,26 @@ export const PhotoCarousel: React.FC<PhotoCarouselProps> = ({
   const openPhotoSwipe = (index: number) => {
     if (images.length === 0) return;
 
-    const items = images.map((image) => ({
-      src: image.src,
-      width: image.width || 1200,
-      height: image.height || 800,
-      alt: image.alt || 'Property image'
-    }));
-
     const options = {
+      dataSource: images.map((image) => ({
+        src: image.src,
+        width: image.width || 1440,
+        height: image.height || 960,
+        alt: image.alt || 'Property image'
+      })),
       index: index,
-      bgOpacity: 0.8,
+      bgOpacity: 0.95,
       showHideOpacity: true,
       closeOnVerticalDrag: true,
-      closeOnScroll: true,
+      closeOnScroll: false,
       closeTitle: 'Close (Esc)',
       zoomTitle: 'Zoom in/out',
       arrowPrevTitle: 'Previous (arrow left)',
       arrowNextTitle: 'Next (arrow right)',
       errorMsg: 'The image could not be loaded.',
       returnFocus: false,
-      trapFocus: false,
+      trapFocus: true,
+      zoom: true,
       onClose: () => {
         setIsFullscreen(false);
         pswpRef.current = null;
@@ -105,24 +105,36 @@ export const PhotoCarousel: React.FC<PhotoCarouselProps> = ({
       {/* Main Image Display */}
       <div className="relative group">
         <div className="relative overflow-hidden rounded-lg bg-gray-100">
-          <img
-            src={images[currentIndex]?.src}
-            alt={images[currentIndex]?.alt || `Property image ${currentIndex + 1}`}
-            className="w-full h-64 md:h-80 lg:h-96 object-cover cursor-pointer transition-transform duration-300 hover:scale-105"
+          {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
+          <button
+            type="button"
             onClick={() => openPhotoSwipe(currentIndex)}
-          />
-          
-          {/* Overlay with zoom icon */}
-          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
-            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <div className="bg-white bg-opacity-90 rounded-full p-3 shadow-lg">
-                <ZoomIn className="w-6 h-6 text-gray-800" />
+            className="w-full cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-blue-500"
+            title="Click to view full size"
+            aria-label={`View ${images[currentIndex]?.alt || 'property image'} in fullscreen`}
+          >
+            {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/click-events-have-key-events */}
+            <img
+              src={images[currentIndex]?.src}
+              alt={images[currentIndex]?.alt || `Property image ${currentIndex + 1}`}
+              className="w-full h-64 md:h-80 lg:h-96 object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+            
+            {/* Overlay with zoom icon and text */}
+            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center pointer-events-none">
+              <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center gap-2">
+                <div className="bg-white bg-opacity-90 rounded-full p-4 shadow-lg">
+                  <ZoomIn className="w-8 h-8 text-gray-800" />
+                </div>
+                <span className="text-white font-semibold text-sm bg-black bg-opacity-50 px-3 py-1 rounded-full">
+                  Click to view full size
+                </span>
               </div>
             </div>
-          </div>
+          </button>
 
           {/* Image counter */}
-          <div className="absolute top-4 right-4 bg-black bg-opacity-60 text-white px-3 py-1 rounded-full text-sm">
+          <div className="absolute top-4 right-4 bg-black bg-opacity-70 text-white px-3 py-1.5 rounded-full text-sm font-medium shadow-lg">
             {currentIndex + 1} / {images.length}
           </div>
         </div>
@@ -153,19 +165,26 @@ export const PhotoCarousel: React.FC<PhotoCarouselProps> = ({
         <div className="mt-4 flex space-x-2 overflow-x-auto pb-2">
           {images.map((image, index) => (
             <button
-              key={index}
+              // eslint-disable-next-line react/no-array-index-key
+              key={`thumb-${image.src.substring(image.src.length - 20)}-${index}`}
               onClick={() => setCurrentIndex(index)}
-              className={`flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
+              onDoubleClick={() => openPhotoSwipe(index)}
+              className={`group/thumb relative flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
                 index === currentIndex
                   ? 'border-blue-500 ring-2 ring-blue-200'
-                  : 'border-gray-200 hover:border-gray-300'
+                  : 'border-gray-200 hover:border-blue-300'
               }`}
+              title={index === currentIndex ? "Current image - Double click to view full size" : "Click to preview - Double click to view full size"}
             >
               <img
                 src={image.src}
                 alt={image.alt || `Thumbnail ${index + 1}`}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-transform duration-200 group-hover/thumb:scale-110"
               />
+              {/* Mini zoom icon on hover */}
+              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover/thumb:bg-opacity-40 transition-all duration-200 flex items-center justify-center pointer-events-none">
+                <ZoomIn className="w-4 h-4 text-white opacity-0 group-hover/thumb:opacity-100 transition-opacity duration-200" />
+              </div>
             </button>
           ))}
         </div>
@@ -174,9 +193,10 @@ export const PhotoCarousel: React.FC<PhotoCarouselProps> = ({
       {/* Dots Indicator */}
       {images.length > 1 && (
         <div className="flex justify-center mt-4 space-x-2">
-          {images.map((_, index) => (
+          {images.map((image, index) => (
             <button
-              key={index}
+              // eslint-disable-next-line react/no-array-index-key
+              key={`dot-${image.src.substring(image.src.length - 20)}-${index}`}
               onClick={() => setCurrentIndex(index)}
               className={`w-2 h-2 rounded-full transition-all duration-200 ${
                 index === currentIndex
