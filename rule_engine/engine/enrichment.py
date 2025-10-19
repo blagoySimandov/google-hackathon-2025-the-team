@@ -15,6 +15,8 @@ class DataEnricher:
         """Processes a single property to add all calculated scores and details."""
         prop = PropertyListing.model_validate(property_data)
         enriched_data = prop.model_dump(mode='json')
+        enriched_data['area_m2'] = property_data.get('area_m2')
+        enriched_data['ber'] = property_data.get('ber')
         lat, lon = prop.latitude, prop.longitude
 
         print(f"Enriching property ID: {prop.property_id} ({prop.address})...")
@@ -31,7 +33,11 @@ class DataEnricher:
             prop.listed_price, market_average
         )
         
-        enriched_data['air_quality_score'] = external_services.get_air_quality_score(lat, lon, MAPS_API_KEY)
+        # enriched_data['air_quality_score'] = external_services.get_air_quality_score(lat, lon, MAPS_API_KEY)
+        air_quality_score, air_quality_index, air_quality_category = external_services.get_air_quality_score(lat, lon, MAPS_API_KEY)
+        enriched_data['air_quality_score'] = air_quality_score
+        enriched_data['air_quality_index'] = air_quality_index
+        enriched_data['air_quality_category'] = air_quality_category
         
         renovation_details = external_services.get_renovation_cost(
             enriched_data['image_urls']

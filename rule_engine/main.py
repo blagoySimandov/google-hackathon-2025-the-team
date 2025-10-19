@@ -23,7 +23,6 @@ def run_single_property_analysis(doc_id: str):
         return
 
     # 3. Initialize and run the engine
-    print(SCORING_WEIGHTS)
     engine = ViabilityEngine(weights=SCORING_WEIGHTS)
     result = engine.run(property_listings)
 
@@ -32,5 +31,5 @@ def run_single_property_analysis(doc_id: str):
     print(json.dumps(result, indent=2))
 
 if __name__ == "__main__":
-    DOCUMENT_ID_TO_TEST = "3467640"
+    DOCUMENT_ID_TO_TEST = "5762962"
     run_single_property_analysis(DOCUMENT_ID_TO_TEST)
