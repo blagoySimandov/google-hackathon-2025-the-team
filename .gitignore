@@ -37,7 +37,7 @@ venv/
 .venv/
 env/
 .env/
-engine_env/ # Your specific virtual env name from the prompt
+rule_engine/engine_env/ # Your specific virtual env name from the prompt
 
 # Distribution / packaging
 /dist/
