@@ -148,7 +148,7 @@ def get_amenity_details(latitude: float, longitude: float, api_key: str) -> Amen
     """
     print("   -> Checking for amenities using Places API...")
     
-    amenity_types = ['supermarket', 'school', 'bus_station', 'train_station', 'park']
+    amenity_types = ['supermarket', 'school', 'bus_station', 'train_station', 'park', 'hospital', 'pharmacy']
     found_amenities_list = []
     
     headers = {
