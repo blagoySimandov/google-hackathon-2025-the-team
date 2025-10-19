@@ -3,7 +3,7 @@ import { GoogleMap } from './GoogleMap';
 import { PropertyCard } from './PropertyCard';
 import { PropertyFilters } from './PropertyFilters';
 import { MobileDrawer } from './MobileDrawer';
-import { filterOptions } from '../data/mockData';
+import { filterOptions } from '../utils/scoreUtils';
 import { Property } from '../types';
 import { apiService } from '../services/apiService';
 import { MapProperty } from '../services/firebaseService';

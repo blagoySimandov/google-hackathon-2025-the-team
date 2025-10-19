@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Wrapper, Status } from '@googlemaps/react-wrapper';
 import { Property } from '../types';
 import { MapProperty } from '../services/firebaseService';
-import { getScoreColor } from '../data/mockData';
+import { getScoreColor } from '../utils/scoreUtils';
 import { PropertyPopover } from './PropertyPopover';
 
 // Union type for properties that can be displayed on the map

@@ -14,7 +14,7 @@ import {
   DocumentSnapshot
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
-import { Schema as ApiProperty } from '../backend/scheme_of_api';
+import { Schema as ApiProperty, Currency } from '../backend/scheme_of_api';
 import { Property } from '../types';
 
 // Collection name for properties in Firestore
@@ -55,6 +55,15 @@ function transformFirestoreToProperty(doc: QueryDocumentSnapshot<DocumentData>):
   const data = doc.data() as any; // Use any since the structure is different
   
   console.log('🔄 Transforming document:', doc.id, 'Data keys:', Object.keys(data));
+  console.log('💰 Price data:', data.price);
+  console.log('💰 NonFormatted data:', data.nonFormatted);
+  console.log('💰 PriceHistory data:', data.priceHistory);
+  console.log('💰 All price-related fields:', {
+    price: data.price,
+    nonFormatted: data.nonFormatted,
+    priceHistory: data.priceHistory,
+    stampDutyValue: data.stampDutyValue
+  });
   
   // Transform coordinates from your Firebase structure
   let transformedCoordinates = { lat: 53.3498, lng: -6.2603 }; // Default to Dublin
@@ -80,11 +89,143 @@ function transformFirestoreToProperty(doc: QueryDocumentSnapshot<DocumentData>):
     seoFriendlyPath: data.seoFriendlyPath || '',
     propertyType: data.propertyType || 'Property',
     sections: data.sections || ['Residential'],
-    price: data.price ? {
-      amount: data.price.amount || 0,
-      currency: data.price.currency || 'EUR',
-      formatted: data.price.formatted || '€0'
-    } : undefined,
+    price: (() => {
+      // Helper function to parse price from string
+      const parsePriceFromString = (priceStr: string): number | null => {
+        if (!priceStr || typeof priceStr !== 'string') return null;
+        
+        // Remove currency symbols and commas, then parse
+        const cleaned = priceStr.replace(/[€$£,]/g, '').trim();
+        const parsed = parseFloat(cleaned);
+        return isNaN(parsed) ? null : parsed;
+      };
+      
+      // Helper function to extract price from object
+      const extractPriceFromObject = (obj: any): number | null => {
+        if (!obj || typeof obj !== 'object') return null;
+        
+        // Try different possible number fields
+        const possibleFields = ['amount', 'value', 'price', 'total', 'cost'];
+        for (const field of possibleFields) {
+          if (obj[field] !== undefined) {
+            if (typeof obj[field] === 'number' && obj[field] > 0) {
+              return obj[field];
+            }
+            if (typeof obj[field] === 'string') {
+              const parsed = parsePriceFromString(obj[field]);
+              if (parsed && parsed > 0) return parsed;
+            }
+          }
+        }
+        return null;
+      };
+      
+      // Try different possible price fields from your Firebase structure
+      
+      // Check if price is a direct number
+      if (typeof data.price === 'number' && data.price > 0) {
+        return {
+          amount: data.price,
+          currency: Currency.Eur,
+          formatted: `€${data.price.toLocaleString()}`
+        };
+      }
+      
+      // Check if price is a string (like "€150,000")
+      if (typeof data.price === 'string') {
+        const parsedPrice = parsePriceFromString(data.price);
+        if (parsedPrice && parsedPrice > 0) {
+        return {
+          amount: parsedPrice,
+          currency: Currency.Eur,
+          formatted: data.price // Use original formatted string
+        };
+        }
+      }
+      
+      // Check if price is an object with amount/value/price
+      if (data.price && typeof data.price === 'object') {
+        const extractedPrice = extractPriceFromObject(data.price);
+        if (extractedPrice && extractedPrice > 0) {
+          return {
+            amount: extractedPrice,
+            currency: Currency.Eur,
+            formatted: data.price.formatted || `€${extractedPrice.toLocaleString()}`
+          };
+        }
+      }
+      
+      // Check nonFormatted field (could be object or string)
+      if (data.nonFormatted) {
+        if (typeof data.nonFormatted === 'number' && data.nonFormatted > 0) {
+          return {
+            amount: data.nonFormatted,
+            currency: Currency.Eur,
+            formatted: `€${data.nonFormatted.toLocaleString()}`
+          };
+        }
+        if (typeof data.nonFormatted === 'string') {
+          const parsedPrice = parsePriceFromString(data.nonFormatted);
+          if (parsedPrice && parsedPrice > 0) {
+            return {
+              amount: parsedPrice,
+              currency: Currency.Eur,
+              formatted: data.nonFormatted
+            };
+          }
+        }
+        if (typeof data.nonFormatted === 'object') {
+          const extractedPrice = extractPriceFromObject(data.nonFormatted);
+          if (extractedPrice && extractedPrice > 0) {
+            return {
+              amount: extractedPrice,
+              currency: Currency.Eur,
+              formatted: `€${extractedPrice.toLocaleString()}`
+            };
+          }
+        }
+      }
+      
+      // Check priceHistory for current price
+      if (data.priceHistory && Array.isArray(data.priceHistory) && data.priceHistory.length > 0) {
+        const latestPrice = data.priceHistory[data.priceHistory.length - 1];
+        if (latestPrice) {
+          const extractedPrice = extractPriceFromObject(latestPrice);
+          if (extractedPrice && extractedPrice > 0) {
+            return {
+              amount: extractedPrice,
+              currency: Currency.Eur,
+              formatted: latestPrice.formatted || `€${extractedPrice.toLocaleString()}`
+            };
+          }
+        }
+      }
+      
+      // Check stampDutyValue as fallback
+      if (data.stampDutyValue) {
+        if (typeof data.stampDutyValue === 'number' && data.stampDutyValue > 0) {
+          return {
+            amount: data.stampDutyValue,
+            currency: Currency.Eur,
+            formatted: `€${data.stampDutyValue.toLocaleString()}`
+          };
+        }
+        if (typeof data.stampDutyValue === 'string') {
+          const parsedPrice = parsePriceFromString(data.stampDutyValue);
+          if (parsedPrice && parsedPrice > 0) {
+            return {
+              amount: parsedPrice,
+              currency: Currency.Eur,
+              formatted: data.stampDutyValue
+            };
+          }
+        }
+      }
+      
+      // Return undefined if no valid price found
+      console.log('❌ No valid price found for property:', doc.id);
+      return undefined;
+    })(),
     bedrooms: data.numBedrooms || 0,
     bathrooms: data.numBathrooms || 0,
     location: {
@@ -377,10 +518,133 @@ function transformFirestoreToMapProperty(doc: QueryDocumentSnapshot<DocumentData
     id: data.id || doc.id,
     coordinates: transformedCoordinates,
     title: data.title || 'Untitled Property',
-    price: data.price ? {
-      amount: data.price.amount || 0,
-      formatted: data.price.formatted || '€0'
-    } : undefined,
+    price: (() => {
+      // Helper function to parse price from string
+      const parsePriceFromString = (priceStr: string): number | null => {
+        if (!priceStr || typeof priceStr !== 'string') return null;
+        
+        // Remove currency symbols and commas, then parse
+        const cleaned = priceStr.replace(/[€$£,]/g, '').trim();
+        const parsed = parseFloat(cleaned);
+        return isNaN(parsed) ? null : parsed;
+      };
+      
+      // Helper function to extract price from object
+      const extractPriceFromObject = (obj: any): number | null => {
+        if (!obj || typeof obj !== 'object') return null;
+        
+        // Try different possible number fields
+        const possibleFields = ['amount', 'value', 'price', 'total', 'cost'];
+        for (const field of possibleFields) {
+          if (obj[field] !== undefined) {
+            if (typeof obj[field] === 'number' && obj[field] > 0) {
+              return obj[field];
+            }
+            if (typeof obj[field] === 'string') {
+              const parsed = parsePriceFromString(obj[field]);
+              if (parsed && parsed > 0) return parsed;
+            }
+          }
+        }
+        return null;
+      };
+      
+      // Try different possible price fields from your Firebase structure
+      
+      // Check if price is a direct number
+      if (typeof data.price === 'number' && data.price > 0) {
+        return {
+          amount: data.price,
+          formatted: `€${data.price.toLocaleString()}`
+        };
+      }
+      
+      // Check if price is a string (like "€150,000")
+      if (typeof data.price === 'string') {
+        const parsedPrice = parsePriceFromString(data.price);
+        if (parsedPrice && parsedPrice > 0) {
+          return {
+            amount: parsedPrice,
+            formatted: data.price // Use original formatted string
+          };
+        }
+      }
+      
+      // Check if price is an object with amount/value/price
+      if (data.price && typeof data.price === 'object') {
+        const extractedPrice = extractPriceFromObject(data.price);
+        if (extractedPrice && extractedPrice > 0) {
+          return {
+            amount: extractedPrice,
+            formatted: data.price.formatted || `€${extractedPrice.toLocaleString()}`
+          };
+        }
+      }
+      
+      // Check nonFormatted field (could be object or string)
+      if (data.nonFormatted) {
+        if (typeof data.nonFormatted === 'number' && data.nonFormatted > 0) {
+          return {
+            amount: data.nonFormatted,
+            formatted: `€${data.nonFormatted.toLocaleString()}`
+          };
+        }
+        if (typeof data.nonFormatted === 'string') {
+          const parsedPrice = parsePriceFromString(data.nonFormatted);
+          if (parsedPrice && parsedPrice > 0) {
+            return {
+              amount: parsedPrice,
+              formatted: data.nonFormatted
+            };
+          }
+        }
+        if (typeof data.nonFormatted === 'object') {
+          const extractedPrice = extractPriceFromObject(data.nonFormatted);
+          if (extractedPrice && extractedPrice > 0) {
+            return {
+              amount: extractedPrice,
+              formatted: `€${extractedPrice.toLocaleString()}`
+            };
+          }
+        }
+      }
+      
+      // Check priceHistory for current price
+      if (data.priceHistory && Array.isArray(data.priceHistory) && data.priceHistory.length > 0) {
+        const latestPrice = data.priceHistory[data.priceHistory.length - 1];
+        if (latestPrice) {
+          const extractedPrice = extractPriceFromObject(latestPrice);
+          if (extractedPrice && extractedPrice > 0) {
+            return {
+              amount: extractedPrice,
+              formatted: latestPrice.formatted || `€${extractedPrice.toLocaleString()}`
+            };
+          }
+        }
+      }
+      
+      // Check stampDutyValue as fallback
+      if (data.stampDutyValue) {
+        if (typeof data.stampDutyValue === 'number' && data.stampDutyValue > 0) {
+          return {
+            amount: data.stampDutyValue,
+            formatted: `€${data.stampDutyValue.toLocaleString()}`
+          };
+        }
+        if (typeof data.stampDutyValue === 'string') {
+          const parsedPrice = parsePriceFromString(data.stampDutyValue);
+          if (parsedPrice && parsedPrice > 0) {
+            return {
+              amount: parsedPrice,
+              formatted: data.stampDutyValue
+            };
+          }
+        }
+      }
+      
+      // Return undefined if no valid price found
+      return undefined;
+    })(),
     propertyType: data.propertyType || 'Property',
     communityValueScore,
     beforeImage: data.media?.images?.[0]?.size1440x960 || '',

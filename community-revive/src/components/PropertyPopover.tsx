@@ -1,7 +1,7 @@
 import React from 'react';
 import { Property } from '../types';
 import { Card, CardContent } from './ui/Card';
-import { getScoreColor } from '../data/mockData';
+import { getScoreColor } from '../utils/scoreUtils';
 
 interface PropertyPopoverProps {
   property: Property;

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Property } from '../types';
 import { Card, CardContent, CardHeader } from './ui/Card';
 import { Button } from './ui/Button';
-import { getScoreColor } from '../data/mockData';
+import { PhotoCarousel } from './PhotoCarousel';
+import { getScoreColor } from '../utils/scoreUtils';
 import { 
   School, 
   Trees, 
@@ -14,10 +15,9 @@ import {
   Square,
   Calendar,
   ArrowLeft,
-  Download,
-  CheckCircle
+  CheckCircle,
+  ZoomIn
 } from 'lucide-react';
-import * as Dialog from '@radix-ui/react-dialog';
 import * as Progress from '@radix-ui/react-progress';
 
 interface PropertyDetailsProps {
@@ -29,7 +29,6 @@ export const PropertyDetails: React.FC<PropertyDetailsProps> = ({
   property,
   onBack,
 }) => {
-  const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
   const scoreColor = getScoreColor(property.communityValueScore);
 
   const formatCurrency = (amount: number, currency: string = 'EUR') => {
@@ -61,10 +60,15 @@ export const PropertyDetails: React.FC<PropertyDetailsProps> = ({
               <span>Back to Map</span>
             </Button>
             <div className="flex-1">
-              <h1 className="text-2xl font-bold text-gray-900">{property.address}</h1>
+              <h1 className="text-2xl font-bold text-gray-900">{property.title}</h1>
               <p className="text-gray-600">
-                {property.city}, {property.state} {property.zipCode}
+                {property.address}, {property.city}, {property.state}
               </p>
+              {property.propertyType && (
+                <p className="text-sm text-gray-500 mt-1">
+                  {property.propertyType.charAt(0).toUpperCase() + property.propertyType.slice(1)}
+                </p>
+              )}
             </div>
             <div className="text-right">
               <div
@@ -80,19 +84,56 @@ export const PropertyDetails: React.FC<PropertyDetailsProps> = ({
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Hero Image */}
+        {/* Photo Carousel */}
         <div className="mb-8">
-          <div className="relative rounded-lg overflow-hidden shadow-lg">
-            <img
-              src={property.beforeImage}
-              alt={property.address}
-              className="w-full h-64 lg:h-80 object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-            <div className="absolute bottom-4 left-4 text-white">
-              <h2 className="text-2xl font-bold mb-2">{property.impactStory.title}</h2>
-              <p className="text-lg opacity-90">{property.impactStory.description}</p>
-            </div>
+          <PhotoCarousel
+            images={(() => {
+              // Create images array from property data
+              const images = [];
+              
+              // Add main before image if available
+              if (property.beforeImage) {
+                images.push({
+                  src: property.beforeImage,
+                  alt: property.title,
+                  width: 1200,
+                  height: 800
+                });
+              }
+              
+              // Add additional images from media if available
+              if (property.media?.images && Array.isArray(property.media.images)) {
+                property.media.images.forEach((image, index) => {
+                  if (image.size1440x960 && image.size1440x960 !== property.beforeImage) {
+                    images.push({
+                      src: image.size1440x960,
+                      alt: `${property.title} - Image ${index + 1}`,
+                      width: 1440,
+                      height: 960
+                    });
+                  }
+                });
+              }
+              
+              // If no images found, add a placeholder
+              if (images.length === 0) {
+                images.push({
+                  src: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwMCIgaGVpZ2h0PSI4MDAiIHZpZXdCb3g9IjAgMCAxMjAwIDgwMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iODAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik01NjAgMzIwSDY0MFY0ODBINjAwVjM0MEg1NjBWMzIwWiIgZmlsbD0iIzlDQTNBRiIvPgo8cGF0aCBkPSJNNTIwIDM2MEg2ODBWNDQwSDUyMFYzNjBaIiBmaWxsPSIjOUNBM0FGIi8+Cjx0ZXh0IHg9IjYwMCIgeT0iNTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNkI3MjgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTgiPk5vIEltYWdlIEF2YWlsYWJsZTwvdGV4dD4KPC9zdmc+',
+                  alt: 'No image available',
+                  width: 1200,
+                  height: 800
+                });
+              }
+              
+              return images;
+            })()}
+            className="w-full"
+          />
+          
+          {/* Impact Story Overlay */}
+          <div className="mt-4 p-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg text-white">
+            <h2 className="text-2xl font-bold mb-2">{property.impactStory.title}</h2>
+            <p className="text-lg opacity-90">{property.impactStory.description}</p>
           </div>
         </div>
 
@@ -162,6 +203,18 @@ export const PropertyDetails: React.FC<PropertyDetailsProps> = ({
                 </ul>
               </CardContent>
             </Card>
+
+            {/* Property Description */}
+            {property.description && (
+              <Card>
+                <CardHeader>
+                  <h3 className="text-lg font-semibold">Property Description</h3>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-700 leading-relaxed">{property.description}</p>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Community Voice */}
             {property.communityVoice && (
@@ -234,6 +287,28 @@ export const PropertyDetails: React.FC<PropertyDetailsProps> = ({
                     <div>
                       <p className="text-sm font-medium">BER {property.ber.rating}</p>
                       <p className="text-xs text-gray-600">Energy Rating</p>
+                    </div>
+                  </div>
+                )}
+
+                {property.seller && (
+                  <div className="flex items-center space-x-3">
+                    <div className="w-5 h-5 text-gray-400">🏢</div>
+                    <div>
+                      <p className="text-sm font-medium">{property.seller.name}</p>
+                      <p className="text-xs text-gray-600">Estate Agent</p>
+                    </div>
+                  </div>
+                )}
+
+                {property.dates.publishDate && (
+                  <div className="flex items-center space-x-3">
+                    <Calendar className="w-5 h-5 text-gray-400" />
+                    <div>
+                      <p className="text-sm font-medium">
+                        Listed {new Date(property.dates.publishDate).toLocaleDateString()}
+                      </p>
+                      <p className="text-xs text-gray-600">Date Listed</p>
                     </div>
                   </div>
                 )}
@@ -311,12 +386,15 @@ export const PropertyDetails: React.FC<PropertyDetailsProps> = ({
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Original Price</span>
                     <span className="text-lg font-bold text-primary-600">
-                      {property.price.formatted}
+                      {/* Use price.amount and price.currency directly from DB, fallback to formatted if available */}
+                      {property.price && typeof property.price.amount === 'number'
+                        ? formatCurrency(property.price.amount, property.price.currency || 'EUR')
+                        : (property.price?.formatted || 'N/A')}
                     </span>
                   </div>
                   {property.features && property.features.length > 0 && (
                     <div>
-                      <p className="text-sm font-medium mb-2">Features</p>
+                      <p className="text-sm font-medium mb-2">Property Features</p>
                       <div className="flex flex-wrap gap-2">
                         {property.features.map((feature) => (
                           <span key={feature} className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded">
@@ -324,6 +402,109 @@ export const PropertyDetails: React.FC<PropertyDetailsProps> = ({
                           </span>
                         ))}
                       </div>
+                    </div>
+                  )}
+
+                  {property.sections && property.sections.length > 0 && (
+                    <div>
+                      <p className="text-sm font-medium mb-2">Property Type</p>
+                      <div className="flex flex-wrap gap-2">
+                        {property.sections.map((section) => (
+                          <span key={section} className="text-xs bg-green-50 text-green-700 px-2 py-1 rounded">
+                            {section}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {property.metadata?.sellingType && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Selling Type</span>
+                      <span className="text-sm text-gray-600">{property.metadata.sellingType}</span>
+                    </div>
+                  )}
+
+                  {property.metadata?.category && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Category</span>
+                      <span className="text-sm text-gray-600">{property.metadata.category}</span>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Photo Gallery */}
+            {property.media && property.media.images && property.media.images.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <h3 className="text-lg font-semibold">Photo Gallery</h3>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-2">
+                    {property.media.images.slice(0, 6).map((image, index) => (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          // This would need to be handled by the PhotoCarousel component
+                          // For now, just show the image
+                          console.log('Gallery image clicked:', index);
+                        }}
+                        className="relative group overflow-hidden rounded-lg aspect-square"
+                      >
+                        <img
+                          src={image.size1440x960}
+                          alt={`Property ${index + 1}`}
+                          className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
+                          <ZoomIn className="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                        </div>
+                      </button>
+                    ))}
+                    {property.media.images.length > 6 && (
+                      <div className="flex items-center justify-center bg-gray-100 rounded-lg aspect-square">
+                        <span className="text-sm text-gray-600">
+                          +{property.media.images.length - 6} more
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Media Information */}
+            {property.media && (
+              <Card>
+                <CardHeader>
+                  <h3 className="text-lg font-semibold">Media & Tours</h3>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Total Images</span>
+                    <span className="text-sm text-gray-600">{property.media.totalImages}</span>
+                  </div>
+                  
+                  {property.media.hasVideo && (
+                    <div className="flex items-center space-x-2 text-sm">
+                      <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                      <span>Video Available</span>
+                    </div>
+                  )}
+                  
+                  {property.media.hasVirtualTour && (
+                    <div className="flex items-center space-x-2 text-sm">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                      <span>Virtual Tour Available</span>
+                    </div>
+                  )}
+                  
+                  {property.media.hasBrochure && (
+                    <div className="flex items-center space-x-2 text-sm">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span>Brochure Available</span>
                     </div>
                   )}
                 </CardContent>
