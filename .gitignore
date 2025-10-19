@@ -1,3 +1,72 @@
 .claude/settings.local.json
 .DS_Store
 daft-scraper/.claude
+daft-scraper/cleaning/.venv
+daft-scraper/cleaning/.claude
+daft-scraper/all-properties.json
+daft-scraper/80-derelict-properties.json
+daft-scraper/cleaning/cleaned_properties.json
+node_modules
+node_modules/.package-lock.json
+node_modules
+node_modules/.package-lock.json
+node_modules/.package-lock.json
+node_modules/.package-lock.json
+node_modules/.package-lock.json
+node_modules/.package-lock.json
+node_modules/.package-lock.json
+node_modules/.package-lock.json
+node_modules/.package-lock.json
+node_modules/.package-lock.json
+node_modules/
+
+firebase/functions/lib
+
+.env
+
+# --- Python ---
+# Byte-compiled / optimized / C-extensions
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+# The virtual environment should be created by each developer and not be in version control.
+# Common names for virtual environment folders:
+venv/
+.venv/
+env/
+.env/
+rule_engine/engine_env/ # Your specific virtual env name from the prompt
+
+# Distribution / packaging
+/dist/
+/build/
+*.egg-info/
+*.egg
+
+# --- IDE & Editor Configuration ---
+# Visual Studio Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# --- Operating System Files ---
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# --- Testing & Coverage ---
+# Test results and coverage reports
+.pytest_cache/
+.coverage
+htmlcov/
+
+# --- Logs ---
+# Any log files generated during runtime
+*.log
+logs/
+average-pricing-scraper/.claude

@@ -4,6 +4,13 @@ module.exports = {
     es6: true,
     node: true,
   },
+  settings: {
+    "import/resolver": {
+      node: {
+        extensions: [".js", ".jsx", ".ts", ".tsx"],
+      },
+    },
+  },
   extends: [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
@@ -25,7 +32,7 @@ module.exports = {
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
 
-    "object-curly-spacing": ["warn", "never"],
+    "object-curly-spacing": "off",
     indent: ["warn", 2],
     quotes: ["off"],
     semi: ["off"],
@@ -33,6 +40,7 @@ module.exports = {
     "no-mixed-spaces-and-tabs": "off",
 
     "import/order": "off",
+    "import/no-unresolved": "off",
 
     "no-console": "off",
   },

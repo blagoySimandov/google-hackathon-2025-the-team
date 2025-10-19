@@ -1,0 +1,5256 @@
+{
+  "dublin": {
+    "towns": [
+      {
+        "town": "Lucan",
+        "price": "€465,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.36879,
+            "lng": -6.4014899
+          },
+          "southwest": {
+            "lat": 53.3206001,
+            "lng": -6.4776399
+          }
+        }
+      },
+      {
+        "town": "Tallaght",
+        "price": "€335,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.2991542,
+            "lng": -6.3326359
+          },
+          "southwest": {
+            "lat": 53.2790099,
+            "lng": -6.3850313
+          }
+        }
+      },
+      {
+        "town": "Swords",
+        "price": "€415,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.4762299,
+            "lng": -6.192719899999999
+          },
+          "southwest": {
+            "lat": 53.4393701,
+            "lng": -6.255840099999999
+          }
+        }
+      },
+      {
+        "town": "Clondalkin",
+        "price": "€352,150",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3386485,
+            "lng": -6.367030199999999
+          },
+          "southwest": {
+            "lat": 53.3046956,
+            "lng": -6.4319999
+          }
+        }
+      },
+      {
+        "town": "Rathfarnham",
+        "price": "€670,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3050192,
+            "lng": -6.2666374
+          },
+          "southwest": {
+            "lat": 53.2854274,
+            "lng": -6.2891001
+          }
+        }
+      },
+      {
+        "town": "Hollystown",
+        "price": "€485,979",
+        "bounds": {
+          "northeast": {
+            "lat": 53.4338257,
+            "lng": -6.3706171
+          },
+          "southwest": {
+            "lat": 53.42394119999999,
+            "lng": -6.3901387
+          }
+        }
+      },
+      {
+        "town": "Raheny",
+        "price": "€560,391"
+      },
+      {
+        "town": "Balbriggan",
+        "price": "€327,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.6198,
+            "lng": -6.1645299
+          },
+          "southwest": {
+            "lat": 53.5941899,
+            "lng": -6.2139001
+          }
+        }
+      },
+      {
+        "town": "Castleknock",
+        "price": "€550,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3797839,
+            "lng": -6.298646799999999
+          },
+          "southwest": {
+            "lat": 53.3544249,
+            "lng": -6.353411899999999
+          }
+        }
+      },
+      {
+        "town": "Blackrock",
+        "price": "€875,000"
+      },
+      {
+        "town": "Malahide",
+        "price": "€735,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.45771,
+            "lng": -6.1302199
+          },
+          "southwest": {
+            "lat": 53.43207,
+            "lng": -6.1911
+          }
+        }
+      },
+      {
+        "town": "Shankill",
+        "price": "€540,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.8651387,
+            "lng": -8.1691471
+          },
+          "southwest": {
+            "lat": 53.8174315,
+            "lng": -8.3393604
+          }
+        }
+      },
+      {
+        "town": "Clontarf",
+        "price": "€724,999"
+      },
+      {
+        "town": "Dun Laoghaire",
+        "price": "€636,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3041655,
+            "lng": -6.1237378
+          },
+          "southwest": {
+            "lat": 53.2865204,
+            "lng": -6.1640346
+          }
+        }
+      },
+      {
+        "town": "Rush",
+        "price": "€457,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.53914,
+            "lng": -6.07543
+          },
+          "southwest": {
+            "lat": 53.51006,
+            "lng": -6.12456
+          }
+        }
+      },
+      {
+        "town": "Foxrock",
+        "price": "€972,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.2736174,
+            "lng": -6.166553
+          },
+          "southwest": {
+            "lat": 53.2622288,
+            "lng": -6.1859953
+          }
+        }
+      },
+      {
+        "town": "Dundrum",
+        "price": "€700,000"
+      },
+      {
+        "town": "Clonsilla",
+        "price": "€420,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.392683,
+            "lng": -6.408993199999999
+          },
+          "southwest": {
+            "lat": 53.379512,
+            "lng": -6.4350095
+          }
+        }
+      },
+      {
+        "town": "Drumcondra",
+        "price": "€550,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3786376,
+            "lng": -6.2381139
+          },
+          "southwest": {
+            "lat": 53.3570681,
+            "lng": -6.2717689
+          }
+        }
+      },
+      {
+        "town": "Glasnevin",
+        "price": "€586,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3955929,
+            "lng": -6.249738499999999
+          },
+          "southwest": {
+            "lat": 53.364346,
+            "lng": -6.2946616
+          }
+        }
+      },
+      {
+        "town": "Ballsbridge",
+        "price": "€778,000"
+      },
+      {
+        "town": "Crumlin",
+        "price": "€441,428",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3171113,
+            "lng": -6.3060213
+          },
+          "southwest": {
+            "lat": 53.311018,
+            "lng": -6.331435700000001
+          }
+        }
+      },
+      {
+        "town": "Killiney",
+        "price": "€650,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.2670945,
+            "lng": -6.110438299999999
+          },
+          "southwest": {
+            "lat": 53.2393762,
+            "lng": -6.1513819
+          }
+        }
+      },
+      {
+        "town": "Sandyford",
+        "price": "€446,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.2855983,
+            "lng": -6.2008066
+          },
+          "southwest": {
+            "lat": 53.2625436,
+            "lng": -6.2492097
+          }
+        }
+      },
+      {
+        "town": "Terenure",
+        "price": "€713,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3235379,
+            "lng": -6.278784099999999
+          },
+          "southwest": {
+            "lat": 53.2986949,
+            "lng": -6.3028868
+          }
+        }
+      },
+      {
+        "town": "Portmarnock",
+        "price": "€718,348",
+        "bounds": {
+          "northeast": {
+            "lat": 53.44238,
+            "lng": -6.122160099999999
+          },
+          "southwest": {
+            "lat": 53.4184399,
+            "lng": -6.14253
+          }
+        }
+      },
+      {
+        "town": "Donabate",
+        "price": "€490,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.49737,
+            "lng": -6.131879899999999
+          },
+          "southwest": {
+            "lat": 53.48325,
+            "lng": -6.161359999999999
+          }
+        }
+      },
+      {
+        "town": "Artane",
+        "price": "€483,500"
+      },
+      {
+        "town": "Santry",
+        "price": "€440,750",
+        "bounds": {
+          "northeast": {
+            "lat": 53.4085015,
+            "lng": -6.2276303
+          },
+          "southwest": {
+            "lat": 53.3970352,
+            "lng": -6.2471669
+          }
+        }
+      },
+      {
+        "town": "Finglas",
+        "price": "€321,000"
+      },
+      {
+        "town": "Ballyfermot",
+        "price": "€327,000"
+      },
+      {
+        "town": "Templeogue",
+        "price": "€699,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3067801,
+            "lng": -6.3018527
+          },
+          "southwest": {
+            "lat": 53.286766,
+            "lng": -6.3349476
+          }
+        }
+      },
+      {
+        "town": "Blanchardstown",
+        "price": "€350,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3917925,
+            "lng": -6.359323
+          },
+          "southwest": {
+            "lat": 53.3748389,
+            "lng": -6.3917968
+          }
+        }
+      },
+      {
+        "town": "Skerries",
+        "price": "€549,999",
+        "bounds": {
+          "northeast": {
+            "lat": 53.58647,
+            "lng": -6.0995301
+          },
+          "southwest": {
+            "lat": 53.56775,
+            "lng": -6.1396
+          }
+        }
+      },
+      {
+        "town": "Leopardstown",
+        "price": "€765,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.27316500000001,
+            "lng": -6.1840169
+          },
+          "southwest": {
+            "lat": 53.26111119999999,
+            "lng": -6.206236199999999
+          }
+        }
+      },
+      {
+        "town": "Lusk",
+        "price": "€485,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.5331601,
+            "lng": -6.15599
+          },
+          "southwest": {
+            "lat": 53.51464989999999,
+            "lng": -6.18561
+          }
+        }
+      },
+      {
+        "town": "Stillorgan",
+        "price": "€670,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.29676629999999,
+            "lng": -6.1874573
+          },
+          "southwest": {
+            "lat": 53.2831801,
+            "lng": -6.214770199999999
+          }
+        }
+      },
+      {
+        "town": "Citywest",
+        "price": "€504,000"
+      },
+      {
+        "town": "Balmoston",
+        "price": "€460,000"
+      },
+      {
+        "town": "Donnybrook",
+        "price": "€707,000"
+      },
+      {
+        "town": "Sandymount",
+        "price": "€942,500"
+      },
+      {
+        "town": "Drimnagh",
+        "price": "€421,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3380605,
+            "lng": -6.3263585
+          },
+          "southwest": {
+            "lat": 53.3159208,
+            "lng": -6.3593436
+          }
+        }
+      },
+      {
+        "town": "Rathmines",
+        "price": "€727,667",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3301384,
+            "lng": -6.23227
+          },
+          "southwest": {
+            "lat": 53.3076508,
+            "lng": -6.2794181
+          }
+        }
+      },
+      {
+        "town": "Church Fields East",
+        "price": "€399,974",
+        "bounds": {
+          "northeast": {
+            "lat": 51.9092964,
+            "lng": -8.4905182
+          },
+          "southwest": {
+            "lat": 51.90801769999999,
+            "lng": -8.4923595
+          }
+        }
+      },
+      {
+        "town": "Kinsealy",
+        "price": "€595,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.4536643,
+            "lng": -6.1455604
+          },
+          "southwest": {
+            "lat": 53.41092709999999,
+            "lng": -6.2141968
+          }
+        }
+      },
+      {
+        "town": "Walkinstown",
+        "price": "€505,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3285569,
+            "lng": -6.3150328
+          },
+          "southwest": {
+            "lat": 53.3162708,
+            "lng": -6.3460147
+          }
+        }
+      },
+      {
+        "town": "Dalkey",
+        "price": "€1,312,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.2814687,
+            "lng": -6.0911314
+          },
+          "southwest": {
+            "lat": 53.2671529,
+            "lng": -6.1183949
+          }
+        }
+      },
+      {
+        "town": "Ranelagh",
+        "price": "€1,010,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3320769,
+            "lng": -6.240797799999999
+          },
+          "southwest": {
+            "lat": 53.3132229,
+            "lng": -6.2633966
+          }
+        }
+      },
+      {
+        "town": "Inchicore",
+        "price": "€434,780",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3410182,
+            "lng": -6.3065167
+          },
+          "southwest": {
+            "lat": 53.325953,
+            "lng": -6.3504594
+          }
+        }
+      },
+      {
+        "town": "Sutton",
+        "price": "€700,000"
+      },
+      {
+        "town": "Adamstown",
+        "price": "€549,999",
+        "bounds": {
+          "northeast": {
+            "lat": 53.338106,
+            "lng": -6.4449025
+          },
+          "southwest": {
+            "lat": 53.3308826,
+            "lng": -6.458519799999999
+          }
+        }
+      },
+      {
+        "town": "Clonee",
+        "price": "€405,000"
+      },
+      {
+        "town": "Clonburris",
+        "price": "€479,999",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3300464,
+            "lng": -6.3958474
+          },
+          "southwest": {
+            "lat": 53.32189229999999,
+            "lng": -6.4234426
+          }
+        }
+      },
+      {
+        "town": "Coolock",
+        "price": "€375,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.4085339,
+            "lng": -6.164302999999999
+          },
+          "southwest": {
+            "lat": 53.381391,
+            "lng": -6.235181799999999
+          }
+        }
+      },
+      {
+        "town": "Kilcarbery Grange",
+        "price": "€465,000"
+      },
+      {
+        "town": "Baldoyle",
+        "price": "€459,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.4187275,
+            "lng": -6.1203677
+          },
+          "southwest": {
+            "lat": 53.3914425,
+            "lng": -6.1688568
+          }
+        }
+      },
+      {
+        "town": "Knocklyon",
+        "price": "€625,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.2919515,
+            "lng": -6.305618399999999
+          },
+          "southwest": {
+            "lat": 53.2731258,
+            "lng": -6.33554
+          }
+        }
+      },
+      {
+        "town": "Rathcoole",
+        "price": "€477,000"
+      },
+      {
+        "town": "Cabra",
+        "price": "€460,000"
+      },
+      {
+        "town": "Carrickmines",
+        "price": "€727,000"
+      },
+      {
+        "town": "Saggart",
+        "price": "€360,000"
+      },
+      {
+        "town": "Stepaside",
+        "price": "€458,000"
+      },
+      {
+        "town": "Cabinteely",
+        "price": "€620,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.2688415,
+            "lng": -6.1478492
+          },
+          "southwest": {
+            "lat": 53.2567916,
+            "lng": -6.170988599999999
+          }
+        }
+      },
+      {
+        "town": "Phibsborough",
+        "price": "€395,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3692919,
+            "lng": -6.2583388
+          },
+          "southwest": {
+            "lat": 53.3542144,
+            "lng": -6.286375
+          }
+        }
+      },
+      {
+        "town": "Ballymun",
+        "price": "€270,956"
+      },
+      {
+        "town": "Harolds Cross",
+        "price": "€581,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3307089,
+            "lng": -6.275519999999999
+          },
+          "southwest": {
+            "lat": 53.3195165,
+            "lng": -6.2967748
+          }
+        }
+      },
+      {
+        "town": "Palmerstown",
+        "price": "€450,000"
+      },
+      {
+        "town": "Mulhuddart",
+        "price": "€330,000"
+      },
+      {
+        "town": "Bray",
+        "price": "€549,999",
+        "bounds": {
+          "northeast": {
+            "lat": 53.21507,
+            "lng": -6.0882999
+          },
+          "southwest": {
+            "lat": 53.17897,
+            "lng": -6.13833
+          }
+        }
+      },
+      {
+        "town": "Rathgar",
+        "price": "€878,000"
+      },
+      {
+        "town": "Beaumont",
+        "price": "€507,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3944086,
+            "lng": -6.2011568
+          },
+          "southwest": {
+            "lat": 53.3755046,
+            "lng": -6.2392005
+          }
+        }
+      },
+      {
+        "town": "Clonskeagh",
+        "price": "€870,000"
+      },
+      {
+        "town": "Churchtown",
+        "price": "€698,750"
+      },
+      {
+        "town": "Whitehall",
+        "price": "€469,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.399075,
+            "lng": -6.2332683
+          },
+          "southwest": {
+            "lat": 53.3738258,
+            "lng": -6.2658789
+          }
+        }
+      },
+      {
+        "town": "Milltown",
+        "price": "€600,000"
+      },
+      {
+        "town": "Ballinteer",
+        "price": "€627,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.2846978,
+            "lng": -6.2443624
+          },
+          "southwest": {
+            "lat": 53.27015590000001,
+            "lng": -6.267059
+          }
+        }
+      },
+      {
+        "town": "Fairview",
+        "price": "€475,000"
+      },
+      {
+        "town": "Newcastle",
+        "price": "€430,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.2841397,
+            "lng": -7.7458562
+          },
+          "southwest": {
+            "lat": 52.2106498,
+            "lng": -7.859923200000001
+          }
+        }
+      },
+      {
+        "town": "Kilmainham",
+        "price": "€407,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3475389,
+            "lng": -6.3077372
+          },
+          "southwest": {
+            "lat": 53.338832,
+            "lng": -6.3390418
+          }
+        }
+      },
+      {
+        "town": "Kimmage",
+        "price": "€490,750",
+        "bounds": {
+          "northeast": {
+            "lat": 53.312158,
+            "lng": -6.297456299999999
+          },
+          "southwest": {
+            "lat": 53.2985148,
+            "lng": -6.3169289
+          }
+        }
+      },
+      {
+        "town": "Firhouse",
+        "price": "€490,000"
+      },
+      {
+        "town": "Monkstown",
+        "price": "€800,000"
+      },
+      {
+        "town": "East Wall",
+        "price": "€409,000"
+      },
+      {
+        "town": "Hansfield",
+        "price": "€547,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3995046,
+            "lng": -6.425543299999999
+          },
+          "southwest": {
+            "lat": 53.3890183,
+            "lng": -6.4489395
+          }
+        }
+      },
+      {
+        "town": "Ringsend",
+        "price": "€450,000"
+      },
+      {
+        "town": "Glenageary",
+        "price": "€900,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.2865204,
+            "lng": -6.1206542
+          },
+          "southwest": {
+            "lat": 53.2761708,
+            "lng": -6.135752399999999
+          }
+        }
+      },
+      {
+        "town": "Goatstown",
+        "price": "€763,000"
+      },
+      {
+        "town": "Ballycullen",
+        "price": "€542,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.2773284,
+            "lng": -6.3202357
+          },
+          "southwest": {
+            "lat": 53.26976639999999,
+            "lng": -6.3315008
+          }
+        }
+      },
+      {
+        "town": "Donaghmede",
+        "price": "€438,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.4092999,
+            "lng": -6.1487511
+          },
+          "southwest": {
+            "lat": 53.376873,
+            "lng": -6.2046961
+          }
+        }
+      },
+      {
+        "town": "Howth",
+        "price": "€745,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3941646,
+            "lng": -6.0439459
+          },
+          "southwest": {
+            "lat": 53.3610918,
+            "lng": -6.088728
+          }
+        }
+      },
+      {
+        "town": "Ashtown",
+        "price": "€409,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3812609,
+            "lng": -6.3318121
+          },
+          "southwest": {
+            "lat": 53.3702153,
+            "lng": -6.352185
+          }
+        }
+      },
+      {
+        "town": "Finglas East",
+        "price": "€422,500"
+      },
+      {
+        "town": "Finglas West",
+        "price": "€295,500"
+      },
+      {
+        "town": "Killester",
+        "price": "€633,917"
+      },
+      {
+        "town": "Stoneybatter",
+        "price": "€445,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3572132,
+            "lng": -6.2817151
+          },
+          "southwest": {
+            "lat": 53.3473403,
+            "lng": -6.2980646
+          }
+        }
+      },
+      {
+        "town": "Clongriffin",
+        "price": "€375,000"
+      },
+      {
+        "town": "Balgriffin",
+        "price": "€460,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.4118757,
+            "lng": -6.167491
+          },
+          "southwest": {
+            "lat": 53.4067576,
+            "lng": -6.1796212
+          }
+        }
+      },
+      {
+        "town": "Phibsboro",
+        "price": "€539,750",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3692919,
+            "lng": -6.2583388
+          },
+          "southwest": {
+            "lat": 53.3542144,
+            "lng": -6.286375
+          }
+        }
+      },
+      {
+        "town": "Smithfield",
+        "price": "€442,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3500244,
+            "lng": -6.2756586
+          },
+          "southwest": {
+            "lat": 53.3458747,
+            "lng": -6.282607199999999
+          }
+        }
+      },
+      {
+        "town": "Chapelizod",
+        "price": "€362,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.354881,
+            "lng": -6.3296899
+          },
+          "southwest": {
+            "lat": 53.341838,
+            "lng": -6.356858
+          }
+        }
+      },
+      {
+        "town": "Mount Merrion",
+        "price": "€1,255,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3069393,
+            "lng": -6.2021386
+          },
+          "southwest": {
+            "lat": 53.2883917,
+            "lng": -6.220105999999999
+          }
+        }
+      },
+      {
+        "town": "Cherrywood",
+        "price": "€501,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.24825999999999,
+            "lng": -6.136785700000001
+          },
+          "southwest": {
+            "lat": 53.2393762,
+            "lng": -6.147351400000001
+          }
+        }
+      },
+      {
+        "town": "Donnycarney",
+        "price": "€460,000"
+      },
+      {
+        "town": "Marino",
+        "price": "€577,500"
+      },
+      {
+        "town": "Sandycove",
+        "price": "€1,010,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.2907836,
+            "lng": -6.108902
+          },
+          "southwest": {
+            "lat": 53.2836356,
+            "lng": -6.1277189
+          }
+        }
+      },
+      {
+        "town": "Booterstown",
+        "price": "€820,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3127424,
+            "lng": -6.1780572
+          },
+          "southwest": {
+            "lat": 53.29352739999999,
+            "lng": -6.2086578
+          }
+        }
+      },
+      {
+        "town": "Kilternan",
+        "price": "€751,058"
+      },
+      {
+        "town": "Northern Cross",
+        "price": "€323,000"
+      },
+      {
+        "town": "Rialto",
+        "price": "€524,000"
+      },
+      {
+        "town": "Cabra West",
+        "price": "€430,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3782131,
+            "lng": -6.2860562
+          },
+          "southwest": {
+            "lat": 53.352747,
+            "lng": -6.3114439
+          }
+        }
+      },
+      {
+        "town": "Spencer Dock",
+        "price": "€419,100",
+        "bounds": {
+          "northeast": {
+            "lat": 53.35074789999999,
+            "lng": -6.240785
+          },
+          "southwest": {
+            "lat": 53.3500406,
+            "lng": -6.2425017
+          }
+        }
+      },
+      {
+        "town": "Ballybrack",
+        "price": "€460,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.2603089,
+            "lng": -6.1194245
+          },
+          "southwest": {
+            "lat": 53.2430513,
+            "lng": -6.1293674
+          }
+        }
+      },
+      {
+        "town": "Streamstown",
+        "price": "€980,000"
+      },
+      {
+        "town": "Ongar",
+        "price": "€276,000"
+      },
+      {
+        "town": "Royal Canal Park",
+        "price": "€388,000"
+      },
+      {
+        "town": "Perrystown",
+        "price": "€575,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.313395,
+            "lng": -6.307371799999999
+          },
+          "southwest": {
+            "lat": 53.3060005,
+            "lng": -6.3205957
+          }
+        }
+      },
+      {
+        "town": "North Strand",
+        "price": "€371,500",
+        "bounds": {
+          "northeast": {
+            "lat": 55.38294149999999,
+            "lng": -5.431909999999999
+          },
+          "southwest": {
+            "lat": 51.4475448,
+            "lng": -10.4800237
+          }
+        }
+      },
+      {
+        "town": "Tyrrelstown",
+        "price": "€343,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.4247614,
+            "lng": -6.382422699999999
+          },
+          "southwest": {
+            "lat": 53.4082109,
+            "lng": -6.4047983
+          }
+        }
+      },
+      {
+        "town": "Custom House Square",
+        "price": "€418,000"
+      },
+      {
+        "town": "Finglas South",
+        "price": "€295,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.391429,
+            "lng": -6.2864887
+          },
+          "southwest": {
+            "lat": 53.3758889,
+            "lng": -6.322874000000001
+          }
+        }
+      },
+      {
+        "town": "Sir John Rogersons Quay",
+        "price": "€530,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3476842,
+            "lng": -6.2304569
+          },
+          "southwest": {
+            "lat": 53.3449295,
+            "lng": -6.2466906
+          }
+        }
+      },
+      {
+        "town": "Meakstown",
+        "price": "€322,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.4115823,
+            "lng": -6.2886538
+          },
+          "southwest": {
+            "lat": 53.400534,
+            "lng": -6.3022752
+          }
+        }
+      },
+      {
+        "town": "Clonshaugh",
+        "price": "€380,000"
+      },
+      {
+        "town": "Glasthule",
+        "price": "€515,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.2915546,
+            "lng": -6.1196531
+          },
+          "southwest": {
+            "lat": 53.2852052,
+            "lng": -6.1315746
+          }
+        }
+      },
+      {
+        "town": "Kingswood",
+        "price": "€515,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3051424,
+            "lng": -6.4080952
+          },
+          "southwest": {
+            "lat": 53.3008503,
+            "lng": -6.4172929
+          }
+        }
+      },
+      {
+        "town": "Phoenix Park Racecourse",
+        "price": "€500,000"
+      },
+      {
+        "town": "Portobello",
+        "price": "€600,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3389293,
+            "lng": -6.2642699
+          },
+          "southwest": {
+            "lat": 53.3296826,
+            "lng": -6.2755123
+          }
+        }
+      },
+      {
+        "town": "Belmayne",
+        "price": "€450,000"
+      },
+      {
+        "town": "Castaheany",
+        "price": "€422,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.4068312,
+            "lng": -6.412955600000001
+          },
+          "southwest": {
+            "lat": 53.39386409999999,
+            "lng": -6.4436483
+          }
+        }
+      },
+      {
+        "town": "Greenhills",
+        "price": "€497,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.31723539999999,
+            "lng": -6.3265715
+          },
+          "southwest": {
+            "lat": 53.3064529,
+            "lng": -6.3440851
+          }
+        }
+      },
+      {
+        "town": "Loughlinstown",
+        "price": "€582,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.26084669999999,
+            "lng": -6.121659699999999
+          },
+          "southwest": {
+            "lat": 53.24193769999999,
+            "lng": -6.1513817
+          }
+        }
+      },
+      {
+        "town": "The Coast",
+        "price": "€370,000"
+      },
+      {
+        "town": "Tyrellstown",
+        "price": "€350,000"
+      },
+      {
+        "town": "Arbour Hill",
+        "price": "€560,000"
+      },
+      {
+        "town": "Cherry Orchard",
+        "price": "€273,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.34567,
+            "lng": -6.349632199999999
+          },
+          "southwest": {
+            "lat": 53.3284509,
+            "lng": -6.3875559
+          }
+        }
+      },
+      {
+        "town": "Hanover Quay",
+        "price": "€610,250",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3444444,
+            "lng": -6.2309926
+          },
+          "southwest": {
+            "lat": 53.3435006,
+            "lng": -6.2384464
+          }
+        }
+      },
+      {
+        "town": "Islandbridge",
+        "price": "€421,250",
+        "bounds": {
+          "northeast": {
+            "lat": 53.347548,
+            "lng": -6.3082329
+          },
+          "southwest": {
+            "lat": 53.3469554,
+            "lng": -6.308354800000001
+          }
+        }
+      },
+      {
+        "town": "Ballyboden",
+        "price": "€455,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.2869666,
+            "lng": -6.284189899999999
+          },
+          "southwest": {
+            "lat": 53.27818019999999,
+            "lng": -6.297788199999999
+          }
+        }
+      },
+      {
+        "town": "Ballybough",
+        "price": "€350,000"
+      },
+      {
+        "town": "Dartry",
+        "price": "€1,505,000"
+      },
+      {
+        "town": "Irishtown",
+        "price": "€523,000"
+      },
+      {
+        "town": "Kilnamanagh",
+        "price": "€445,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.92861749999999,
+            "lng": -8.3126036
+          },
+          "southwest": {
+            "lat": 53.8825047,
+            "lng": -8.5126335
+          }
+        }
+      },
+      {
+        "town": "Shankhill",
+        "price": "€500,000"
+      },
+      {
+        "town": "Bluebell",
+        "price": "€335,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3317793,
+            "lng": -6.3452739
+          },
+          "southwest": {
+            "lat": 53.3247238,
+            "lng": -6.3593438
+          }
+        }
+      },
+      {
+        "town": "Rathmichael",
+        "price": "€575,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.2389696,
+            "lng": -6.144731699999999
+          },
+          "southwest": {
+            "lat": 53.2240123,
+            "lng": -6.1683192
+          }
+        }
+      }
+    ]
+  },
+  "cork": {
+    "towns": [
+      {
+        "town": "Midleton",
+        "price": "€371,000",
+        "bounds": {
+          "northeast": {
+            "lat": 51.9240678,
+            "lng": -8.154339199999999
+          },
+          "southwest": {
+            "lat": 51.9056114,
+            "lng": -8.196346499999999
+          }
+        }
+      },
+      {
+        "town": "Mallow",
+        "price": "€278,500",
+        "bounds": {
+          "northeast": {
+            "lat": 52.14809,
+            "lng": -8.61587
+          },
+          "southwest": {
+            "lat": 52.1205,
+            "lng": -8.6685801
+          }
+        }
+      },
+      {
+        "town": "Douglas",
+        "price": "€460,000",
+        "bounds": {
+          "northeast": {
+            "lat": 51.880424,
+            "lng": -8.412270099999999
+          },
+          "southwest": {
+            "lat": 51.86144789999999,
+            "lng": -8.441087099999999
+          }
+        }
+      },
+      {
+        "town": "Bandon",
+        "price": "€341,350",
+        "bounds": {
+          "northeast": {
+            "lat": 51.7618403,
+            "lng": -8.7080697
+          },
+          "southwest": {
+            "lat": 51.7279579,
+            "lng": -8.7667509
+          }
+        }
+      },
+      {
+        "town": "Kinsale",
+        "price": "€485,000",
+        "bounds": {
+          "northeast": {
+            "lat": 51.715329,
+            "lng": -8.5105133
+          },
+          "southwest": {
+            "lat": 51.6957883,
+            "lng": -8.542464599999999
+          }
+        }
+      },
+      {
+        "town": "Ballincollig",
+        "price": "€398,495",
+        "bounds": {
+          "northeast": {
+            "lat": 51.8936901,
+            "lng": -8.56854
+          },
+          "southwest": {
+            "lat": 51.87701999999999,
+            "lng": -8.643030099999999
+          }
+        }
+      },
+      {
+        "town": "Carrigaline",
+        "price": "€417,500",
+        "bounds": {
+          "northeast": {
+            "lat": 51.82816,
+            "lng": -8.36375
+          },
+          "southwest": {
+            "lat": 51.80054,
+            "lng": -8.4118
+          }
+        }
+      },
+      {
+        "town": "Clonakilty",
+        "price": "€367,500",
+        "bounds": {
+          "northeast": {
+            "lat": 51.6319127,
+            "lng": -8.867619699999999
+          },
+          "southwest": {
+            "lat": 51.6131129,
+            "lng": -8.9162848
+          }
+        }
+      },
+      {
+        "town": "Fermoy",
+        "price": "€337,500",
+        "bounds": {
+          "northeast": {
+            "lat": 52.15571809999999,
+            "lng": -8.263237499999999
+          },
+          "southwest": {
+            "lat": 52.12574189999999,
+            "lng": -8.3001521
+          }
+        }
+      },
+      {
+        "town": "Ballyvolane",
+        "price": "€397,500",
+        "bounds": {
+          "northeast": {
+            "lat": 51.9252528,
+            "lng": -8.4450711
+          },
+          "southwest": {
+            "lat": 51.9156064,
+            "lng": -8.4594889
+          }
+        }
+      },
+      {
+        "town": "Youghal",
+        "price": "€245,000",
+        "bounds": {
+          "northeast": {
+            "lat": 51.96473,
+            "lng": -7.841190099999999
+          },
+          "southwest": {
+            "lat": 51.9421301,
+            "lng": -7.874810000000001
+          }
+        }
+      },
+      {
+        "town": "Bishopstown",
+        "price": "€490,888",
+        "bounds": {
+          "northeast": {
+            "lat": 51.8862633,
+            "lng": -8.505545099999999
+          },
+          "southwest": {
+            "lat": 51.872355,
+            "lng": -8.5536709
+          }
+        }
+      },
+      {
+        "town": "Cobh",
+        "price": "€305,000",
+        "bounds": {
+          "northeast": {
+            "lat": 51.85843,
+            "lng": -8.27092
+          },
+          "southwest": {
+            "lat": 51.84303,
+            "lng": -8.31976
+          }
+        }
+      },
+      {
+        "town": "Glanmire",
+        "price": "€395,500"
+      },
+      {
+        "town": "Macroom",
+        "price": "€323,000"
+      },
+      {
+        "town": "Bantry",
+        "price": "€295,000",
+        "bounds": {
+          "northeast": {
+            "lat": 51.6889557,
+            "lng": -9.430203299999999
+          },
+          "southwest": {
+            "lat": 51.6692561,
+            "lng": -9.460907899999999
+          }
+        }
+      },
+      {
+        "town": "Carrigtwohill",
+        "price": "€350,000"
+      },
+      {
+        "town": "Blackrock",
+        "price": "€405,000"
+      },
+      {
+        "town": "Rochestown",
+        "price": "€421,000",
+        "bounds": {
+          "northeast": {
+            "lat": 51.880752,
+            "lng": -8.3877057
+          },
+          "southwest": {
+            "lat": 51.86215499999999,
+            "lng": -8.4188182
+          }
+        }
+      },
+      {
+        "town": "Maryborough",
+        "price": "€399,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.05466010000001,
+            "lng": -7.255550100000001
+          },
+          "southwest": {
+            "lat": 53.02104,
+            "lng": -7.330229900000001
+          }
+        }
+      },
+      {
+        "town": "Passage West",
+        "price": "€325,000"
+      },
+      {
+        "town": "Ovens",
+        "price": "€475,000"
+      },
+      {
+        "town": "Rathcormac",
+        "price": "€364,999"
+      },
+      {
+        "town": "Cork City",
+        "price": "€272,500",
+        "bounds": {
+          "northeast": {
+            "lat": 51.9701434,
+            "lng": -8.3551296
+          },
+          "southwest": {
+            "lat": 51.8273101,
+            "lng": -8.637854299999999
+          }
+        }
+      },
+      {
+        "town": "Charleville",
+        "price": "€185,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.3665308,
+            "lng": -8.663277299999999
+          },
+          "southwest": {
+            "lat": 52.3419979,
+            "lng": -8.713861999999999
+          }
+        }
+      },
+      {
+        "town": "Kerry Pike",
+        "price": "€485,000"
+      },
+      {
+        "town": "Wilton",
+        "price": "€350,000"
+      },
+      {
+        "town": "Coachford",
+        "price": "€345,875"
+      },
+      {
+        "town": "Skibbereen",
+        "price": "€295,000"
+      },
+      {
+        "town": "Dunmanway",
+        "price": "€246,000"
+      },
+      {
+        "town": "Blarney",
+        "price": "€369,000",
+        "bounds": {
+          "northeast": {
+            "lat": 51.9456321,
+            "lng": -8.5525624
+          },
+          "southwest": {
+            "lat": 51.9285898,
+            "lng": -8.5737907
+          }
+        }
+      },
+      {
+        "town": "Whites Cross",
+        "price": "€367,973"
+      },
+      {
+        "town": "Carriganarra",
+        "price": "€355,001",
+        "bounds": {
+          "northeast": {
+            "lat": 51.8924543,
+            "lng": -8.552397299999999
+          },
+          "southwest": {
+            "lat": 51.8880503,
+            "lng": -8.5673625
+          }
+        }
+      },
+      {
+        "town": "Crosshaven",
+        "price": "€440,000",
+        "bounds": {
+          "northeast": {
+            "lat": 51.8103553,
+            "lng": -8.2815432
+          },
+          "southwest": {
+            "lat": 51.7923555,
+            "lng": -8.2948363
+          }
+        }
+      },
+      {
+        "town": "Kanturk",
+        "price": "€230,000"
+      },
+      {
+        "town": "Annabella",
+        "price": "€406,264",
+        "bounds": {
+          "northeast": {
+            "lat": 52.1455581,
+            "lng": -8.6463653
+          },
+          "southwest": {
+            "lat": 52.13559859999999,
+            "lng": -8.6834168
+          }
+        }
+      },
+      {
+        "town": "Cloughduv",
+        "price": "€399,000"
+      },
+      {
+        "town": "Glounthaune",
+        "price": "€482,499"
+      },
+      {
+        "town": "Mitchelstown",
+        "price": "€250,000"
+      },
+      {
+        "town": "Carrigane",
+        "price": "€405,056"
+      },
+      {
+        "town": "Schull",
+        "price": "€407,500"
+      },
+      {
+        "town": "Whitegate",
+        "price": "€356,288"
+      },
+      {
+        "town": "Castlelyons",
+        "price": "€350,000"
+      },
+      {
+        "town": "Ladysbridge",
+        "price": "€413,050"
+      },
+      {
+        "town": "Mayfield",
+        "price": "€287,500",
+        "bounds": {
+          "northeast": {
+            "lat": 51.917102,
+            "lng": -8.4289641
+          },
+          "southwest": {
+            "lat": 51.909158,
+            "lng": -8.4550111
+          }
+        }
+      },
+      {
+        "town": "Ballintemple",
+        "price": "€432,000",
+        "bounds": {
+          "northeast": {
+            "lat": 51.902081,
+            "lng": -8.4118792
+          },
+          "southwest": {
+            "lat": 51.8861401,
+            "lng": -8.4730501
+          }
+        }
+      },
+      {
+        "town": "Blackpool",
+        "price": "€191,000",
+        "bounds": {
+          "northeast": {
+            "lat": 51.918955,
+            "lng": -8.4672111
+          },
+          "southwest": {
+            "lat": 51.904016,
+            "lng": -8.4787279
+          }
+        }
+      },
+      {
+        "town": "Mogeely",
+        "price": "€350,374",
+        "bounds": {
+          "northeast": {
+            "lat": 51.9417026,
+            "lng": -8.049120499999999
+          },
+          "southwest": {
+            "lat": 51.9270608,
+            "lng": -8.0674067
+          }
+        }
+      },
+      {
+        "town": "Ballyphehane",
+        "price": "€292,500",
+        "bounds": {
+          "northeast": {
+            "lat": 51.8948049,
+            "lng": -8.4650258
+          },
+          "southwest": {
+            "lat": 51.8670061,
+            "lng": -8.4871648
+          }
+        }
+      },
+      {
+        "town": "Innishannon",
+        "price": "€375,000"
+      },
+      {
+        "town": "Buttevant",
+        "price": "€150,000"
+      },
+      {
+        "town": "Castlemartyr",
+        "price": "€275,000"
+      },
+      {
+        "town": "Doneraile",
+        "price": "€190,000"
+      },
+      {
+        "town": "Killeagh",
+        "price": "€325,000"
+      },
+      {
+        "town": "Rosscarbery",
+        "price": "€330,000"
+      },
+      {
+        "town": "Togher",
+        "price": "€306,000",
+        "bounds": {
+          "northeast": {
+            "lat": 51.889217,
+            "lng": -8.483806099999999
+          },
+          "southwest": {
+            "lat": 51.8681239,
+            "lng": -8.507346799999999
+          }
+        }
+      },
+      {
+        "town": "Baltimore",
+        "price": "€457,000"
+      },
+      {
+        "town": "Grange",
+        "price": "€411,350"
+      },
+      {
+        "town": "Ballinlough",
+        "price": "€503,750"
+      },
+      {
+        "town": "Drimoleague",
+        "price": "€153,125"
+      },
+      {
+        "town": "Kilworth",
+        "price": "€350,000"
+      },
+      {
+        "town": "Newmarket",
+        "price": "€181,000"
+      },
+      {
+        "town": "Carrigrohane",
+        "price": "€507,000"
+      },
+      {
+        "town": "Watergrasshill",
+        "price": "€350,000"
+      },
+      {
+        "town": "Castletownroche",
+        "price": "€278,750"
+      },
+      {
+        "town": "Cloyne",
+        "price": "€365,000"
+      },
+      {
+        "town": "Goleen",
+        "price": "€543,750"
+      },
+      {
+        "town": "Castletownbere",
+        "price": "€227,500"
+      },
+      {
+        "town": "Turners Cross",
+        "price": "€310,000",
+        "bounds": {
+          "northeast": {
+            "lat": 51.8914088,
+            "lng": -8.4629762
+          },
+          "southwest": {
+            "lat": 51.879972,
+            "lng": -8.474127
+          }
+        }
+      },
+      {
+        "town": "Enniskeane",
+        "price": "€421,000"
+      },
+      {
+        "town": "Montenotte",
+        "price": "€450,000",
+        "bounds": {
+          "northeast": {
+            "lat": 51.914327,
+            "lng": -8.4258071
+          },
+          "southwest": {
+            "lat": 51.9013219,
+            "lng": -8.4654694
+          }
+        }
+      },
+      {
+        "town": "St Lukes",
+        "price": "€146,250"
+      },
+      {
+        "town": "The Lough",
+        "price": "€423,500",
+        "bounds": {
+          "northeast": {
+            "lat": 51.8969521,
+            "lng": -8.4761278
+          },
+          "southwest": {
+            "lat": 51.884469,
+            "lng": -8.4938282
+          }
+        }
+      },
+      {
+        "town": "Ballinhassig",
+        "price": "€315,000"
+      },
+      {
+        "town": "Farranree",
+        "price": "€250,000"
+      },
+      {
+        "town": "Frankfield",
+        "price": "€440,000"
+      },
+      {
+        "town": "Gurranabraher",
+        "price": "€240,000",
+        "bounds": {
+          "northeast": {
+            "lat": 51.9069339,
+            "lng": -8.477222099999999
+          },
+          "southwest": {
+            "lat": 51.900992,
+            "lng": -8.5054837
+          }
+        }
+      },
+      {
+        "town": "Little Island",
+        "price": "€280,000"
+      },
+      {
+        "town": "Donnybrook",
+        "price": "€430,000"
+      },
+      {
+        "town": "Glanworth",
+        "price": "€329,999"
+      },
+      {
+        "town": "Monkstown",
+        "price": "€372,500"
+      },
+      {
+        "town": "Waterfall",
+        "price": "€597,500",
+        "bounds": {
+          "northeast": {
+            "lat": 55.38294149999999,
+            "lng": -5.431909999999999
+          },
+          "southwest": {
+            "lat": 51.4475448,
+            "lng": -10.4800237
+          }
+        }
+      }
+    ]
+  },
+  "galway": {
+    "towns": [
+      {
+        "town": "Ballinasloe",
+        "price": "€200,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.34609,
+            "lng": -8.18372
+          },
+          "southwest": {
+            "lat": 53.31789,
+            "lng": -8.25781
+          }
+        }
+      },
+      {
+        "town": "Oranmore",
+        "price": "€417,041",
+        "bounds": {
+          "northeast": {
+            "lat": 53.2736749,
+            "lng": -8.918052699999999
+          },
+          "southwest": {
+            "lat": 53.2597075,
+            "lng": -8.9406565
+          }
+        }
+      },
+      {
+        "town": "Tuam",
+        "price": "€260,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.5336981,
+            "lng": -8.8293809
+          },
+          "southwest": {
+            "lat": 53.5030307,
+            "lng": -8.8944405
+          }
+        }
+      },
+      {
+        "town": "Ballybrit",
+        "price": "€408,900",
+        "bounds": {
+          "northeast": {
+            "lat": 55.38294149999999,
+            "lng": -5.431909999999999
+          },
+          "southwest": {
+            "lat": 51.4475448,
+            "lng": -10.4800237
+          }
+        }
+      },
+      {
+        "town": "Loughrea",
+        "price": "€305,000"
+      },
+      {
+        "town": "Athenry",
+        "price": "€374,999",
+        "bounds": {
+          "northeast": {
+            "lat": 53.31388639999999,
+            "lng": -8.7316363
+          },
+          "southwest": {
+            "lat": 53.29031089999999,
+            "lng": -8.7718363
+          }
+        }
+      },
+      {
+        "town": "Knocknacarra",
+        "price": "€410,000"
+      },
+      {
+        "town": "Claregalway",
+        "price": "€372,000"
+      },
+      {
+        "town": "Doughiska",
+        "price": "€275,000"
+      },
+      {
+        "town": "Gort",
+        "price": "€280,000"
+      },
+      {
+        "town": "Moycullen",
+        "price": "€387,500"
+      },
+      {
+        "town": "Salthill",
+        "price": "€550,000"
+      },
+      {
+        "town": "Rahoon",
+        "price": "€425,876",
+        "bounds": {
+          "northeast": {
+            "lat": 53.31698890000001,
+            "lng": -9.0466533
+          },
+          "southwest": {
+            "lat": 53.245227,
+            "lng": -9.2356239
+          }
+        }
+      },
+      {
+        "town": "Clifden",
+        "price": "€206,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.49577439999999,
+            "lng": -9.993122399999999
+          },
+          "southwest": {
+            "lat": 53.4848312,
+            "lng": -10.0365447
+          }
+        }
+      },
+      {
+        "town": "Renmore",
+        "price": "€345,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.2777714,
+            "lng": -9.0142286
+          },
+          "southwest": {
+            "lat": 53.2748676,
+            "lng": -9.0233971
+          }
+        }
+      },
+      {
+        "town": "Newcastle",
+        "price": "€445,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.2841397,
+            "lng": -7.7458562
+          },
+          "southwest": {
+            "lat": 52.2106498,
+            "lng": -7.859923200000001
+          }
+        }
+      },
+      {
+        "town": "Ballybane",
+        "price": "€312,000"
+      },
+      {
+        "town": "Barna",
+        "price": "€488,360",
+        "bounds": {
+          "northeast": {
+            "lat": 53.2624517,
+            "lng": -9.1423043
+          },
+          "southwest": {
+            "lat": 53.2467872,
+            "lng": -9.1800373
+          }
+        }
+      },
+      {
+        "town": "Galway City",
+        "price": "€367,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.31947049999999,
+            "lng": -8.9548057
+          },
+          "southwest": {
+            "lat": 53.2483525,
+            "lng": -9.1426873
+          }
+        }
+      },
+      {
+        "town": "Craughwell",
+        "price": "€410,000"
+      },
+      {
+        "town": "Galway",
+        "price": "€446,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.31947049999999,
+            "lng": -8.9548057
+          },
+          "southwest": {
+            "lat": 53.2483525,
+            "lng": -9.1426873
+          }
+        }
+      },
+      {
+        "town": "Headford",
+        "price": "€348,000"
+      },
+      {
+        "town": "Kinvara",
+        "price": "€445,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.14455890000001,
+            "lng": -8.919804
+          },
+          "southwest": {
+            "lat": 53.132144,
+            "lng": -8.9592076
+          }
+        }
+      },
+      {
+        "town": "Portumna",
+        "price": "€122,000"
+      },
+      {
+        "town": "Ballyburke",
+        "price": "€405,002"
+      },
+      {
+        "town": "Bearna",
+        "price": "€416,173",
+        "bounds": {
+          "northeast": {
+            "lat": 53.2624517,
+            "lng": -9.1423043
+          },
+          "southwest": {
+            "lat": 53.2467872,
+            "lng": -9.1800373
+          }
+        }
+      },
+      {
+        "town": "Oughterard",
+        "price": "€320,000"
+      },
+      {
+        "town": "Mervue",
+        "price": "€235,000"
+      },
+      {
+        "town": "Roscam",
+        "price": "€390,500"
+      },
+      {
+        "town": "Bohermore",
+        "price": "€300,000"
+      },
+      {
+        "town": "Corrandulla",
+        "price": "€352,500"
+      },
+      {
+        "town": "Dunmore",
+        "price": "€233,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.6760458,
+            "lng": -8.605773
+          },
+          "southwest": {
+            "lat": 53.5064678,
+            "lng": -8.9013428
+          }
+        }
+      },
+      {
+        "town": "Ardrahan",
+        "price": "€390,000"
+      }
+    ]
+  },
+  "limerick": {
+    "towns": [
+      {
+        "town": "Castletroy",
+        "price": "€397,999",
+        "bounds": {
+          "northeast": {
+            "lat": 52.6804254,
+            "lng": -8.537958
+          },
+          "southwest": {
+            "lat": 52.6684364,
+            "lng": -8.5628987
+          }
+        }
+      },
+      {
+        "town": "Dooradoyle",
+        "price": "€365,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.6434845,
+            "lng": -8.6298664
+          },
+          "southwest": {
+            "lat": 52.6278113,
+            "lng": -8.6578121
+          }
+        }
+      },
+      {
+        "town": "Newcastle West",
+        "price": "€255,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.4642451,
+            "lng": -9.040084
+          },
+          "southwest": {
+            "lat": 52.4338636,
+            "lng": -9.0844208
+          }
+        }
+      },
+      {
+        "town": "Croom",
+        "price": "€372,700",
+        "bounds": {
+          "northeast": {
+            "lat": 52.53283649999999,
+            "lng": -8.7087748
+          },
+          "southwest": {
+            "lat": 52.5087,
+            "lng": -8.7399256
+          }
+        }
+      },
+      {
+        "town": "Greenpark",
+        "price": "€436,975"
+      },
+      {
+        "town": "Castleconnell",
+        "price": "€405,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.7223007,
+            "lng": -8.4833573
+          },
+          "southwest": {
+            "lat": 52.702012,
+            "lng": -8.5127217
+          }
+        }
+      },
+      {
+        "town": "Kilmallock",
+        "price": "€210,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.4184989,
+            "lng": -8.5534903
+          },
+          "southwest": {
+            "lat": 52.3895922,
+            "lng": -8.5917525
+          }
+        }
+      },
+      {
+        "town": "Mungret",
+        "price": "€435,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.6390514,
+            "lng": -8.6871475
+          },
+          "southwest": {
+            "lat": 52.6283423,
+            "lng": -8.7026652
+          }
+        }
+      },
+      {
+        "town": "Raheen",
+        "price": "€382,500"
+      },
+      {
+        "town": "Limerick",
+        "price": "€245,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.6899853,
+            "lng": -8.5281442
+          },
+          "southwest": {
+            "lat": 52.6134535,
+            "lng": -8.7057848
+          }
+        }
+      },
+      {
+        "town": "Patrickswell",
+        "price": "€400,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.6035575,
+            "lng": -8.6999876
+          },
+          "southwest": {
+            "lat": 52.5946072,
+            "lng": -8.7175937
+          }
+        }
+      },
+      {
+        "town": "Annacotty",
+        "price": "€363,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.6781959,
+            "lng": -8.5190093
+          },
+          "southwest": {
+            "lat": 52.65952859999999,
+            "lng": -8.5445332
+          }
+        }
+      },
+      {
+        "town": "Adare",
+        "price": "€506,554",
+        "bounds": {
+          "northeast": {
+            "lat": 52.5686127,
+            "lng": -8.7851359
+          },
+          "southwest": {
+            "lat": 52.5538645,
+            "lng": -8.8047042
+          }
+        }
+      },
+      {
+        "town": "Corbally",
+        "price": "€337,500",
+        "bounds": {
+          "northeast": {
+            "lat": 52.9625453,
+            "lng": -7.6849823
+          },
+          "southwest": {
+            "lat": 52.8899943,
+            "lng": -7.8671773
+          }
+        }
+      },
+      {
+        "town": "Abbeyfeale",
+        "price": "€202,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.3925035,
+            "lng": -9.2762535
+          },
+          "southwest": {
+            "lat": 52.3674644,
+            "lng": -9.316955
+          }
+        }
+      },
+      {
+        "town": "Newcastlewest",
+        "price": "€167,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.4642451,
+            "lng": -9.040084
+          },
+          "southwest": {
+            "lat": 52.4338636,
+            "lng": -9.0844208
+          }
+        }
+      },
+      {
+        "town": "Limerick City",
+        "price": "€317,500",
+        "bounds": {
+          "northeast": {
+            "lat": 52.6899853,
+            "lng": -8.5281442
+          },
+          "southwest": {
+            "lat": 52.6134535,
+            "lng": -8.7057848
+          }
+        }
+      },
+      {
+        "town": "Rathkeale",
+        "price": "€251,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.5345925,
+            "lng": -8.908110599999999
+          },
+          "southwest": {
+            "lat": 52.51018320000001,
+            "lng": -8.9691312
+          }
+        }
+      },
+      {
+        "town": "Hospital",
+        "price": "€300,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.4813944,
+            "lng": -8.422561
+          },
+          "southwest": {
+            "lat": 52.4630149,
+            "lng": -8.4364128
+          }
+        }
+      },
+      {
+        "town": "Garryowen",
+        "price": "€214,000"
+      },
+      {
+        "town": "Caherconlish",
+        "price": "€290,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.6009792,
+            "lng": -8.462743699999999
+          },
+          "southwest": {
+            "lat": 52.5825641,
+            "lng": -8.4818366
+          }
+        }
+      },
+      {
+        "town": "Knocklong",
+        "price": "€331,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.43916,
+            "lng": -8.4015355
+          },
+          "southwest": {
+            "lat": 52.43091039999999,
+            "lng": -8.4240015
+          }
+        }
+      },
+      {
+        "town": "Askeaton",
+        "price": "€200,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.60548989999999,
+            "lng": -8.9571287
+          },
+          "southwest": {
+            "lat": 52.5961942,
+            "lng": -8.987494200000002
+          }
+        }
+      },
+      {
+        "town": "Bruff",
+        "price": "€275,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.4884928,
+            "lng": -8.535071799999999
+          },
+          "southwest": {
+            "lat": 52.4701092,
+            "lng": -8.5578182
+          }
+        }
+      },
+      {
+        "town": "Murroe",
+        "price": "€266,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.6589103,
+            "lng": -8.398254099999999
+          },
+          "southwest": {
+            "lat": 52.6494317,
+            "lng": -8.4121458
+          }
+        }
+      },
+      {
+        "town": "Pallaskenry",
+        "price": "€323,817",
+        "bounds": {
+          "northeast": {
+            "lat": 52.6490253,
+            "lng": -8.861885599999999
+          },
+          "southwest": {
+            "lat": 52.6338663,
+            "lng": -8.8753516
+          }
+        }
+      },
+      {
+        "town": "Athea",
+        "price": "€260,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.4653463,
+            "lng": -9.2789232
+          },
+          "southwest": {
+            "lat": 52.4527166,
+            "lng": -9.2964357
+          }
+        }
+      },
+      {
+        "town": "Foynes",
+        "price": "€139,250",
+        "bounds": {
+          "northeast": {
+            "lat": 52.6146385,
+            "lng": -9.087805099999999
+          },
+          "southwest": {
+            "lat": 52.6038345,
+            "lng": -9.114124
+          }
+        }
+      },
+      {
+        "town": "Glin",
+        "price": "€135,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.5755963,
+            "lng": -9.2690472
+          },
+          "southwest": {
+            "lat": 52.5621982,
+            "lng": -9.2879344
+          }
+        }
+      }
+    ]
+  },
+  "waterford": {
+    "towns": [
+      {
+        "town": "Tramore",
+        "price": "€377,413",
+        "bounds": {
+          "northeast": {
+            "lat": 52.1785499,
+            "lng": -7.131710000000001
+          },
+          "southwest": {
+            "lat": 52.14681,
+            "lng": -7.174440099999999
+          }
+        }
+      },
+      {
+        "town": "Dungarvan",
+        "price": "€313,250",
+        "bounds": {
+          "northeast": {
+            "lat": 52.10551,
+            "lng": -7.5958199
+          },
+          "southwest": {
+            "lat": 52.0773099,
+            "lng": -7.6464501
+          }
+        }
+      },
+      {
+        "town": "Waterford",
+        "price": "€195,500",
+        "bounds": {
+          "northeast": {
+            "lat": 52.27019989999999,
+            "lng": -7.0548699
+          },
+          "southwest": {
+            "lat": 52.22481,
+            "lng": -7.171189999999999
+          }
+        }
+      },
+      {
+        "town": "Kilbarry",
+        "price": "€300,283",
+        "bounds": {
+          "northeast": {
+            "lat": 51.932882,
+            "lng": -8.466276299999999
+          },
+          "southwest": {
+            "lat": 51.9227819,
+            "lng": -8.4832675
+          }
+        }
+      },
+      {
+        "town": "Dunmore East",
+        "price": "€420,000"
+      },
+      {
+        "town": "Waterford City",
+        "price": "€163,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.27019989999999,
+            "lng": -7.0548699
+          },
+          "southwest": {
+            "lat": 52.22481,
+            "lng": -7.171189999999999
+          }
+        }
+      },
+      {
+        "town": "Williamstown",
+        "price": "€399,974"
+      },
+      {
+        "town": "Gracedieu",
+        "price": "€300,000"
+      },
+      {
+        "town": "Kilmeaden",
+        "price": "€347,025"
+      },
+      {
+        "town": "Cappoquin",
+        "price": "€185,000"
+      },
+      {
+        "town": "Lismore",
+        "price": "€209,000"
+      },
+      {
+        "town": "Kilmacthomas",
+        "price": "€207,500",
+        "bounds": {
+          "northeast": {
+            "lat": 52.2103414,
+            "lng": -7.4089789
+          },
+          "southwest": {
+            "lat": 52.1969332,
+            "lng": -7.434842600000001
+          }
+        }
+      },
+      {
+        "town": "Tallow",
+        "price": "€195,000"
+      },
+      {
+        "town": "Ferrybank",
+        "price": "€180,000"
+      },
+      {
+        "town": "Portlaw",
+        "price": "€200,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.2969692,
+            "lng": -7.307820299999999
+          },
+          "southwest": {
+            "lat": 52.2794089,
+            "lng": -7.324320999999999
+          }
+        }
+      },
+      {
+        "town": "Hillview",
+        "price": "€242,500",
+        "bounds": {
+          "northeast": {
+            "lat": 55.4602,
+            "lng": -5.668900100000001
+          },
+          "southwest": {
+            "lat": 51.3066,
+            "lng": -10.7666001
+          }
+        }
+      }
+    ]
+  },
+  "tipperary": {
+    "towns": [
+      {
+        "town": "Clonmel",
+        "price": "€265,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.3737368,
+            "lng": -7.656223499999999
+          },
+          "southwest": {
+            "lat": 52.3447153,
+            "lng": -7.7509355
+          }
+        }
+      },
+      {
+        "town": "Nenagh",
+        "price": "€288,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.87605,
+            "lng": -8.18663
+          },
+          "southwest": {
+            "lat": 52.84892,
+            "lng": -8.22823
+          }
+        }
+      },
+      {
+        "town": "Thurles",
+        "price": "€245,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.68973,
+            "lng": -7.78334
+          },
+          "southwest": {
+            "lat": 52.66366,
+            "lng": -7.8297201
+          }
+        }
+      },
+      {
+        "town": "Cashel",
+        "price": "€282,500",
+        "bounds": {
+          "northeast": {
+            "lat": 52.528077,
+            "lng": -7.876163600000001
+          },
+          "southwest": {
+            "lat": 52.5037191,
+            "lng": -7.907570400000001
+          }
+        }
+      },
+      {
+        "town": "Roscrea",
+        "price": "€244,570"
+      },
+      {
+        "town": "Cahir",
+        "price": "€250,000"
+      },
+      {
+        "town": "Carrick On Suir",
+        "price": "€221,625",
+        "bounds": {
+          "northeast": {
+            "lat": 52.3555956,
+            "lng": -7.384372599999999
+          },
+          "southwest": {
+            "lat": 52.33822199999999,
+            "lng": -7.4282674
+          }
+        }
+      },
+      {
+        "town": "Templemore",
+        "price": "€185,000"
+      },
+      {
+        "town": "Tipperary Town",
+        "price": "€172,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.4893965,
+            "lng": -8.1389578
+          },
+          "southwest": {
+            "lat": 52.4644092,
+            "lng": -8.178445199999999
+          }
+        }
+      },
+      {
+        "town": "Newport",
+        "price": "€335,000"
+      },
+      {
+        "town": "Fethard",
+        "price": "€220,000"
+      },
+      {
+        "town": "Ballina",
+        "price": "€407,500",
+        "bounds": {
+          "northeast": {
+            "lat": 54.12732,
+            "lng": -9.1254501
+          },
+          "southwest": {
+            "lat": 54.0997999,
+            "lng": -9.1731299
+          }
+        }
+      },
+      {
+        "town": "Cloughjordan",
+        "price": "€275,000"
+      },
+      {
+        "town": "Dundrum",
+        "price": "€240,000"
+      },
+      {
+        "town": "Tipperary",
+        "price": "€148,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.4893965,
+            "lng": -8.1389578
+          },
+          "southwest": {
+            "lat": 52.4644092,
+            "lng": -8.178445199999999
+          }
+        }
+      },
+      {
+        "town": "Borrisokane",
+        "price": "€167,500"
+      }
+    ]
+  },
+  "clare": {
+    "towns": [
+      {
+        "town": "Ennis",
+        "price": "€300,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.86792999999999,
+            "lng": -8.93751
+          },
+          "southwest": {
+            "lat": 52.81326,
+            "lng": -9.016759900000002
+          }
+        }
+      },
+      {
+        "town": "Shannon",
+        "price": "€240,500",
+        "bounds": {
+          "northeast": {
+            "lat": 52.7270035,
+            "lng": -8.851483
+          },
+          "southwest": {
+            "lat": 52.6932089,
+            "lng": -8.900267999999999
+          }
+        }
+      },
+      {
+        "town": "Kilrush",
+        "price": "€162,000"
+      },
+      {
+        "town": "Sixmilebridge",
+        "price": "€285,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.7516214,
+            "lng": -8.7601016
+          },
+          "southwest": {
+            "lat": 52.7342039,
+            "lng": -8.786465999999999
+          }
+        }
+      },
+      {
+        "town": "Kilkee",
+        "price": "€255,000"
+      },
+      {
+        "town": "Tulla",
+        "price": "€336,485"
+      },
+      {
+        "town": "Crusheen",
+        "price": "€302,500"
+      },
+      {
+        "town": "Killaloe",
+        "price": "€306,000"
+      },
+      {
+        "town": "Clonlara",
+        "price": "€447,500",
+        "bounds": {
+          "northeast": {
+            "lat": 52.7271009,
+            "lng": -8.547970099999999
+          },
+          "southwest": {
+            "lat": 52.71161559999999,
+            "lng": -8.5653839
+          }
+        }
+      },
+      {
+        "town": "Miltown Malbay",
+        "price": "€242,000"
+      },
+      {
+        "town": "Clarecastle",
+        "price": "€336,000"
+      },
+      {
+        "town": "Lahinch",
+        "price": "€350,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.94755139999999,
+            "lng": -9.3296057
+          },
+          "southwest": {
+            "lat": 52.9214639,
+            "lng": -9.3589688
+          }
+        }
+      },
+      {
+        "town": "Newmarket On Fergus",
+        "price": "€219,500",
+        "bounds": {
+          "northeast": {
+            "lat": 52.77411,
+            "lng": -8.8776428
+          },
+          "southwest": {
+            "lat": 52.7494355,
+            "lng": -8.9131375
+          }
+        }
+      },
+      {
+        "town": "Doonbeg",
+        "price": "€300,000"
+      },
+      {
+        "town": "Corbally",
+        "price": "€312,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.9625453,
+            "lng": -7.6849823
+          },
+          "southwest": {
+            "lat": 52.8899943,
+            "lng": -7.8671773
+          }
+        }
+      },
+      {
+        "town": "Quin",
+        "price": "€345,000"
+      },
+      {
+        "town": "Ennistymon",
+        "price": "€235,000"
+      },
+      {
+        "town": "Corofin",
+        "price": "€240,500"
+      },
+      {
+        "town": "Cratloe",
+        "price": "€337,500",
+        "bounds": {
+          "northeast": {
+            "lat": 52.7094106,
+            "lng": -8.7468872
+          },
+          "southwest": {
+            "lat": 52.6928221,
+            "lng": -8.7789778
+          }
+        }
+      }
+    ]
+  },
+  "offaly": {
+    "towns": [
+      {
+        "town": "Tullamore",
+        "price": "€292,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.2896,
+            "lng": -7.459529999999999
+          },
+          "southwest": {
+            "lat": 53.25442,
+            "lng": -7.520770000000001
+          }
+        }
+      },
+      {
+        "town": "Edenderry",
+        "price": "€285,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3540001,
+            "lng": -7.0319799
+          },
+          "southwest": {
+            "lat": 53.33029999999999,
+            "lng": -7.084869899999999
+          }
+        }
+      },
+      {
+        "town": "Birr",
+        "price": "€230,000"
+      },
+      {
+        "town": "Clara",
+        "price": "€171,250"
+      },
+      {
+        "town": "Portarlington",
+        "price": "€260,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.17075,
+            "lng": -7.174305599999999
+          },
+          "southwest": {
+            "lat": 53.14593,
+            "lng": -7.221660099999999
+          }
+        }
+      },
+      {
+        "town": "Banagher",
+        "price": "€185,000"
+      },
+      {
+        "town": "Ferbane",
+        "price": "€249,500"
+      },
+      {
+        "town": "Rhode",
+        "price": "€279,000"
+      }
+    ]
+  },
+  "laois": {
+    "towns": [
+      {
+        "town": "Portlaoise",
+        "price": "€300,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.05466010000001,
+            "lng": -7.255550100000001
+          },
+          "southwest": {
+            "lat": 53.02104,
+            "lng": -7.330229900000001
+          }
+        }
+      },
+      {
+        "town": "Portarlington",
+        "price": "€285,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.17075,
+            "lng": -7.174305599999999
+          },
+          "southwest": {
+            "lat": 53.14593,
+            "lng": -7.221660099999999
+          }
+        }
+      },
+      {
+        "town": "Mountmellick",
+        "price": "€368,166"
+      },
+      {
+        "town": "Mountrath",
+        "price": "€329,531",
+        "bounds": {
+          "northeast": {
+            "lat": 53.01200309999999,
+            "lng": -7.4392527
+          },
+          "southwest": {
+            "lat": 52.9809869,
+            "lng": -7.476735299999999
+          }
+        }
+      },
+      {
+        "town": "Graiguecullen",
+        "price": "€339,999"
+      },
+      {
+        "town": "Rathdowney",
+        "price": "€220,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.8597823,
+            "lng": -7.5677112
+          },
+          "southwest": {
+            "lat": 52.8464815,
+            "lng": -7.604495200000001
+          }
+        }
+      },
+      {
+        "town": "Abbeyleix",
+        "price": "€265,000"
+      },
+      {
+        "town": "Borris In Ossory",
+        "price": "€265,000"
+      },
+      {
+        "town": "Stradbally",
+        "price": "€320,000"
+      },
+      {
+        "town": "Durrow",
+        "price": "€371,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3488146,
+            "lng": -7.455820799999999
+          },
+          "southwest": {
+            "lat": 53.2993163,
+            "lng": -7.6182682
+          }
+        }
+      }
+    ]
+  },
+  "carlow": {
+    "towns": [
+      {
+        "town": "Tullow",
+        "price": "€235,000"
+      },
+      {
+        "town": "Carlow",
+        "price": "€245,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.8511318,
+            "lng": -6.8771427
+          },
+          "southwest": {
+            "lat": 52.81785199999999,
+            "lng": -6.9460839
+          }
+        }
+      },
+      {
+        "town": "Graiguecullen",
+        "price": "€197,500"
+      },
+      {
+        "town": "Bagenalstown",
+        "price": "€236,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.7065285,
+            "lng": -6.9385026
+          },
+          "southwest": {
+            "lat": 52.6870201,
+            "lng": -6.983196599999999
+          }
+        }
+      },
+      {
+        "town": "Rathvilly",
+        "price": "€346,000"
+      },
+      {
+        "town": "Pollerton",
+        "price": "€265,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.8404957,
+            "lng": -6.8950365
+          },
+          "southwest": {
+            "lat": 52.83613399999999,
+            "lng": -6.9243261
+          }
+        }
+      },
+      {
+        "town": "Quinagh",
+        "price": "€339,999",
+        "bounds": {
+          "northeast": {
+            "lat": 52.8245526,
+            "lng": -6.9027615
+          },
+          "southwest": {
+            "lat": 52.80346470000001,
+            "lng": -6.938674499999999
+          }
+        }
+      }
+    ]
+  },
+  "kilkenny": {
+    "towns": [
+      {
+        "town": "Kilkenny",
+        "price": "€257,500",
+        "bounds": {
+          "northeast": {
+            "lat": 52.677211,
+            "lng": -7.216920900000001
+          },
+          "southwest": {
+            "lat": 52.6313876,
+            "lng": -7.27535
+          }
+        }
+      },
+      {
+        "town": "Breagagh Valley",
+        "price": "€355,001"
+      },
+      {
+        "town": "Ferrybank",
+        "price": "€296,000"
+      },
+      {
+        "town": "Callan",
+        "price": "€265,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.5609721,
+            "lng": -7.374335
+          },
+          "southwest": {
+            "lat": 52.5359825,
+            "lng": -7.4023137
+          }
+        }
+      },
+      {
+        "town": "Nyne Park",
+        "price": "€380,000"
+      },
+      {
+        "town": "Thomastown",
+        "price": "€286,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.5377393,
+            "lng": -7.1214135
+          },
+          "southwest": {
+            "lat": 52.514708,
+            "lng": -7.170303
+          }
+        }
+      },
+      {
+        "town": "Gowran",
+        "price": "€394,890",
+        "bounds": {
+          "northeast": {
+            "lat": 52.6339382,
+            "lng": -7.0581372
+          },
+          "southwest": {
+            "lat": 52.6257999,
+            "lng": -7.0791024
+          }
+        }
+      },
+      {
+        "town": "Piltown",
+        "price": "€310,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.3601464,
+            "lng": -7.3148367
+          },
+          "southwest": {
+            "lat": 52.34153209999999,
+            "lng": -7.341387600000001
+          }
+        }
+      },
+      {
+        "town": "Castlecomer",
+        "price": "€246,500",
+        "bounds": {
+          "northeast": {
+            "lat": 52.8126216,
+            "lng": -7.2037327
+          },
+          "southwest": {
+            "lat": 52.7878128,
+            "lng": -7.222326400000001
+          }
+        }
+      },
+      {
+        "town": "Ballyragget",
+        "price": "€240,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.7965896,
+            "lng": -7.327977199999999
+          },
+          "southwest": {
+            "lat": 52.7749258,
+            "lng": -7.343964
+          }
+        }
+      },
+      {
+        "town": "Mullinavat",
+        "price": "€335,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.37347150000001,
+            "lng": -7.1660808
+          },
+          "southwest": {
+            "lat": 52.36402649999999,
+            "lng": -7.183190799999999
+          }
+        }
+      },
+      {
+        "town": "Urlingford",
+        "price": "€181,375",
+        "bounds": {
+          "northeast": {
+            "lat": 52.725871,
+            "lng": -7.572830600000001
+          },
+          "southwest": {
+            "lat": 52.7118546,
+            "lng": -7.588772499999998
+          }
+        }
+      }
+    ]
+  },
+  "wexford": {
+    "towns": [
+      {
+        "town": "Gorey",
+        "price": "€340,000"
+      },
+      {
+        "town": "Enniscorthy",
+        "price": "€267,500",
+        "bounds": {
+          "northeast": {
+            "lat": 52.5238783,
+            "lng": -6.547808799999999
+          },
+          "southwest": {
+            "lat": 52.4921448,
+            "lng": -6.595453900000001
+          }
+        }
+      },
+      {
+        "town": "New Ross",
+        "price": "€220,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.41600649999999,
+            "lng": -6.919444899999999
+          },
+          "southwest": {
+            "lat": 52.37508889999999,
+            "lng": -6.956865499999999
+          }
+        }
+      },
+      {
+        "town": "Wexford",
+        "price": "€226,500",
+        "bounds": {
+          "northeast": {
+            "lat": 52.3470099,
+            "lng": -6.4464301
+          },
+          "southwest": {
+            "lat": 52.32044,
+            "lng": -6.49995
+          }
+        }
+      },
+      {
+        "town": "Clonard",
+        "price": "€250,000"
+      },
+      {
+        "town": "Whiterock Hill",
+        "price": "€315,000"
+      },
+      {
+        "town": "Kilmore",
+        "price": "€298,750"
+      },
+      {
+        "town": "Coolcotts",
+        "price": "€395,000"
+      },
+      {
+        "town": "Kilmuckridge",
+        "price": "€290,000"
+      },
+      {
+        "town": "Rosslare Strand",
+        "price": "€350,000"
+      },
+      {
+        "town": "Creagh",
+        "price": "€361,739"
+      },
+      {
+        "town": "Rosslare Harbour",
+        "price": "€232,500"
+      },
+      {
+        "town": "Courtown",
+        "price": "€266,000"
+      },
+      {
+        "town": "Murrintown",
+        "price": "€495,000"
+      },
+      {
+        "town": "Bunclody",
+        "price": "€295,000"
+      },
+      {
+        "town": "Mulgannon",
+        "price": "€265,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.3280644,
+            "lng": -6.4556379
+          },
+          "southwest": {
+            "lat": 52.3152298,
+            "lng": -6.473183799999999
+          }
+        }
+      },
+      {
+        "town": "Rosslare",
+        "price": "€410,000"
+      },
+      {
+        "town": "Castlebridge",
+        "price": "€301,000"
+      },
+      {
+        "town": "Kilrane",
+        "price": "€310,000"
+      },
+      {
+        "town": "Ferns",
+        "price": "€270,000"
+      },
+      {
+        "town": "Blackwater",
+        "price": "€357,500"
+      },
+      {
+        "town": "Wexford Town",
+        "price": "€362,500",
+        "bounds": {
+          "northeast": {
+            "lat": 52.3470099,
+            "lng": -6.4464301
+          },
+          "southwest": {
+            "lat": 52.32044,
+            "lng": -6.49995
+          }
+        }
+      },
+      {
+        "town": "Bridgetown",
+        "price": "€190,000"
+      },
+      {
+        "town": "Crossabeg",
+        "price": "€345,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.3879324,
+            "lng": -6.4954984
+          },
+          "southwest": {
+            "lat": 52.3811619,
+            "lng": -6.504122799999999
+          }
+        }
+      },
+      {
+        "town": "Duncormick",
+        "price": "€275,000"
+      }
+    ]
+  },
+  "wicklow": {
+    "towns": [
+      {
+        "town": "Bray",
+        "price": "€525,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.21507,
+            "lng": -6.0882999
+          },
+          "southwest": {
+            "lat": 53.17897,
+            "lng": -6.13833
+          }
+        }
+      },
+      {
+        "town": "Rathnew",
+        "price": "€395,000"
+      },
+      {
+        "town": "Greystones",
+        "price": "€605,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.16058,
+            "lng": -6.056159999999999
+          },
+          "southwest": {
+            "lat": 53.12935,
+            "lng": -6.104829899999999
+          }
+        }
+      },
+      {
+        "town": "Arklow",
+        "price": "€278,750",
+        "bounds": {
+          "northeast": {
+            "lat": 52.8105549,
+            "lng": -6.1334053
+          },
+          "southwest": {
+            "lat": 52.7795899,
+            "lng": -6.18126
+          }
+        }
+      },
+      {
+        "town": "Delgany",
+        "price": "€702,500"
+      },
+      {
+        "town": "Rathdrum",
+        "price": "€381,999"
+      },
+      {
+        "town": "Wicklow Town",
+        "price": "€462,500",
+        "bounds": {
+          "northeast": {
+            "lat": 52.99892,
+            "lng": -6.0154599
+          },
+          "southwest": {
+            "lat": 52.9661001,
+            "lng": -6.07004
+          }
+        }
+      },
+      {
+        "town": "Newtownmountkennedy",
+        "price": "€500,000"
+      },
+      {
+        "town": "Keatingstown",
+        "price": "€458,263"
+      },
+      {
+        "town": "Baltinglass",
+        "price": "€312,481"
+      },
+      {
+        "town": "Kilcoole",
+        "price": "€414,500"
+      },
+      {
+        "town": "Roundwood",
+        "price": "€500,000"
+      },
+      {
+        "town": "Wicklow",
+        "price": "€370,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.99892,
+            "lng": -6.0154599
+          },
+          "southwest": {
+            "lat": 52.9661001,
+            "lng": -6.07004
+          }
+        }
+      },
+      {
+        "town": "Blessington",
+        "price": "€397,000"
+      },
+      {
+        "town": "Enniskerry",
+        "price": "€1,240,000"
+      },
+      {
+        "town": "Dunlavin",
+        "price": "€435,000"
+      },
+      {
+        "town": "Ashford",
+        "price": "€520,000"
+      },
+      {
+        "town": "Aughrim",
+        "price": "€312,500"
+      },
+      {
+        "town": "Tinahely",
+        "price": "€230,000"
+      },
+      {
+        "town": "Carnew",
+        "price": "€213,500"
+      }
+    ]
+  },
+  "kildare": {
+    "towns": [
+      {
+        "town": "Naas",
+        "price": "€440,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.2416,
+            "lng": -6.62979
+          },
+          "southwest": {
+            "lat": 53.19867,
+            "lng": -6.68849
+          }
+        }
+      },
+      {
+        "town": "Newbridge",
+        "price": "€432,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.19846,
+            "lng": -6.77156
+          },
+          "southwest": {
+            "lat": 53.16131,
+            "lng": -6.8233901
+          }
+        }
+      },
+      {
+        "town": "Leixlip",
+        "price": "€484,986",
+        "bounds": {
+          "northeast": {
+            "lat": 53.37480009999999,
+            "lng": -6.473680000000001
+          },
+          "southwest": {
+            "lat": 53.3587301,
+            "lng": -6.521649999999999
+          }
+        }
+      },
+      {
+        "town": "Clane",
+        "price": "€465,000"
+      },
+      {
+        "town": "Kilcock",
+        "price": "€444,999"
+      },
+      {
+        "town": "Celbridge",
+        "price": "€445,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.35711999999999,
+            "lng": -6.5239699
+          },
+          "southwest": {
+            "lat": 53.32322,
+            "lng": -6.56685
+          }
+        }
+      },
+      {
+        "town": "Athy",
+        "price": "€282,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.00189,
+            "lng": -6.964349899999999
+          },
+          "southwest": {
+            "lat": 52.97806,
+            "lng": -7.0013701
+          }
+        }
+      },
+      {
+        "town": "Maynooth",
+        "price": "€477,583",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3915101,
+            "lng": -6.57626
+          },
+          "southwest": {
+            "lat": 53.36823,
+            "lng": -6.61254
+          }
+        }
+      },
+      {
+        "town": "Kilcullen",
+        "price": "€425,000"
+      },
+      {
+        "town": "Kildare Town",
+        "price": "€441,742",
+        "bounds": {
+          "northeast": {
+            "lat": 53.1828601,
+            "lng": -6.8829899
+          },
+          "southwest": {
+            "lat": 53.15196,
+            "lng": -6.92259
+          }
+        }
+      },
+      {
+        "town": "Athgarvan",
+        "price": "€460,011"
+      },
+      {
+        "town": "Monasterevin",
+        "price": "€405,876"
+      },
+      {
+        "town": "Magee Quarter",
+        "price": "€420,000"
+      },
+      {
+        "town": "Sallins",
+        "price": "€340,000"
+      },
+      {
+        "town": "Ballymany",
+        "price": "€440,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.17531690000001,
+            "lng": -6.8073128
+          },
+          "southwest": {
+            "lat": 53.1573299,
+            "lng": -6.835616000000001
+          }
+        }
+      },
+      {
+        "town": "Rathangan",
+        "price": "€369,000"
+      },
+      {
+        "town": "Kill",
+        "price": "€495,000"
+      },
+      {
+        "town": "Oak Church",
+        "price": "€370,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.9044573,
+            "lng": -8.5753988
+          },
+          "southwest": {
+            "lat": 53.90421079999999,
+            "lng": -8.575919599999999
+          }
+        }
+      },
+      {
+        "town": "Prosperous",
+        "price": "€444,999"
+      },
+      {
+        "town": "Straffan",
+        "price": "€715,000"
+      },
+      {
+        "town": "Castledermot",
+        "price": "€272,500"
+      },
+      {
+        "town": "Carbury",
+        "price": "€405,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3676728,
+            "lng": -6.951993799999999
+          },
+          "southwest": {
+            "lat": 53.348043,
+            "lng": -6.9880653
+          }
+        }
+      },
+      {
+        "town": "Ballymore Eustace",
+        "price": "€385,000"
+      },
+      {
+        "town": "Kildare",
+        "price": "€322,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.1828601,
+            "lng": -6.8829899
+          },
+          "southwest": {
+            "lat": 53.15196,
+            "lng": -6.92259
+          }
+        }
+      },
+      {
+        "town": "The Curragh",
+        "price": "€385,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.1573404,
+            "lng": -6.781456299999999
+          },
+          "southwest": {
+            "lat": 53.12501890000001,
+            "lng": -6.8595903
+          }
+        }
+      }
+    ]
+  },
+  "meath": {
+    "towns": [
+      {
+        "town": "Navan",
+        "price": "€346,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.6631241,
+            "lng": -6.6646177
+          },
+          "southwest": {
+            "lat": 53.6328124,
+            "lng": -6.7357193
+          }
+        }
+      },
+      {
+        "town": "Ashbourne",
+        "price": "€475,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.52543009999999,
+            "lng": -6.3844701
+          },
+          "southwest": {
+            "lat": 53.50273,
+            "lng": -6.4186299
+          }
+        }
+      },
+      {
+        "town": "Dunshaughlin",
+        "price": "€465,000"
+      },
+      {
+        "town": "Kells",
+        "price": "€348,035",
+        "bounds": {
+          "northeast": {
+            "lat": 53.739437,
+            "lng": -6.860752499999999
+          },
+          "southwest": {
+            "lat": 53.7138189,
+            "lng": -6.8973416
+          }
+        }
+      },
+      {
+        "town": "Trim",
+        "price": "€360,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.5675902,
+            "lng": -6.7545217
+          },
+          "southwest": {
+            "lat": 53.5453218,
+            "lng": -6.8077789
+          }
+        }
+      },
+      {
+        "town": "Bettystown",
+        "price": "€414,956"
+      },
+      {
+        "town": "Drogheda",
+        "price": "€370,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.73425,
+            "lng": -6.2989899
+          },
+          "southwest": {
+            "lat": 53.69853,
+            "lng": -6.38988
+          }
+        }
+      },
+      {
+        "town": "Dunboyne",
+        "price": "€477,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.42728,
+            "lng": -6.46202
+          },
+          "southwest": {
+            "lat": 53.40945989999999,
+            "lng": -6.4882301
+          }
+        }
+      },
+      {
+        "town": "Duleek",
+        "price": "€374,999"
+      },
+      {
+        "town": "Ratoath",
+        "price": "€460,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.5166499,
+            "lng": -6.44405
+          },
+          "southwest": {
+            "lat": 53.49570989999999,
+            "lng": -6.4784001
+          }
+        }
+      },
+      {
+        "town": "Mornington",
+        "price": "€408,600",
+        "bounds": {
+          "northeast": {
+            "lat": 53.73086490000001,
+            "lng": -6.2431928
+          },
+          "southwest": {
+            "lat": 53.6985925,
+            "lng": -6.298152300000001
+          }
+        }
+      },
+      {
+        "town": "Summerhill",
+        "price": "€460,000"
+      },
+      {
+        "town": "Stamullen",
+        "price": "€444,999"
+      },
+      {
+        "town": "Athboy",
+        "price": "€300,000"
+      },
+      {
+        "town": "Clonee",
+        "price": "€410,000"
+      },
+      {
+        "town": "Commons",
+        "price": "€385,000",
+        "bounds": {
+          "northeast": {
+            "lat": 52.6282425,
+            "lng": -7.542031400000001
+          },
+          "southwest": {
+            "lat": 52.6226403,
+            "lng": -7.550262500000001
+          }
+        }
+      },
+      {
+        "town": "Enfield",
+        "price": "€376,500"
+      },
+      {
+        "town": "Julianstown",
+        "price": "€440,000"
+      },
+      {
+        "town": "Oldcastle",
+        "price": "€265,000"
+      },
+      {
+        "town": "Slane",
+        "price": "€336,500"
+      },
+      {
+        "town": "Longwood",
+        "price": "€340,000"
+      },
+      {
+        "town": "Laytown",
+        "price": "€317,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.69112,
+            "lng": -6.2370301
+          },
+          "southwest": {
+            "lat": 53.67764,
+            "lng": -6.2511701
+          }
+        }
+      },
+      {
+        "town": "Donacarney",
+        "price": "€385,000"
+      },
+      {
+        "town": "Ballivor",
+        "price": "€294,000"
+      },
+      {
+        "town": "Kildalkey",
+        "price": "€355,000"
+      },
+      {
+        "town": "Kilmessan",
+        "price": "€342,500"
+      }
+    ]
+  },
+  "louth": {
+    "towns": [
+      {
+        "town": "Drogheda",
+        "price": "€370,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.73425,
+            "lng": -6.2989899
+          },
+          "southwest": {
+            "lat": 53.69853,
+            "lng": -6.38988
+          }
+        }
+      },
+      {
+        "town": "Dundalk",
+        "price": "€290,000",
+        "bounds": {
+          "northeast": {
+            "lat": 54.02587,
+            "lng": -6.34662
+          },
+          "southwest": {
+            "lat": 53.96965,
+            "lng": -6.44125
+          }
+        }
+      },
+      {
+        "town": "Ardee",
+        "price": "€336,000"
+      },
+      {
+        "town": "Blackrock",
+        "price": "€397,000"
+      },
+      {
+        "town": "Carlingford",
+        "price": "€322,500",
+        "bounds": {
+          "northeast": {
+            "lat": 54.0475686,
+            "lng": -6.175510699999999
+          },
+          "southwest": {
+            "lat": 54.03115039999999,
+            "lng": -6.1970265
+          }
+        }
+      },
+      {
+        "town": "Dunleer",
+        "price": "€295,000"
+      },
+      {
+        "town": "Clogherhead",
+        "price": "€311,000"
+      },
+      {
+        "town": "Tullyallen",
+        "price": "€399,950"
+      },
+      {
+        "town": "Castlebellingham",
+        "price": "€276,250"
+      },
+      {
+        "town": "Louth Village",
+        "price": "€344,999"
+      },
+      {
+        "town": "Termonfeckin",
+        "price": "€396,000"
+      },
+      {
+        "town": "Collon",
+        "price": "€427,000"
+      },
+      {
+        "town": "Dromiskin",
+        "price": "€420,000"
+      },
+      {
+        "town": "Omeath",
+        "price": "€285,000"
+      }
+    ]
+  },
+  "monaghan": {
+    "towns": [
+      {
+        "town": "Carrickmacross",
+        "price": "€280,000"
+      },
+      {
+        "town": "Castleblayney",
+        "price": "€240,000"
+      },
+      {
+        "town": "Monaghan",
+        "price": "€200,000",
+        "bounds": {
+          "northeast": {
+            "lat": 54.26408,
+            "lng": -6.942600000000001
+          },
+          "southwest": {
+            "lat": 54.22737,
+            "lng": -6.9994099
+          }
+        }
+      },
+      {
+        "town": "Clones",
+        "price": "€170,000"
+      },
+      {
+        "town": "Kilnacloy",
+        "price": "€330,000",
+        "bounds": {
+          "northeast": {
+            "lat": 54.25819389999999,
+            "lng": -6.9647193
+          },
+          "southwest": {
+            "lat": 54.2502706,
+            "lng": -6.9834751
+          }
+        }
+      },
+      {
+        "town": "Ballybay",
+        "price": "€160,800"
+      }
+    ]
+  },
+  "cavan": {
+    "towns": [
+      {
+        "town": "Virginia",
+        "price": "€311,000"
+      },
+      {
+        "town": "Belturbet",
+        "price": "€167,500"
+      },
+      {
+        "town": "Kingscourt",
+        "price": "€269,903"
+      },
+      {
+        "town": "Cavan",
+        "price": "€223,500",
+        "bounds": {
+          "northeast": {
+            "lat": 54.00315670000001,
+            "lng": -7.3168015
+          },
+          "southwest": {
+            "lat": 53.9700812,
+            "lng": -7.394294299999999
+          }
+        }
+      },
+      {
+        "town": "Ballyjamesduff",
+        "price": "€257,000"
+      },
+      {
+        "town": "Ballyconnell",
+        "price": "€221,750"
+      },
+      {
+        "town": "Mullagh",
+        "price": "€285,000"
+      },
+      {
+        "town": "Bailieborough",
+        "price": "€250,000"
+      },
+      {
+        "town": "Ballinagh",
+        "price": "€181,000"
+      },
+      {
+        "town": "Cootehill",
+        "price": "€175,000"
+      },
+      {
+        "town": "Shercock",
+        "price": "€280,000"
+      },
+      {
+        "town": "Drumalee",
+        "price": "€256,500",
+        "bounds": {
+          "northeast": {
+            "lat": 54.0228907,
+            "lng": -7.343645599999999
+          },
+          "southwest": {
+            "lat": 53.99349669999999,
+            "lng": -7.3762863
+          }
+        }
+      },
+      {
+        "town": "Killeshandra",
+        "price": "€219,000"
+      },
+      {
+        "town": "Swellan",
+        "price": "€282,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.9929828,
+            "lng": -7.369574600000001
+          },
+          "southwest": {
+            "lat": 53.9908265,
+            "lng": -7.371549499999999
+          }
+        }
+      },
+      {
+        "town": "Cavan Town",
+        "price": "€276,250",
+        "bounds": {
+          "northeast": {
+            "lat": 54.00315670000001,
+            "lng": -7.3168015
+          },
+          "southwest": {
+            "lat": 53.9700812,
+            "lng": -7.394294299999999
+          }
+        }
+      },
+      {
+        "town": "Kilnaleck",
+        "price": "€125,031"
+      }
+    ]
+  },
+  "longford": {
+    "towns": [
+      {
+        "town": "Longford",
+        "price": "€138,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.7423701,
+            "lng": -7.7682599
+          },
+          "southwest": {
+            "lat": 53.7107499,
+            "lng": -7.8201999
+          }
+        }
+      },
+      {
+        "town": "Ballymahon",
+        "price": "€171,000"
+      },
+      {
+        "town": "Edgeworthstown",
+        "price": "€175,000"
+      },
+      {
+        "town": "Drumlish",
+        "price": "€240,000"
+      },
+      {
+        "town": "Granard",
+        "price": "€165,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.7811673,
+            "lng": -7.491095
+          },
+          "southwest": {
+            "lat": 53.7738223,
+            "lng": -7.5035867
+          }
+        }
+      },
+      {
+        "town": "Aughnacliffe",
+        "price": "€210,000"
+      },
+      {
+        "town": "Ballinalee",
+        "price": "€180,000"
+      },
+      {
+        "town": "Lanesborough",
+        "price": "€247,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.6757287,
+            "lng": -7.984906999999999
+          },
+          "southwest": {
+            "lat": 53.668794,
+            "lng": -7.993270399999999
+          }
+        }
+      },
+      {
+        "town": "Newtownforbes",
+        "price": "€195,000"
+      }
+    ]
+  },
+  "westmeath": {
+    "towns": [
+      {
+        "town": "Mullingar",
+        "price": "€337,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.54669999999999,
+            "lng": -7.30012
+          },
+          "southwest": {
+            "lat": 53.5054599,
+            "lng": -7.3877801
+          }
+        }
+      },
+      {
+        "town": "Athlone",
+        "price": "€308,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.43956,
+            "lng": -7.890370000000001
+          },
+          "southwest": {
+            "lat": 53.4069301,
+            "lng": -7.9726401
+          }
+        }
+      },
+      {
+        "town": "Moate",
+        "price": "€309,500"
+      },
+      {
+        "town": "Killucan",
+        "price": "€344,500"
+      },
+      {
+        "town": "Kinnegad",
+        "price": "€308,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.4699393,
+            "lng": -7.0869852
+          },
+          "southwest": {
+            "lat": 53.44628789999999,
+            "lng": -7.1284795
+          }
+        }
+      },
+      {
+        "town": "Castlepollard",
+        "price": "€250,000"
+      },
+      {
+        "town": "Delvin",
+        "price": "€301,000"
+      },
+      {
+        "town": "Kilbeggan",
+        "price": "€263,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.3713068,
+            "lng": -7.477271099999999
+          },
+          "southwest": {
+            "lat": 53.3617321,
+            "lng": -7.507999400000001
+          }
+        }
+      },
+      {
+        "town": "Collinstown",
+        "price": "€405,000"
+      }
+    ]
+  },
+  "roscommon": {
+    "towns": [
+      {
+        "town": "Castlerea",
+        "price": "€142,500"
+      },
+      {
+        "town": "Athlone",
+        "price": "€296,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.43956,
+            "lng": -7.890370000000001
+          },
+          "southwest": {
+            "lat": 53.4069301,
+            "lng": -7.9726401
+          }
+        }
+      },
+      {
+        "town": "Boyle",
+        "price": "€178,000"
+      },
+      {
+        "town": "Strokestown",
+        "price": "€185,000"
+      },
+      {
+        "town": "Ballaghaderreen",
+        "price": "€123,500"
+      },
+      {
+        "town": "Roscommon",
+        "price": "€251,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.63941999999999,
+            "lng": -8.16418
+          },
+          "southwest": {
+            "lat": 53.6117699,
+            "lng": -8.20713
+          }
+        }
+      },
+      {
+        "town": "Carrick On Shannon",
+        "price": "€167,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.9608183,
+            "lng": -8.0663085
+          },
+          "southwest": {
+            "lat": 53.9320041,
+            "lng": -8.126962599999999
+          }
+        }
+      },
+      {
+        "town": "Elphin",
+        "price": "€120,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.8618525,
+            "lng": -8.1212535
+          },
+          "southwest": {
+            "lat": 53.78796939999999,
+            "lng": -8.333203
+          }
+        }
+      },
+      {
+        "town": "Rooskey",
+        "price": "€194,500"
+      },
+      {
+        "town": "Ballaghadereen",
+        "price": "€161,500"
+      },
+      {
+        "town": "Ballinasloe",
+        "price": "€170,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.34609,
+            "lng": -8.18372
+          },
+          "southwest": {
+            "lat": 53.31789,
+            "lng": -8.25781
+          }
+        }
+      },
+      {
+        "town": "Tulsk",
+        "price": "€165,000"
+      }
+    ]
+  },
+  "sligo": {
+    "towns": [
+      {
+        "town": "Collooney",
+        "price": "€300,000",
+        "bounds": {
+          "northeast": {
+            "lat": 54.18708669999999,
+            "lng": -8.4801565
+          },
+          "southwest": {
+            "lat": 54.1737529,
+            "lng": -8.5008678
+          }
+        }
+      },
+      {
+        "town": "Ballymote",
+        "price": "€182,500"
+      },
+      {
+        "town": "Tubbercurry",
+        "price": "€180,000"
+      },
+      {
+        "town": "Enniscrone",
+        "price": "€301,500",
+        "bounds": {
+          "northeast": {
+            "lat": 54.2303419,
+            "lng": -9.0757922
+          },
+          "southwest": {
+            "lat": 54.20214470000001,
+            "lng": -9.1067396
+          }
+        }
+      },
+      {
+        "town": "Ballisodare",
+        "price": "€322,500"
+      },
+      {
+        "town": "Caltragh",
+        "price": "€369,000"
+      },
+      {
+        "town": "Ballinode",
+        "price": "€231,000"
+      },
+      {
+        "town": "Strandhill",
+        "price": "€367,500"
+      },
+      {
+        "town": "Coolaney",
+        "price": "€197,000",
+        "bounds": {
+          "northeast": {
+            "lat": 54.1786878,
+            "lng": -8.587184299999999
+          },
+          "southwest": {
+            "lat": 54.1631722,
+            "lng": -8.6112484
+          }
+        }
+      },
+      {
+        "town": "Gurteen",
+        "price": "€130,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.9968483,
+            "lng": -8.483847899999999
+          },
+          "southwest": {
+            "lat": 53.9841918,
+            "lng": -8.5179636
+          }
+        }
+      },
+      {
+        "town": "Riverstown",
+        "price": "€261,078"
+      }
+    ]
+  },
+  "leitrim": {
+    "towns": [
+      {
+        "town": "Carrick On Shannon",
+        "price": "€220,000",
+        "bounds": {
+          "northeast": {
+            "lat": 53.9608183,
+            "lng": -8.0663085
+          },
+          "southwest": {
+            "lat": 53.9320041,
+            "lng": -8.126962599999999
+          }
+        }
+      },
+      {
+        "town": "Mohill",
+        "price": "€192,500"
+      },
+      {
+        "town": "Manorhamilton",
+        "price": "€180,000"
+      },
+      {
+        "town": "Drumshanbo",
+        "price": "€220,000"
+      },
+      {
+        "town": "Kinlough",
+        "price": "€220,000"
+      },
+      {
+        "town": "Ballinamore",
+        "price": "€220,000"
+      },
+      {
+        "town": "Dromahair",
+        "price": "€141,000"
+      },
+      {
+        "town": "Carrigallen",
+        "price": "€187,500"
+      },
+      {
+        "town": "Leitrim Village",
+        "price": "€181,000"
+      },
+      {
+        "town": "Dromod",
+        "price": "€210,000"
+      }
+    ]
+  },
+  "mayo": {
+    "towns": [
+      {
+        "town": "Ballina",
+        "price": "€165,000",
+        "bounds": {
+          "northeast": {
+            "lat": 54.12732,
+            "lng": -9.1254501
+          },
+          "southwest": {
+            "lat": 54.0997999,
+            "lng": -9.1731299
+          }
+        }
+      },
+      {
+        "town": "Castlebar",
+        "price": "€282,500",
+        "bounds": {
+          "northeast": {
+            "lat": 53.8699901,
+            "lng": -9.26671
+          },
+          "southwest": {
+            "lat": 53.83884,
+            "lng": -9.330530099999999
+          }
+        }
+      },
+      {
+        "town": "Westport",
+        "price": "€311,250",
+        "bounds": {
+          "northeast": {
+            "lat": 53.8084393,
+            "lng": -9.5016299
+          },
+          "southwest": {
+            "lat": 53.7919801,
+            "lng": -9.5352093
+          }
+        }
+      },
+      {
+        "town": "Claremorris",
+        "price": "€202,500"
+      },
+      {
+        "town": "Swinford",
+        "price": "€152,667"
+      },
+      {
+        "town": "Ballinrobe",
+        "price": "€241,250"
+      },
+      {
+        "town": "Foxford",
+        "price": "€165,000"
+      },
+      {
+        "town": "Ballyhaunis",
+        "price": "€170,000"
+      },
+      {
+        "town": "Belmullet",
+        "price": "€150,000"
+      },
+      {
+        "town": "Kiltimagh",
+        "price": "€160,000"
+      },
+      {
+        "town": "Newport",
+        "price": "€300,000"
+      },
+      {
+        "town": "Charlestown",
+        "price": "€168,000"
+      },
+      {
+        "town": "Knock",
+        "price": "€200,000"
+      },
+      {
+        "town": "Achill",
+        "price": "€202,500",
+        "bounds": {
+          "northeast": {
+            "lat": 54.03169,
+            "lng": -9.9142406
+          },
+          "southwest": {
+            "lat": 53.87417929999999,
+            "lng": -10.2591201
+          }
+        }
+      },
+      {
+        "town": "Crossmolina",
+        "price": "€160,000"
+      },
+      {
+        "town": "Killala",
+        "price": "€156,250"
+      },
+      {
+        "town": "Kilkelly",
+        "price": "€150,000"
+      },
+      {
+        "town": "Louisburgh",
+        "price": "€306,000"
+      },
+      {
+        "town": "Balla",
+        "price": "€273,500"
+      }
+    ]
+  },
+  "donegal": {
+    "towns": [
+      {
+        "town": "Letterkenny",
+        "price": "€181,000",
+        "bounds": {
+          "northeast": {
+            "lat": 54.99262,
+            "lng": -7.688440000000001
+          },
+          "southwest": {
+            "lat": 54.94365999999999,
+            "lng": -7.7636901
+          }
+        }
+      },
+      {
+        "town": "Lifford",
+        "price": "€160,000"
+      },
+      {
+        "town": "Ballybofey",
+        "price": "€227,000"
+      },
+      {
+        "town": "Bundoran",
+        "price": "€198,000"
+      },
+      {
+        "town": "Donegal Town",
+        "price": "€257,500",
+        "bounds": {
+          "northeast": {
+            "lat": 54.66157159999999,
+            "lng": -8.087926099999999
+          },
+          "southwest": {
+            "lat": 54.6426687,
+            "lng": -8.124109299999999
+          }
+        }
+      },
+      {
+        "town": "Buncrana",
+        "price": "€190,000",
+        "bounds": {
+          "northeast": {
+            "lat": 55.1394512,
+            "lng": -7.440584
+          },
+          "southwest": {
+            "lat": 55.1232842,
+            "lng": -7.4648685
+          }
+        }
+      },
+      {
+        "town": "Ballyshannon",
+        "price": "€128,000"
+      },
+      {
+        "town": "Carndonagh",
+        "price": "€145,000"
+      },
+      {
+        "town": "Dungloe",
+        "price": "€170,000"
+      },
+      {
+        "town": "Clonmany",
+        "price": "€144,500"
+      },
+      {
+        "town": "Moville",
+        "price": "€185,000"
+      },
+      {
+        "town": "Dunfanaghy",
+        "price": "€245,000"
+      },
+      {
+        "town": "Ramelton",
+        "price": "€310,000"
+      },
+      {
+        "town": "Ardara",
+        "price": "€163,000"
+      },
+      {
+        "town": "Killybegs",
+        "price": "€160,000"
+      },
+      {
+        "town": "Muff",
+        "price": "€190,000"
+      },
+      {
+        "town": "Rathmullan",
+        "price": "€245,000"
+      },
+      {
+        "town": "Burtonport",
+        "price": "€80,000"
+      },
+      {
+        "town": "Falcarragh",
+        "price": "€113,000"
+      },
+      {
+        "town": "Milford",
+        "price": "€144,000"
+      }
+    ]
+  },
+  "derry": {
+    "towns": []
+  },
+  "tyrone": {
+    "towns": []
+  },
+  "fermanagh": {
+    "towns": []
+  },
+  "armagh": {
+    "towns": []
+  },
+  "down": {
+    "towns": []
+  },
+  "antrim": {
+    "towns": []
+  }
+}
