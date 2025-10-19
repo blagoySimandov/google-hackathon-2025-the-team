@@ -94,6 +94,7 @@ def get_renovation_cost(image_urls: List[str]) -> RenovationCost:
 
 def get_market_average(latitude: float, longitude: float) -> float:
     # ... (no change)
+
     return 300000 + (latitude * 100) + (longitude * 100)
 
 def get_amenity_details(latitude: float, longitude: float, api_key: str) -> AmenityResult:
@@ -166,7 +167,13 @@ def get_air_quality_score(latitude: float, longitude: float, api_key: str) -> fl
         response.raise_for_status()
         data = response.json()
         uaqi = next((idx['aqi'] for idx in data['indexes'] if idx['code'] == 'uaqi'), 75)
-        score = 100 - (min(uaqi, 150) / 150 * 100)
+        max_aqi = 500
+        if uaqi < 0:
+            uaqi = 0
+        elif uaqi > max_aqi:
+            uaqi = max_aqi
+        score = (1 - uaqi / max_aqi) * 100
+        # score = 100 - (min(uaqi, 150) / 150 * 100)
         return round(score, 2)
     except requests.exceptions.RequestException:
         return 50.0

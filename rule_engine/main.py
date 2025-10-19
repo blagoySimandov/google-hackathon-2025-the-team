@@ -23,6 +23,7 @@ def run_single_property_analysis(doc_id: str):
         return
 
     # 3. Initialize and run the engine
+    print(SCORING_WEIGHTS)
     engine = ViabilityEngine(weights=SCORING_WEIGHTS)
     result = engine.run(property_listings)
 

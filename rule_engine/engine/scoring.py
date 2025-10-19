@@ -5,7 +5,9 @@ from typing import List, Dict
 class ScoringEngine:
     """Applies a weighted algorithm to rank properties."""
     def __init__(self, weights: Dict[str, float]):
+        print("Weights in scoring engine: ", weights)
         if sum(weights.values()) != 1.0:
+            print("Sum of weights: ", sum(weights.values()))
             raise ValueError("The sum of weights must be 1.0")
         self.weights = weights
 
