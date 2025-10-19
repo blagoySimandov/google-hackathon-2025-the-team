@@ -1,9 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
-import { getAllProperties, getPropertyByIdApi } from "./index";
-import type { PropertyListing } from "./firestore/types";
+import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import { getAllProperties } from "./index";
+import { getValidityDataById } from "./firestore";
+import type { PropertyListing, ValidityData } from "./firestore/types";
 
 export const PROPERTIES_QUERY_KEY = "properties";
-export const PROPERTY_BY_ID_QUERY_KEY = "property";
+export const VALIDITY_DATA_QUERY_KEY = "validity_data";
 
 interface UseGetAllPropertiesReturn {
   properties: PropertyListing[];
@@ -34,28 +35,32 @@ export const useGetAllProperties = (
   };
 };
 
-interface UsePropertyByIdReturn {
-  data: PropertyListing | null;
-  isLoading: boolean;
+interface UseGetValidityDataReturn {
+  validityData: ValidityData | null;
+  loading: boolean;
   error: Error | null;
   refetch: () => void;
+  isRefetching: boolean;
 }
 
-export const usePropertyById = (id: number): UsePropertyByIdReturn => {
-  const query = useQuery<PropertyListing | null, Error>({
-    queryKey: [PROPERTY_BY_ID_QUERY_KEY, id],
-    queryFn: () => getPropertyByIdApi(id),
+export const useGetValidityData = (
+  propertyId: string,
+): UseGetValidityDataReturn => {
+  const query = useQuery<ValidityData | null, Error>({
+    queryKey: [VALIDITY_DATA_QUERY_KEY, propertyId],
+    queryFn: () => getValidityDataById(propertyId),
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     retry: 2,
     refetchOnWindowFocus: false,
-    enabled: id > 0, // Only run query if we have a valid ID
+    enabled: !!propertyId,
   });
 
   return {
-    data: query.data ?? null,
-    isLoading: query.isLoading,
-    error: query.error ?? null,
+    validityData: query.data || null,
+    loading: query.isLoading,
+    error: query.error,
     refetch: query.refetch,
+    isRefetching: query.isRefetching,
   };
 };

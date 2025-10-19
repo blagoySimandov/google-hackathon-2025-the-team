@@ -6,10 +6,12 @@ import {
   limit,
   where,
   QueryConstraint,
+  doc,
+  getDoc,
 } from "firebase/firestore";
 import { getFirestoreInstance } from "./util";
-import { PROPERTIES_COLLECTION } from "./constants";
-import { PropertyListing } from "./types";
+import { PROPERTIES_COLLECTION, VALIDITY_DATA_COLLECTION } from "./constants";
+import { PropertyListing, ValidityData } from "./types";
 
 const parsePropertyData = (data: any): PropertyListing => {
   return {
@@ -97,27 +99,45 @@ export const getPropertyListings = async (
   }
 };
 
-export const getPropertyById = async (
-  propertyId: number,
-): Promise<PropertyListing | null> => {
+export const getValidityDataById = async (
+  propertyId: string,
+): Promise<ValidityData | null> => {
   try {
     const db = getFirestoreInstance();
-    const propertiesRef = collection(db, PROPERTIES_COLLECTION);
+    const docRef = doc(db, VALIDITY_DATA_COLLECTION, propertyId);
+    const docSnap = await getDoc(docRef);
 
-    // Query by the 'id' field (not the document ID)
-    const q = query(propertiesRef, where("id", "==", propertyId), limit(1));
-    const snapshot = await getDocs(q);
-
-    if (snapshot.empty) {
+    if (!docSnap.exists()) {
       return null;
     }
 
-    const data = snapshot.docs[0].data();
-    return parsePropertyData(data);
+    const data = docSnap.data();
+    return {
+      id: data.id,
+      property_id: data.property_id,
+      rank: data.rank,
+      url: data.url,
+      address: data.address,
+      latitude: data.latitude,
+      longitude: data.longitude,
+      listed_price: data.listed_price,
+      market_average_price: data.market_average_price,
+      image_urls: data.image_urls || [],
+      area_m2: data.area_m2,
+      ber: data.ber,
+      air_quality_index: data.air_quality_index,
+      air_quality_score: data.air_quality_score,
+      air_quality_category: data.air_quality_category,
+      found_amenities: data.found_amenities || [],
+      investment_analysis: data.investment_analysis || {},
+      renovation_details: data.renovation_details || { total_cost: 0, items: [] },
+      total_renovation_cost: data.total_renovation_cost,
+      scores: data.scores || {},
+    } as ValidityData;
   } catch (error) {
-    console.error("Error fetching property by ID:", error);
+    console.error("Error fetching validity data:", error);
     throw new Error(
-      `Failed to fetch property: ${error instanceof Error ? error.message : "Unknown error"}`,
+      `Failed to fetch validity data: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 };

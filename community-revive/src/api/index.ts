@@ -11,22 +11,12 @@ export async function getAllProperties(limit?: number): Promise<PropertyListing[
   }
 }
 
-export async function getPropertyByIdApi(id: number): Promise<PropertyListing | null> {
-  try {
-    const property = await getPropertyById(id);
-    return property;
-  } catch (error) {
-    console.error('Error in getPropertyByIdApi:', error);
-    throw error;
-  }
-}
-
-export type { PropertyListing } from './firestore/types';
+export type { PropertyListing, ValidityData } from './firestore/types';
 
 export {
   getPropertyListings,
-  getPropertyById
+  getValidityDataById
 } from './firestore';
 
-export { useGetAllProperties, usePropertyById, PROPERTIES_QUERY_KEY } from './hooks';
+export { useGetAllProperties, useGetValidityData, PROPERTIES_QUERY_KEY, VALIDITY_DATA_QUERY_KEY } from './hooks';
 export { QueryProvider, queryClient } from './QueryProvider';
