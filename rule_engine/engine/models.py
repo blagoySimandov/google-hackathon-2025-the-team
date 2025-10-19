@@ -12,8 +12,6 @@ class PropertyListing(BaseModel):
     latitude: float = Field(..., ge=-90, le=90)
     longitude: float = Field(..., ge=-180, le=180)
     image_urls: List[HttpUrl] = Field(..., min_length=1)
-    area_m2: float | None = None
-    ber: str | None = None
 
 class RenovationItem(BaseModel):
     """Defines the schema for an item in the renovation list."""
@@ -85,3 +83,4 @@ class InvestmentAnalysis(BaseModel):
     estimated_after_repair_value: float
     potential_profit: float
     return_on_investment_percent: float
+    

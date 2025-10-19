@@ -26,6 +26,7 @@ def load_from_firestore(db, doc_id: str) -> dict:
 
     data = doc.to_dict()
     
+    
     try:
         price = float(data['price']['amount'])
         if price <= 0:
@@ -82,10 +83,7 @@ def load_from_firestore(db, doc_id: str) -> dict:
             "address": data["title"],
             "latitude": data["location"]["coordinates"][1],
             "longitude": data["location"]["coordinates"][0],
-            "image_urls": [img["size1200x1200"] for img in data["media"]["images"] if img.get("size1200x1200")],
-            "area_m2": area_m2,  
-            "ber": ber_rating
-
+            "image_urls": image_urls # <-- Use the direct storage URLs
         }
     except (KeyError, TypeError) as e:
         raise ValueError(f"Could not transform Firestore document '{doc_id}'. Invalid or missing key: {e}")
