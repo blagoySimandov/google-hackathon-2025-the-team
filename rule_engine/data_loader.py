@@ -27,32 +27,29 @@ def load_from_firestore(db, doc_id: str) -> dict:
 
     data = doc.to_dict()
     
-    # The debug print can be removed now that we've found the issue, but it's useful to keep
-    # print("\n--- Raw Firestore Data Received ---")
-    # print(json.dumps(data, indent=2))
-    # print("---------------------------------\n")
-
     try:
-        # --- CORRECTED TRANSFORMATION LOGIC ---
-        
-        # CORRECTED PATH: Directly access price.amount
         price = float(data['price']['amount'])
         if price <= 0:
             raise ValueError("Firestore document contains a non-positive price.")
+
+        # --- THE FIX: Point to the 'storageImages' field ---
+        # This new field contains direct, public URLs to Firebase Storage,
+        # so we no longer need the proxy function.
+        image_urls = data.get("storageImages", []) # Safely get the list, default to empty
+        if not image_urls:
+            print(f"   WARNING: No images found in 'storageImages' for document {doc_id}.")
+        # ----------------------------------------------------
 
         return {
             "property_id": str(data["id"]),
             "url": f"https://www.daft.ie{data['seoFriendlyPath']}",
             "listed_price": price,
             "address": data["title"],
-            # CORRECTED PATH: Use location.coordinates
             "latitude": data["location"]["coordinates"][1],
             "longitude": data["location"]["coordinates"][0],
-            "image_urls": [img["size1200x1200"] for img in data["media"]["images"] if img.get("size1200x1200")]
+            "image_urls": image_urls # <-- Use the direct storage URLs
         }
     except (KeyError, TypeError) as e:
-        # This will catch errors if fields are missing in the new structure.
         raise ValueError(f"Could not transform Firestore document '{doc_id}'. Invalid or missing key: {e}")
     except ValueError as e:
-        # This catches the non-positive price error from above.
         raise ValueError(f"Could not transform Firestore document '{doc_id}'. Invalid value: {e}")
