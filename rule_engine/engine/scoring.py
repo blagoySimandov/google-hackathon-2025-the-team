@@ -3,6 +3,8 @@ import pandas as pd
 from typing import List, Dict
 from math import radians, sin, cos, asin, sqrt, exp
 
+from constants import FIELD_NAMES_RE
+
 
 class ScoringEngine:
     """Applies a weighted algorithm to rank properties."""
