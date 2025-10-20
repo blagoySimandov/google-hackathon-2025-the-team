@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleMap } from './GoogleMap';
 import { PropertyCard } from './PropertyCard';
@@ -28,12 +28,14 @@ export const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [mapLoading, setMapLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [pagination, setPagination] = useState<{
-    lastDoc?: any;
-    hasMore: boolean;
-  }>({ hasMore: true });
+  const [mapBounds, setMapBounds] = useState<{
+    north: number;
+    south: number;
+    east: number;
+    west: number;
+  } | null>(null);
 
-  // Fetch properties from Firebase
+  // Fetch initial properties from Firebase (for cache)
   useEffect(() => {
     const fetchProperties = async () => {
       try {
@@ -41,14 +43,10 @@ export const Dashboard: React.FC = () => {
         setLoading(true);
         setError(null);
 
-        const result = await apiService.fetchProperties({}, { pageSize: 20 });
+        const result = await apiService.fetchProperties({}, { pageSize: 100 });
         console.log('📋 Dashboard: Received result from API:', result);
 
         setProperties(result.data);
-        setPagination({
-          lastDoc: result.lastDoc,
-          hasMore: result.hasMore,
-        });
 
         console.log('📋 Dashboard: Properties set successfully:', result.data.length);
       } catch (err) {
@@ -103,30 +101,6 @@ export const Dashboard: React.FC = () => {
     fetchMapProperties();
   }, []);
 
-  // Load more properties
-  const loadMoreProperties = useCallback(async () => {
-    if (!pagination.hasMore || loading) return;
-
-    try {
-      setLoading(true);
-      const result = await apiService.fetchProperties({}, {
-        pageSize: 20,
-        lastDoc: pagination.lastDoc,
-      });
-
-      setProperties(prev => [...prev, ...result.data]);
-      setPagination({
-        lastDoc: result.lastDoc,
-        hasMore: result.hasMore,
-      });
-    } catch (err) {
-      console.error('Error loading more properties:', err);
-      setError('Failed to load more properties.');
-    } finally {
-      setLoading(false);
-    }
-  }, [pagination, loading]);
-
   // Helper function to apply filters (used for both full properties and map properties)
   const applyFilters = useCallback((propertyList: any[]) => {
     let filtered = [...propertyList];
@@ -177,12 +151,70 @@ export const Dashboard: React.FC = () => {
     return applyFilters(mapProperties);
   }, [mapProperties, applyFilters]);
 
-  // Filtered and sorted list properties
-  const filteredAndSortedProperties = useMemo(() => {
-    const filtered = applyFilters(properties);
+  // Get visible properties on the map (after filters and within bounds)
+  const visibleMapProperties = useMemo(() => {
+    if (!mapBounds) return filteredMapProperties;
+    
+    return filteredMapProperties.filter(mapProp => {
+      const coords = mapProp.coordinates;
+      return coords &&
+        coords.lat >= mapBounds.south &&
+        coords.lat <= mapBounds.north &&
+        coords.lng >= mapBounds.west &&
+        coords.lng <= mapBounds.east;
+    });
+  }, [filteredMapProperties, mapBounds]);
 
-    // Apply sorting
-    const sorted = [...filtered].sort((a, b) => {
+  // Fetch full property details for visible map properties
+  const [sidebarProperties, setSidebarProperties] = useState<Property[]>([]);
+  const [sidebarLoading, setSidebarLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchVisibleProperties = async () => {
+      // Get IDs of visible properties
+      const visibleIds = visibleMapProperties.map(p => p.id);
+      
+      // If no visible properties, clear sidebar
+      if (visibleIds.length === 0) {
+        setSidebarProperties([]);
+        return;
+      }
+
+      // Check which IDs we already have loaded
+      const loadedIds = new Set(properties.map(p => p.id));
+      const alreadyLoaded = properties.filter(p => visibleIds.includes(p.id));
+      const needToFetch = visibleIds.filter(id => !loadedIds.has(id));
+
+      // If we have all properties, just use them
+      if (needToFetch.length === 0) {
+        setSidebarProperties(alreadyLoaded);
+        return;
+      }
+
+      // Fetch missing properties (limit to first 50 to avoid overwhelming)
+      try {
+        setSidebarLoading(true);
+        const idsToFetch = needToFetch.slice(0, 50);
+        const fetchPromises = idsToFetch.map(id => apiService.fetchPropertyById(id));
+        const fetchedProperties = await Promise.all(fetchPromises);
+        const validProperties = fetchedProperties.filter((p): p is Property => p !== null);
+        
+        // Combine already loaded and newly fetched
+        setSidebarProperties([...alreadyLoaded, ...validProperties]);
+      } catch (err) {
+        console.error('Error fetching visible properties:', err);
+        setSidebarProperties(alreadyLoaded);
+      } finally {
+        setSidebarLoading(false);
+      }
+    };
+
+    fetchVisibleProperties();
+  }, [visibleMapProperties, properties]);
+
+  // Sorted sidebar properties
+  const sortedSidebarProperties = useMemo(() => {
+    return [...sidebarProperties].sort((a, b) => {
       switch (filters.sortBy) {
         case 'score':
           return b.communityScore - a.communityScore;
@@ -198,9 +230,7 @@ export const Dashboard: React.FC = () => {
           return 0;
       }
     });
-
-    return sorted;
-  }, [properties, applyFilters, filters.sortBy]);
+  }, [sidebarProperties, filters.sortBy]);
 
   const handlePropertySelect = (property: Property) => {
     setSelectedProperty(property);
@@ -219,6 +249,21 @@ export const Dashboard: React.FC = () => {
     setFilters(defaultFilters);
   };
 
+  const boundsUpdateTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  const handleMapBoundsChange = useCallback((bounds: { north: number; south: number; east: number; west: number }) => {
+    // Clear existing timeout
+    if (boundsUpdateTimeout.current) {
+      clearTimeout(boundsUpdateTimeout.current);
+    }
+
+    // Set new timeout to update bounds after 500ms of inactivity
+    boundsUpdateTimeout.current = setTimeout(() => {
+      console.log('🗺️ Updating map bounds after delay');
+      setMapBounds(bounds);
+    }, 500);
+  }, []);
+
   const clearSearch = () => {
     setSearchQuery('');
   };
@@ -236,6 +281,7 @@ export const Dashboard: React.FC = () => {
               selectedProperty={selectedProperty || undefined}
               highlightedProperty={highlightedProperty || undefined}
               onPropertySelect={handlePropertySelect}
+              onBoundsChange={handleMapBoundsChange}
               className="h-full"
               loading={mapLoading}
             />
@@ -290,12 +336,12 @@ export const Dashboard: React.FC = () => {
             filters={filters}
             onFiltersChange={setFilters}
             onReset={handleResetFilters}
-            propertyCount={filteredAndSortedProperties.length}
+            propertyCount={sortedSidebarProperties.length}
           />
 
           {/* Scrollable Properties List - Takes all remaining space */}
           <div className="flex-1 overflow-y-auto p-4 space-y-3"  style={{ height: 0 }}>
-            {loading && properties.length === 0 ? (
+            {(loading && properties.length === 0) || sidebarLoading ? (
               <div className="space-y-3">
                 {/* Loading Skeletons */}
                 {[1, 2, 3].map(i => (
@@ -333,7 +379,7 @@ export const Dashboard: React.FC = () => {
                   Retry
                 </button>
               </div>
-            ) : filteredAndSortedProperties.length === 0 ? (
+            ) : sortedSidebarProperties.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 px-4">
                 <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                   <MapPin className="w-10 h-10 text-gray-400" />
@@ -353,7 +399,7 @@ export const Dashboard: React.FC = () => {
                 )}
               </div>
             ) : (
-              filteredAndSortedProperties.map((property, index) => (
+              sortedSidebarProperties.map((property, index) => (
                 <div key={property.id} className="fade-in" style={{ animationDelay: `${index * 0.05}s` }}>
                   <PropertyCard
                     property={property}
@@ -366,27 +412,12 @@ export const Dashboard: React.FC = () => {
             )}
           </div>
 
-          {/* Load More Button - Fixed at bottom */}
-          {pagination.hasMore && !loading && filteredAndSortedProperties.length > 0 && (
-            <div className="flex-shrink-0 p-4 bg-gray-50 border-t border-gray-200">
-              <button
-                onClick={loadMoreProperties}
-                disabled={loading}
-                className="w-full py-3 px-4 bg-gradient-to-r from-primary-600 to-primary-700 
-                  text-white rounded-xl font-semibold hover:from-primary-700 hover:to-primary-800 
-                  disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 
-                  shadow-sm hover:shadow-md button-press"
-              >
-                Load More Properties
-              </button>
-            </div>
-          )}
         </div>
       </div>
 
       {/* Mobile Drawer */}
       <MobileDrawer
-        properties={filteredAndSortedProperties}
+        properties={sortedSidebarProperties}
         filters={[]}
         selectedFilter=""
         selectedProperty={selectedProperty || undefined}

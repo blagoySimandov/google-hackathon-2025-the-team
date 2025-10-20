@@ -15,6 +15,7 @@ interface GoogleMapProps {
   selectedProperty?: Property;
   highlightedProperty?: Property;
   onPropertySelect: (property: Property) => void;
+  onBoundsChange?: (bounds: { north: number; south: number; east: number; west: number }) => void;
   className?: string;
   loading?: boolean;
 }
@@ -24,6 +25,7 @@ interface MapComponentProps {
   selectedProperty?: Property;
   highlightedProperty?: Property;
   onPropertySelect: (property: Property) => void;
+  onBoundsChange?: (bounds: { north: number; south: number; east: number; west: number }) => void;
   className?: string;
   loading?: boolean;
 }
@@ -83,6 +85,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
   selectedProperty,
   highlightedProperty,
   onPropertySelect,
+  onBoundsChange,
   className = '',
   loading = false,
 }) => {
@@ -233,6 +236,21 @@ const MapComponent: React.FC<MapComponentProps> = ({
           }
         }
       }
+      
+      // Report bounds change to parent
+      if (onBoundsChange) {
+        const bounds = mapInstance.current?.getBounds();
+        if (bounds) {
+          const ne = bounds.getNorthEast();
+          const sw = bounds.getSouthWest();
+          onBoundsChange({
+            north: ne.lat(),
+            south: sw.lat(),
+            east: ne.lng(),
+            west: sw.lng(),
+          });
+        }
+      }
     });
 
     // Cleanup on unmount
@@ -244,7 +262,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
         google.maps.event.removeListener(boundsChangedListener.current);
       }
     };
-  }, [calculateScreenPosition]);
+  }, [calculateScreenPosition, onBoundsChange]);
 
   // Handle highlighted property - center and zoom to it
   useEffect(() => {
