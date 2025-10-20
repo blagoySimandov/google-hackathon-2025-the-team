@@ -110,7 +110,7 @@ const ValidityDataSection: React.FC<ValidityDataSectionProps> = ({
   };
 
   const scoreExplanations = {
-    validity_score:
+    valiability_score:
       "A weighted score based on Price, Amenities, Renovation Cost, and Air Quality, indicating the overall soundness of the property itself.",
     community_score:
       "Measures community engagement potential, walkability, and neighborhood characteristics. Higher scores suggest better community integration.",
@@ -140,12 +140,12 @@ const ValidityDataSection: React.FC<ValidityDataSectionProps> = ({
             {validityData.scores.validity_score}
           </div>
           <div className="flex items-center justify-center gap-2">
-            <span className="text-sm text-gray-600">Validity Score</span>
+            <span className="text-sm text-gray-600">Valiability Score</span>
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 setActiveTooltip(
-                  activeTooltip === "validity_score" ? null : "validity_score"
+                  activeTooltip === "valiability_score" ? null : "valiability_score"
                 );
               }}
               className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -153,9 +153,9 @@ const ValidityDataSection: React.FC<ValidityDataSectionProps> = ({
               <Info className="w-4 h-4" />
             </button>
           </div>
-          {activeTooltip === "validity_score" && (
+          {activeTooltip === "valiability_score" && (
             <div className="absolute top-16 left-0 right-0 bg-gray-900 text-white text-xs p-3 rounded-lg shadow-lg z-10">
-              {scoreExplanations.validity_score}
+              {scoreExplanations.valiability_score}
             </div>
           )}
         </div>
@@ -736,7 +736,7 @@ export const PropertyDetails: React.FC = () => {
                 Analyzing Property Data
               </h3>
               <p className="text-gray-600 text-center">
-                Calculating investment metrics, validity scores, and nearby amenities...
+                Calculating investment metrics, valiability scores, and nearby amenities...
               </p>
             </div>
           </div>

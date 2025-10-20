@@ -131,7 +131,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
             }}
           />
 
-          {/* Validity Score Badge - Top Left */}
+          {/* Valiability Score Badge - Top Left */}
           <div className="absolute top-3 left-3">
             <div className="glass rounded-full px-3 py-1.5 shadow-lg ring-1 ring-white/20">
               <div className="flex items-center gap-2">
@@ -145,7 +145,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
                   {property.validityScore}
                 </span>
                 <span className="text-xs text-gray-600 font-medium">
-                  Validity
+                  Valiability
                 </span>
               </div>
             </div>

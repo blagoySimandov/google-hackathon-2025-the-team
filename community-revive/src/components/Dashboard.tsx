@@ -186,7 +186,7 @@ export const Dashboard: React.FC = () => {
       switch (filters.sortBy) {
         case 'score':
           return b.communityScore - a.communityScore;
-        case 'validity-score':
+        case 'valiability-score':
           return b.validityScore - a.validityScore;
         case 'price-low':
           return (a.price?.amount || 0) - (b.price?.amount || 0);
