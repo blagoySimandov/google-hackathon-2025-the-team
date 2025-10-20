@@ -453,23 +453,15 @@ const MapComponent: React.FC<MapComponentProps> = ({
                 </h3>
                 {isFullProperty(hoverProperty) && (
                   <p className="text-xs text-gray-600 mb-2">
-                    {hoverProperty.city}, {hoverProperty.state} {hoverProperty.zipCode}
+                    {[
+                      hoverProperty.city,
+                      hoverProperty.state,
+                      hoverProperty.zipCode,
+                    ].filter(Boolean).join(', ')}
                   </p>
                 )}
                 
-                {/* Score */}
-                <div className="flex items-center space-x-2">
-                  <div
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm"
-                    style={{ backgroundColor: getScoreColor(getPropertyScore(hoverProperty)) }}
-                  >
-                    {getPropertyScore(hoverProperty)}
-                  </div>
-                  <div>
-                    <p className="text-xs font-medium text-gray-900">Community Value</p>
-                    <p className="text-xs text-gray-600">Score</p>
-                  </div>
-                </div>
+                {/* Community Value removed */}
                 
                 {/* Additional Info */}
                 {isFullProperty(hoverProperty) ? (

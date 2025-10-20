@@ -1,7 +1,6 @@
 import React from 'react';
 import { Property } from '../types';
 import { Card, CardContent } from './ui/Card';
-import { getScoreColor } from '../utils/scoreUtils';
 
 interface PropertyPopoverProps {
   property: Property;
@@ -14,8 +13,6 @@ export const PropertyPopover: React.FC<PropertyPopoverProps> = ({
   position,
   onClose,
 }) => {
-  const scoreColor = getScoreColor(property.communityValueScore);
-
   return (
     <div
       className="fixed z-50 pointer-events-none"
@@ -46,26 +43,8 @@ export const PropertyPopover: React.FC<PropertyPopoverProps> = ({
             </button>
           </div>
           
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <div
-                className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm"
-                style={{ backgroundColor: scoreColor }}
-              >
-                {property.communityValueScore}
-              </div>
-              <div>
-                <p className="text-xs font-medium text-gray-900">Community Value</p>
-                <p className="text-xs text-gray-600">Score</p>
-              </div>
-            </div>
-            
+          <div className="flex items-center justify-end">
             <div className="text-right">
-              <p className="text-xs text-gray-600">Potential Uses</p>
-              <p className="text-xs font-medium text-gray-900">
-                {property.potentialUses.slice(0, 2).join(', ')}
-                {property.potentialUses.length > 2 && '...'}
-              </p>
             </div>
           </div>
         </CardContent>
