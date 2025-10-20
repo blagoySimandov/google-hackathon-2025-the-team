@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Wrapper, Status } from '@googlemaps/react-wrapper';
 import { MarkerClusterer, GridAlgorithm } from '@googlemaps/markerclusterer';
 import { Property } from '../types';
@@ -97,6 +97,44 @@ const MapComponent: React.FC<MapComponentProps> = ({
   const hoverTimeout = useRef<NodeJS.Timeout | null>(null);
   const hideTimeout = useRef<NodeJS.Timeout | null>(null);
   const currentHoveredProperty = useRef<MapDisplayProperty | null>(null);
+  const boundsChangedListener = useRef<google.maps.MapsEventListener | null>(null);
+
+  // Helper function to calculate screen position from lat/lng
+  const calculateScreenPosition = useCallback((lat: number, lng: number) => {
+    const mapDiv = mapRef.current;
+    const map = mapInstance.current;
+    if (!mapDiv || !map) return null;
+
+    const projection = map.getProjection();
+    if (!projection) return null;
+
+    const bounds = map.getBounds();
+    if (!bounds) return null;
+
+    const markerLatLng = new google.maps.LatLng(lat, lng);
+    const ne = bounds.getNorthEast();
+    const sw = bounds.getSouthWest();
+    
+    const worldCoordinate = projection.fromLatLngToPoint(markerLatLng);
+    const scale = Math.pow(2, map.getZoom() || 8);
+    
+    if (!worldCoordinate) return null;
+    
+    const swWorldCoordinate = projection.fromLatLngToPoint(sw);
+    const neWorldCoordinate = projection.fromLatLngToPoint(ne);
+    
+    if (!swWorldCoordinate || !neWorldCoordinate) return null;
+    
+    const mapWidth = mapDiv.offsetWidth;
+    const mapHeight = mapDiv.offsetHeight;
+    
+    const x = ((worldCoordinate.x - swWorldCoordinate.x) * scale * mapWidth) / 
+              ((neWorldCoordinate.x - swWorldCoordinate.x) * scale);
+    const y = ((worldCoordinate.y - neWorldCoordinate.y) * scale * mapHeight) / 
+              ((swWorldCoordinate.y - neWorldCoordinate.y) * scale);
+    
+    return { x, y: y - 10 }; // Offset above the marker
+  }, []);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -184,21 +222,37 @@ const MapComponent: React.FC<MapComponentProps> = ({
       currentHoveredProperty.current = null;
     });
 
+    // Add listener to update hover position when map moves
+    boundsChangedListener.current = mapInstance.current.addListener('bounds_changed', () => {
+      if (currentHoveredProperty.current) {
+        const coords = getPropertyCoordinates(currentHoveredProperty.current);
+        if (coords) {
+          const newPosition = calculateScreenPosition(coords.lat, coords.lng);
+          if (newPosition) {
+            setHoverPosition(newPosition);
+          }
+        }
+      }
+    });
+
     // Cleanup on unmount
     return () => {
       if (markerClusterer.current) {
         markerClusterer.current.clearMarkers();
       }
+      if (boundsChangedListener.current) {
+        google.maps.event.removeListener(boundsChangedListener.current);
+      }
     };
-  }, []);
+  }, [calculateScreenPosition]);
 
   // Handle highlighted property - center and zoom to it
   useEffect(() => {
     if (!mapInstance.current || !highlightedProperty) return;
     
     const coords = highlightedProperty.coordinates;
-    mapInstance.current.panTo({ lat: coords.lat, lng: coords.lng });
-    mapInstance.current.setZoom(15); // Zoom in to the highlighted property
+    mapInstance.current.setCenter({ lat: coords.lat, lng: coords.lng });
+    mapInstance.current.setZoom(15);
     
   }, [highlightedProperty]);
 
@@ -253,7 +307,6 @@ const MapComponent: React.FC<MapComponentProps> = ({
           fontSize: '12px',
           fontWeight: 'bold',
         },
-        animation: isHighlighted ? google.maps.Animation.BOUNCE : undefined,
         optimized: true, // Use optimized rendering for better performance
       });
 
@@ -298,45 +351,13 @@ const MapComponent: React.FC<MapComponentProps> = ({
         
         // Show hover tooltip with small delay
         hoverTimeout.current = setTimeout(() => {
-          // Get marker position on screen
-          const mapDiv = mapRef.current;
-          const map = mapInstance.current;
-          if (mapDiv && map) {
-            const projection = map.getProjection();
-            if (projection) {
-              const bounds = map.getBounds();
-              if (bounds) {
-                const markerLatLng = new google.maps.LatLng(coordinates.lat, coordinates.lng);
-                const ne = bounds.getNorthEast();
-                const sw = bounds.getSouthWest();
-                
-                // Calculate pixel position
-                const worldCoordinate = projection.fromLatLngToPoint(markerLatLng);
-                const scale = Math.pow(2, map.getZoom() || 8);
-                
-                if (worldCoordinate) {
-                  const swWorldCoordinate = projection.fromLatLngToPoint(sw);
-                  const neWorldCoordinate = projection.fromLatLngToPoint(ne);
-                  
-                  if (swWorldCoordinate && neWorldCoordinate) {
-                    const mapWidth = mapDiv.offsetWidth;
-                    const mapHeight = mapDiv.offsetHeight;
-                    
-                    const x = ((worldCoordinate.x - swWorldCoordinate.x) * scale * mapWidth) / 
-                              ((neWorldCoordinate.x - swWorldCoordinate.x) * scale);
-                    const y = ((worldCoordinate.y - neWorldCoordinate.y) * scale * mapHeight) / 
-                              ((swWorldCoordinate.y - neWorldCoordinate.y) * scale);
-                    
-                    console.log('Setting hover property:', property.id);
-                    // Set hover for both full properties and map properties
-                    currentHoveredProperty.current = property;
-                    setHoverProperty(property);
-                    // Offset tooltip above the marker to avoid overlap
-                    setHoverPosition({ x, y: y - 10 });
-                  }
-                }
-              }
-            }
+          const position = calculateScreenPosition(coordinates.lat, coordinates.lng);
+          if (position) {
+            console.log('Setting hover property:', property.id);
+            // Set hover for both full properties and map properties
+            currentHoveredProperty.current = property;
+            setHoverProperty(property);
+            setHoverPosition(position);
           }
         }, 300); // Delay to prevent flickering
       });
@@ -374,7 +395,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
         clearTimeout(hideTimeout.current);
       }
     };
-  }, [properties, highlightedProperty, onPropertySelect]);
+  }, [properties, highlightedProperty, onPropertySelect, calculateScreenPosition]);
 
   return (
     <div className={`relative ${className}`}>
