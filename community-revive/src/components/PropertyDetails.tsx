@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { usePropertyById } from '../api';
+import { usePropertyById, useGetValidityData } from '../api';
 import { PhotoCarousel } from './PhotoCarousel';
 import { ArrowLeft, List, Map as MapIcon } from 'lucide-react';
 import { AmenitiesMap } from './AmenitiesMap';
 import { AirQuality } from './AirQuality';
 import { SchoolsSection } from './SchoolsSection';
 import { TransportSection } from './TransportSection';
+import { RenovationDetailsSection } from './RenovationDetailsSection';
 
 export const PropertyDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -14,6 +15,7 @@ export const PropertyDetails: React.FC = () => {
   const [view, setView] = useState<'list' | 'map'>('list');
 
   const { property, loading, error } = usePropertyById(id || '');
+  const { validityData, loading: validityLoading } = useGetValidityData(id || '');
 
   if (loading) {
     return (
@@ -248,6 +250,13 @@ export const PropertyDetails: React.FC = () => {
                 )}
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Renovation Details Section */}
+        {validityData?.renovation_details && (
+          <div>
+            <RenovationDetailsSection renovationDetails={validityData.renovation_details} />
           </div>
         )}
       </div>
