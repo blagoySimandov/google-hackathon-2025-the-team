@@ -1,17 +1,17 @@
-import React from 'react';
-import { Property } from '../types';
-import { Card, CardContent } from './ui/Card';
-import { getScoreColor } from '../utils/scoreUtils';
-import { 
-  School, 
-  Trees, 
-  Bus, 
-  Landmark, 
-  Users, 
+import React from "react";
+import { Property } from "../types";
+import { Card, CardContent } from "./ui/Card";
+import { getScoreColor } from "../utils/scoreUtils";
+import {
+  School,
+  Trees,
+  Bus,
+  Landmark,
+  Users,
   Leaf,
   Square,
-  MapPin
-} from 'lucide-react';
+  MapPin,
+} from "lucide-react";
 
 interface PropertyCardProps {
   property: Property;
@@ -33,9 +33,9 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
     onViewOnMap?.();
   };
 
-  const formatCurrency = (amount: number, currency: string = 'EUR') => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
+  const formatCurrency = (amount: number, currency: string = "EUR") => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
       currency: currency,
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
@@ -43,31 +43,66 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
   };
 
   const formatSquareFeet = (sqft: number) => {
-    return new Intl.NumberFormat('en-US').format(sqft);
+    return new Intl.NumberFormat("en-US").format(sqft);
   };
 
   const getTopImpacts = () => {
     const impacts = [];
     if (property.communityImpact.nearSchool) {
-      impacts.push({ icon: <School className="w-3 h-3" />, label: 'Near School', bgColor: 'bg-blue-50', textColor: 'text-blue-700' });
+      impacts.push({
+        icon: <School className="w-3 h-3" />,
+        label: "Near School",
+        bgColor: "bg-blue-50",
+        textColor: "text-blue-700",
+      });
     }
     if (property.communityImpact.nearPark) {
-      impacts.push({ icon: <Trees className="w-3 h-3" />, label: 'Near Park', bgColor: 'bg-green-50', textColor: 'text-green-700' });
+      impacts.push({
+        icon: <Trees className="w-3 h-3" />,
+        label: "Near Park",
+        bgColor: "bg-green-50",
+        textColor: "text-green-700",
+      });
     }
     if (property.communityImpact.nearTransit) {
-      impacts.push({ icon: <Bus className="w-3 h-3" />, label: 'Near Transit', bgColor: 'bg-purple-50', textColor: 'text-purple-700' });
+      impacts.push({
+        icon: <Bus className="w-3 h-3" />,
+        label: "Near Transit",
+        bgColor: "bg-purple-50",
+        textColor: "text-purple-700",
+      });
     }
     if (property.communityImpact.historicDistrict) {
-      impacts.push({ icon: <Landmark className="w-3 h-3" />, label: 'Historic', bgColor: 'bg-amber-50', textColor: 'text-amber-700' });
+      impacts.push({
+        icon: <Landmark className="w-3 h-3" />,
+        label: "Historic",
+        bgColor: "bg-amber-50",
+        textColor: "text-amber-700",
+      });
     }
     if (property.communityImpact.highYouthImpact) {
-      impacts.push({ icon: <Users className="w-3 h-3" />, label: 'Youth Impact', bgColor: 'bg-pink-50', textColor: 'text-pink-700' });
+      impacts.push({
+        icon: <Users className="w-3 h-3" />,
+        label: "Youth Impact",
+        bgColor: "bg-pink-50",
+        textColor: "text-pink-700",
+      });
     }
     if (property.communityImpact.potentialGreenSpace) {
-      impacts.push({ icon: <Leaf className="w-3 h-3" />, label: 'Green Space', bgColor: 'bg-emerald-50', textColor: 'text-emerald-700' });
+      impacts.push({
+        icon: <Leaf className="w-3 h-3" />,
+        label: "Green Space",
+        bgColor: "bg-emerald-50",
+        textColor: "text-emerald-700",
+      });
     }
     if (property.communityImpact.blightRemoval) {
-      impacts.push({ icon: null, label: 'Blight Removal', bgColor: 'bg-red-50', textColor: 'text-red-700' });
+      impacts.push({
+        icon: null,
+        label: "Blight Removal",
+        bgColor: "bg-red-50",
+        textColor: "text-red-700",
+      });
     }
     return impacts.slice(0, 3);
   };
@@ -77,9 +112,9 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
   return (
     <Card
       className={`group cursor-pointer transition-all duration-300 overflow-hidden bg-white ${
-        isSelected 
-          ? 'ring-2 ring-accent-500 shadow-soft-lg scale-[1.02]' 
-          : 'hover:shadow-soft-lg hover:-translate-y-1'
+        isSelected
+          ? "ring-2 ring-accent-500 shadow-soft-lg scale-[1.02]"
+          : "hover:shadow-soft-lg hover:-translate-y-1"
       }`}
       onClick={onClick}
     >
@@ -91,7 +126,8 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
             alt={property.address}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             onError={(e) => {
-              e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23f3f4f6" width="400" height="300"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="18" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
+              e.currentTarget.src =
+                'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23f3f4f6" width="400" height="300"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="18" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
             }}
           />
 
@@ -101,10 +137,16 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
               <div className="flex items-center gap-2">
                 <div
                   className="w-2.5 h-2.5 rounded-full animate-pulse-slow"
-                  style={{ backgroundColor: getScoreColor(property.validityScore) }}
+                  style={{
+                    backgroundColor: getScoreColor(property.validityScore),
+                  }}
                 ></div>
-                <span className="font-bold text-sm text-gray-900">{property.validityScore}</span>
-                <span className="text-xs text-gray-600 font-medium">Validity</span>
+                <span className="font-bold text-sm text-gray-900">
+                  {property.validityScore}
+                </span>
+                <span className="text-xs text-gray-600 font-medium">
+                  Validity
+                </span>
               </div>
             </div>
           </div>
@@ -117,8 +159,12 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
                   className="w-2.5 h-2.5 rounded-full animate-pulse-slow"
                   style={{ backgroundColor: scoreColor }}
                 ></div>
-                <span className="font-bold text-sm text-gray-900">{property.communityScore}</span>
-                <span className="text-xs text-gray-600 font-medium">Community</span>
+                <span className="font-bold text-sm text-gray-900">
+                  {property.communityScore}
+                </span>
+                <span className="text-xs text-gray-600 font-medium">
+                  Community
+                </span>
               </div>
             </div>
           </div>
@@ -127,7 +173,10 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           <div className="absolute bottom-3 right-3">
             <div className="glass-dark text-white px-3 py-1.5 rounded-lg shadow-lg">
               <span className="text-sm font-bold">
-                {formatCurrency(property.price?.amount || 0, property.price?.currency || 'EUR')}
+                {formatCurrency(
+                  property.price?.amount || 0,
+                  property.price?.currency || "EUR",
+                )}
               </span>
             </div>
           </div>
@@ -141,7 +190,9 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
               {property.address}
             </h3>
             <p className="text-sm text-gray-600 mt-0.5">
-              {property.city && property.city !== property.address && `${property.city}, `}
+              {property.city &&
+                property.city !== property.address &&
+                `${property.city}, `}
               {property.state}
             </p>
           </div>
@@ -166,33 +217,13 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
               <div className="min-w-0">
                 <p className="text-xs text-gray-500">Renovation</p>
                 <p className="text-sm font-semibold text-gray-900 truncate">
-                  {formatCurrency(property.estimatedRenovationCost, property.price?.currency || 'EUR')}
+                  {formatCurrency(
+                    property.estimatedRenovationCost,
+                    property.price?.currency || "EUR",
+                  )}
                 </p>
               </div>
             </div>
-          </div>
-
-          {/* Top 3 Impact Badges */}
-          {topImpacts.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
-              {topImpacts.map((impact) => (
-                <div
-                  key={impact.label}
-                  className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${impact.bgColor} ${impact.textColor}`}
-                >
-                  {impact.icon || <span className="w-1.5 h-1.5 bg-current rounded-full"></span>}
-                  <span>{impact.label}</span>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Potential Uses */}
-          <div>
-            <p className="text-xs text-gray-500 mb-1 font-medium">Potential Uses:</p>
-            <p className="text-xs text-gray-700 line-clamp-2">
-              {property.potentialUses.slice(0, 3).join(' • ')}
-            </p>
           </div>
 
           {/* See on Map Button */}
