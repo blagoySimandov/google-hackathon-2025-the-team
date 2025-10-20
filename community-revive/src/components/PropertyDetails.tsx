@@ -310,10 +310,27 @@ const ValidityDataSection: React.FC<ValidityDataSectionProps> = ({ validityData,
       {/* Renovation Analysis */}
       {validityData.renovation_details && validityData.total_renovation_cost > 0 && (
         <div className="mb-8">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-            <Home className="w-5 h-5 mr-2" />
-            Renovation Analysis
-          </h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+              <Home className="w-5 h-5 mr-2" />
+              Renovation Analysis
+            </h3>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveTooltip(activeTooltip === 'renovation_details' ? null : 'renovation_details');
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium"
+            >
+              <span>{activeTooltip === 'renovation_details' ? 'Hide Details' : 'Show Details'}</span>
+              <div className={`transform transition-transform ${activeTooltip === 'renovation_details' ? 'rotate-180' : ''}`}>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </button>
+          </div>
+          
           <div className="p-4 bg-gray-50 rounded-lg">
             <div className="text-sm text-gray-600 mb-2">Estimated Renovation Cost</div>
             <div className="text-2xl font-bold text-gray-900 mb-4">{formatCurrency(validityData.total_renovation_cost)}</div>
@@ -321,6 +338,46 @@ const ValidityDataSection: React.FC<ValidityDataSectionProps> = ({ validityData,
               <strong>Total Investment:</strong> {formatCurrency(validityData.listed_price + validityData.total_renovation_cost)}
             </div>
           </div>
+
+          {/* Expandable Details */}
+          {activeTooltip === 'renovation_details' && (
+            <div className="mt-4 p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+              <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <Home className="w-5 h-5 mr-2 text-blue-600" />
+                Renovation Items Breakdown
+              </h4>
+              <div className="space-y-4">
+                {validityData.renovation_details.items.map((item, index) => (
+                  <div key={index} className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="flex justify-between items-start mb-3">
+                      <h5 className="font-semibold text-gray-900 text-base">{item.item}</h5>
+                      <span className="text-lg font-bold text-green-600">{formatCurrency(item.price)}</span>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-gray-600">
+                      <div>
+                        <span className="font-medium text-gray-700">Reason:</span>
+                        <p className="mt-1">{item.reason}</p>
+                      </div>
+                      <div>
+                        <span className="font-medium text-gray-700">Material:</span>
+                        <p className="mt-1">{item.material}</p>
+                      </div>
+                      <div className="md:col-span-2">
+                        <span className="font-medium text-gray-700">Amount:</span>
+                        <p className="mt-1">{item.amount}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex justify-between items-center">
+                  <span className="text-lg font-semibold text-blue-900">Total Renovation Cost:</span>
+                  <span className="text-2xl font-bold text-blue-900">{formatCurrency(validityData.renovation_details.total_cost)}</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
