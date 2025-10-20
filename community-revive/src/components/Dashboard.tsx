@@ -203,7 +203,14 @@ export const Dashboard: React.FC = () => {
   const sortedSidebarProperties = useMemo(() => {
     return [...sidebarProperties].sort((a, b) => {
       switch (filters.sortBy) {
+<<<<<<< HEAD
 
+=======
+        case 'score':
+          return b.communityScore - a.communityScore;
+        case 'validity-score':
+          return b.validityScore - a.validityScore;
+>>>>>>> 5e93294d8a596d60dba4ec0a3c2072e25acdb961
         case 'price-low':
           return (a.price?.amount || 0) - (b.price?.amount || 0);
         case 'price-high':

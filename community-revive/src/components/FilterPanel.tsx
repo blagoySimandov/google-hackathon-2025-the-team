@@ -11,7 +11,7 @@ export interface FilterState {
     min: number | '';
     max: number | '';
   };
-  sortBy: 'score' | 'price-low' | 'price-high' | 'newest' | 'oldest';
+  sortBy: 'score' | 'validity-score' | 'price-low' | 'price-high' | 'newest' | 'oldest';
 }
 
 interface FilterPanelProps {
@@ -34,6 +34,11 @@ const propertyTypeOptions = [
 
 
 const sortOptions = [
+<<<<<<< HEAD
+=======
+  { value: 'score', label: 'Community Score' },
+  { value: 'validity-score', label: 'Validity Score' },
+>>>>>>> 5e93294d8a596d60dba4ec0a3c2072e25acdb961
   { value: 'price-low', label: 'Price: Low to High' },
   { value: 'price-high', label: 'Price: High to Low' },
   { value: 'newest', label: 'Newest First' },
