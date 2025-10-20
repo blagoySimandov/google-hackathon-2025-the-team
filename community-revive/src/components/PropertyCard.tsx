@@ -46,59 +46,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
     return new Intl.NumberFormat('en-US').format(sqft);
   };
 
-  const getAmenityIcon = (type: string) => {
-    const typeLower = type.toLowerCase();
-    if (typeLower.includes('school') || typeLower.includes('education')) {
-      return <School className="w-3 h-3" />;
-    }
-    if (typeLower.includes('park') || typeLower.includes('green')) {
-      return <Trees className="w-3 h-3" />;
-    }
-    if (typeLower.includes('transit') || typeLower.includes('bus') || typeLower.includes('train')) {
-      return <Bus className="w-3 h-3" />;
-    }
-    if (typeLower.includes('historic') || typeLower.includes('landmark')) {
-      return <Landmark className="w-3 h-3" />;
-    }
-    return <MapPin className="w-3 h-3" />;
-  };
-
-  const getAmenityColor = (type: string) => {
-    const typeLower = type.toLowerCase();
-    if (typeLower.includes('school') || typeLower.includes('education')) {
-      return { bgColor: 'bg-blue-50', textColor: 'text-blue-700' };
-    }
-    if (typeLower.includes('park') || typeLower.includes('green')) {
-      return { bgColor: 'bg-green-50', textColor: 'text-green-700' };
-    }
-    if (typeLower.includes('transit') || typeLower.includes('bus') || typeLower.includes('train')) {
-      return { bgColor: 'bg-purple-50', textColor: 'text-purple-700' };
-    }
-    if (typeLower.includes('historic') || typeLower.includes('landmark')) {
-      return { bgColor: 'bg-amber-50', textColor: 'text-amber-700' };
-    }
-    return { bgColor: 'bg-gray-50', textColor: 'text-gray-700' };
-  };
-
   const getTopImpacts = () => {
-    console.log('🏠 Property:', property.id, 'foundAmenities:', property.foundAmenities);
-
-    if (property.foundAmenities && property.foundAmenities.length > 0) {
-      console.log('✅ Using foundAmenities for property', property.id);
-      return property.foundAmenities.slice(0, 3).map(amenity => {
-        const colors = getAmenityColor(amenity.type);
-        const distance = amenity.distance_km < 1
-          ? `${Math.round(amenity.distance_km * 1000)}m`
-          : `${amenity.distance_km.toFixed(1)}km`;
-        return {
-          icon: getAmenityIcon(amenity.type),
-          label: `${amenity.name} (${distance})`,
-          bgColor: colors.bgColor,
-          textColor: colors.textColor
-        };
-      });
-    }
-
     const impacts = [];
     if (property.communityImpact.nearSchool) {
       impacts.push({ icon: <School className="w-3 h-3" />, label: 'Near School', bgColor: 'bg-blue-50', textColor: 'text-blue-700' });

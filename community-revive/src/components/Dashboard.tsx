@@ -2,28 +2,29 @@ import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleMap } from './GoogleMap';
 import { PropertyCard } from './PropertyCard';
-import { PropertyFilters } from './PropertyFilters';
 import { MobileDrawer } from './MobileDrawer';
-import { filterOptions } from '../utils/scoreUtils';
+import { FilterPanel, FilterState } from './FilterPanel';
 import { Property } from '../types';
 import { apiService } from '../services/apiService';
-import { MapProperty, PropertyFilters as ApiPropertyFilters } from '../services/firebaseService';
-import { Search, SlidersHorizontal, X, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
+import { MapProperty } from '../services/firebaseService';
+import { Search, X, MapPin } from 'lucide-react';
+
+const defaultFilters: FilterState = {
+  priceRange: { min: '', max: '' },
+  propertyTypes: [],
+  scoreRange: { min: '', max: '' },
+  sortBy: 'score',
+};
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
-  const [highlightedProperty, setHighlightedProperty] = useState<Property | null>(null); // For "See on map" feature
-  const [selectedFilter, setSelectedFilter] = useState('all');
+  const [highlightedProperty, setHighlightedProperty] = useState<Property | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [minPrice, setMinPrice] = useState<number | ''>('');
-  const [maxPrice, setMaxPrice] = useState<number | ''>('');
-  const [sortBy, setSortBy] = useState<'score' | 'validity' | 'price' | 'newest'>('score');
-  const [filtersExpanded, setFiltersExpanded] = useState(false);
+  const [filters, setFilters] = useState<FilterState>(defaultFilters);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [properties, setProperties] = useState<Property[]>([]);
   const [mapProperties, setMapProperties] = useState<MapProperty[]>([]);
-  const [mapPropertiesFetched, setMapPropertiesFetched] = useState(false);
   const [loading, setLoading] = useState(true);
   const [mapLoading, setMapLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -31,115 +32,16 @@ export const Dashboard: React.FC = () => {
     lastDoc?: any;
     hasMore: boolean;
   }>({ hasMore: true });
-  const [visiblePropertyIds, setVisiblePropertyIds] = useState<number[]>([]);
 
-  const buildFilters = useCallback((): ApiPropertyFilters => {
-    const filters: ApiPropertyFilters = {};
-
-    if (visiblePropertyIds.length > 0) {
-      filters.propertyIds = visiblePropertyIds;
-    }
-
-    if (minPrice !== '' && minPrice > 0) {
-      filters.minPrice = minPrice;
-    }
-
-    if (maxPrice !== '' && maxPrice > 0) {
-      filters.maxPrice = maxPrice;
-    }
-
-    if (selectedFilter !== 'all') {
-      const filterIdToPropertyType: Record<string, string> = {
-        'house': 'House',
-        'apartment': 'Apartment',
-        'bungalow': 'Bungalow',
-        'detached': 'Detached',
-        'semi-d': 'Semi-D',
-        'terrace': 'Terrace',
-        'townhouse': 'Townhouse',
-        'site': 'Site',
-      };
-
-      if (filterIdToPropertyType[selectedFilter]) {
-        filters.propertyType = filterIdToPropertyType[selectedFilter];
-      }
-
-      if (selectedFilter === 'high-score') {
-        filters.minCommunityScore = 80;
-      } else if (selectedFilter === 'medium-score') {
-        filters.minCommunityScore = 60;
-        filters.maxCommunityScore = 79;
-      }
-
-      if (selectedFilter === 'near-school') filters.nearSchool = true;
-      if (selectedFilter === 'near-park') filters.nearPark = true;
-      if (selectedFilter === 'near-transit') filters.nearTransit = true;
-      if (selectedFilter === 'historic') filters.historicDistrict = true;
-      if (selectedFilter === 'blight-removal') filters.blightRemoval = true;
-      if (selectedFilter === 'youth-impact') filters.highYouthImpact = true;
-      if (selectedFilter === 'green-space') filters.potentialGreenSpace = true;
-    }
-
-    return filters;
-  }, [selectedFilter, minPrice, maxPrice, visiblePropertyIds]);
-
-  const buildMapFilters = useCallback((): ApiPropertyFilters => {
-    const filters: ApiPropertyFilters = {};
-
-    if (minPrice !== '' && minPrice > 0) {
-      filters.minPrice = minPrice;
-    }
-
-    if (maxPrice !== '' && maxPrice > 0) {
-      filters.maxPrice = maxPrice;
-    }
-
-    if (selectedFilter !== 'all') {
-      const filterIdToPropertyType: Record<string, string> = {
-        'house': 'House',
-        'apartment': 'Apartment',
-        'bungalow': 'Bungalow',
-        'detached': 'Detached',
-        'semi-d': 'Semi-D',
-        'terrace': 'Terrace',
-        'townhouse': 'Townhouse',
-        'site': 'Site',
-      };
-
-      if (filterIdToPropertyType[selectedFilter]) {
-        filters.propertyType = filterIdToPropertyType[selectedFilter];
-      }
-
-      if (selectedFilter === 'high-score') {
-        filters.minCommunityScore = 80;
-      } else if (selectedFilter === 'medium-score') {
-        filters.minCommunityScore = 60;
-        filters.maxCommunityScore = 79;
-      }
-
-      if (selectedFilter === 'near-school') filters.nearSchool = true;
-      if (selectedFilter === 'near-park') filters.nearPark = true;
-      if (selectedFilter === 'near-transit') filters.nearTransit = true;
-      if (selectedFilter === 'historic') filters.historicDistrict = true;
-      if (selectedFilter === 'blight-removal') filters.blightRemoval = true;
-      if (selectedFilter === 'youth-impact') filters.highYouthImpact = true;
-      if (selectedFilter === 'green-space') filters.potentialGreenSpace = true;
-    }
-
-    return filters;
-  }, [selectedFilter, minPrice, maxPrice]);
-
-  // Fetch properties from Firebase with server-side filters
+  // Fetch properties from Firebase
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        console.log('📋 Dashboard: Starting to fetch properties with filters...');
+        console.log('📋 Dashboard: Starting to fetch properties...');
         setLoading(true);
         setError(null);
 
-        const filters = buildFilters();
-        console.log('📋 Dashboard: Calling apiService.fetchProperties with filters:', filters);
-        const result = await apiService.fetchProperties(filters, { pageSize: 20 });
+        const result = await apiService.fetchProperties({}, { pageSize: 20 });
         console.log('📋 Dashboard: Received result from API:', result);
 
         setProperties(result.data);
@@ -159,13 +61,13 @@ export const Dashboard: React.FC = () => {
 
     console.log('📋 Dashboard: useEffect triggered, calling fetchProperties...');
     fetchProperties();
-  }, [buildFilters]);
+  }, []);
 
-  // Fetch lightweight map properties separately with filters
+  // Fetch lightweight map properties separately
   useEffect(() => {
     const fetchMapProperties = async () => {
       try {
-        console.log('🗺️ Dashboard: Starting to fetch ALL map properties with filters...');
+        console.log('🗺️ Dashboard: Starting to fetch ALL map properties...');
         setMapLoading(true);
 
         let allProperties: MapProperty[] = [];
@@ -173,14 +75,11 @@ export const Dashboard: React.FC = () => {
         let lastDoc: any = undefined;
         let pageCount = 0;
 
-        const mapFilters = buildMapFilters();
-        console.log('🗺️ Dashboard: Using map filters:', mapFilters);
-
         while (hasMore) {
           pageCount++;
           console.log(`🗺️ Dashboard: Fetching page ${pageCount}...`);
 
-          const result = await apiService.fetchMapProperties(mapFilters, {
+          const result = await apiService.fetchMapProperties({}, {
             pageSize: 100,
             lastDoc
           });
@@ -194,7 +93,6 @@ export const Dashboard: React.FC = () => {
 
         console.log('🗺️ Dashboard: All map properties fetched:', allProperties.length);
         setMapProperties(allProperties);
-        setMapPropertiesFetched(true);
       } catch (err) {
         console.error('❌ Dashboard: Error fetching map properties:', err);
       } finally {
@@ -202,18 +100,16 @@ export const Dashboard: React.FC = () => {
       }
     };
 
-    setMapPropertiesFetched(false);
     fetchMapProperties();
-  }, [buildMapFilters]);
+  }, []);
 
-  // Load more properties with filters
+  // Load more properties
   const loadMoreProperties = useCallback(async () => {
     if (!pagination.hasMore || loading) return;
 
     try {
       setLoading(true);
-      const filters = buildFilters();
-      const result = await apiService.fetchProperties(filters, {
+      const result = await apiService.fetchProperties({}, {
         pageSize: 20,
         lastDoc: pagination.lastDoc,
       });
@@ -229,61 +125,82 @@ export const Dashboard: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [pagination, loading, buildFilters]);
+  }, [pagination, loading]);
 
-  const sortedProperties = useMemo(() => {
-    const sorted = [...properties].sort((a, b) => {
-      switch (sortBy) {
+  // Helper function to apply filters (used for both full properties and map properties)
+  const applyFilters = useCallback((propertyList: any[]) => {
+    let filtered = [...propertyList];
+
+    // Apply search query filter
+    if (searchQuery.trim()) {
+      const queryLower = searchQuery.toLowerCase();
+      filtered = filtered.filter(p =>
+        p.title.toLowerCase().includes(queryLower) ||
+        (p.address && p.address.toLowerCase().includes(queryLower)) ||
+        (p.city && p.city.toLowerCase().includes(queryLower)) ||
+        (p.state && p.state.toLowerCase().includes(queryLower))
+      );
+    }
+
+    // Apply price range filter
+    if (filters.priceRange.min !== '') {
+      filtered = filtered.filter(p => p.price && p.price.amount >= (filters.priceRange.min as number));
+    }
+    if (filters.priceRange.max !== '') {
+      filtered = filtered.filter(p => p.price && p.price.amount <= (filters.priceRange.max as number));
+    }
+
+    // Apply property type filter
+    if (filters.propertyTypes.length > 0) {
+      filtered = filtered.filter(p => filters.propertyTypes.includes(p.propertyType));
+    }
+
+    // Apply score range filter (communityScore for full properties, communityValueScore for map properties)
+    if (filters.scoreRange.min !== '') {
+      filtered = filtered.filter(p => {
+        const score = p.communityScore !== undefined ? p.communityScore : p.communityValueScore;
+        return score >= (filters.scoreRange.min as number);
+      });
+    }
+    if (filters.scoreRange.max !== '') {
+      filtered = filtered.filter(p => {
+        const score = p.communityScore !== undefined ? p.communityScore : p.communityValueScore;
+        return score <= (filters.scoreRange.max as number);
+      });
+    }
+
+    return filtered;
+  }, [searchQuery, filters]);
+
+  // Filtered map properties
+  const filteredMapProperties = useMemo(() => {
+    return applyFilters(mapProperties);
+  }, [mapProperties, applyFilters]);
+
+  // Filtered and sorted list properties
+  const filteredAndSortedProperties = useMemo(() => {
+    const filtered = applyFilters(properties);
+
+    // Apply sorting
+    const sorted = [...filtered].sort((a, b) => {
+      switch (filters.sortBy) {
         case 'score':
           return b.communityScore - a.communityScore;
-        case 'validity':
-          return b.validityScore - a.validityScore;
-        case 'price':
+        case 'price-low':
           return (a.price?.amount || 0) - (b.price?.amount || 0);
+        case 'price-high':
+          return (b.price?.amount || 0) - (a.price?.amount || 0);
         case 'newest':
           return b.id - a.id;
+        case 'oldest':
+          return a.id - b.id;
         default:
           return 0;
       }
     });
 
     return sorted;
-  }, [sortBy, properties]);
-
-  const handleBoundsChange = useCallback((ids: number[]) => {
-    console.log('🗺️ Dashboard: Map bounds changed, visible IDs:', ids.length);
-    setVisiblePropertyIds(ids);
-  }, []);
-
-  // Calculate filter counts dynamically
-  const filterCounts = useMemo(() => {
-    const counts: Record<string, number> = { all: properties.length };
-
-    for (const property of properties) {
-      if (property.communityScore >= 80) counts['high-score'] = (counts['high-score'] || 0) + 1;
-      if (property.communityScore >= 60 && property.communityScore < 80) counts['medium-score'] = (counts['medium-score'] || 0) + 1;
-
-      const propType = property.propertyType?.toLowerCase();
-      if (propType === 'house') counts['house'] = (counts['house'] || 0) + 1;
-      if (propType === 'apartment') counts['apartment'] = (counts['apartment'] || 0) + 1;
-      if (propType === 'bungalow') counts['bungalow'] = (counts['bungalow'] || 0) + 1;
-      if (propType === 'detached') counts['detached'] = (counts['detached'] || 0) + 1;
-      if (propType === 'semi-d') counts['semi-d'] = (counts['semi-d'] || 0) + 1;
-      if (propType === 'terrace') counts['terrace'] = (counts['terrace'] || 0) + 1;
-      if (propType === 'townhouse') counts['townhouse'] = (counts['townhouse'] || 0) + 1;
-      if (propType === 'site') counts['site'] = (counts['site'] || 0) + 1;
-
-      if (property.communityImpact?.nearSchool) counts['near-school'] = (counts['near-school'] || 0) + 1;
-      if (property.communityImpact?.nearPark) counts['near-park'] = (counts['near-park'] || 0) + 1;
-      if (property.communityImpact?.nearTransit) counts['near-transit'] = (counts['near-transit'] || 0) + 1;
-      if (property.communityImpact?.historicDistrict) counts['historic'] = (counts['historic'] || 0) + 1;
-      if (property.communityImpact?.blightRemoval) counts['blight-removal'] = (counts['blight-removal'] || 0) + 1;
-      if (property.communityImpact?.highYouthImpact) counts['youth-impact'] = (counts['youth-impact'] || 0) + 1;
-      if (property.communityImpact?.potentialGreenSpace) counts['green-space'] = (counts['green-space'] || 0) + 1;
-    }
-
-    return counts;
-  }, [properties]);
+  }, [properties, applyFilters, filters.sortBy]);
 
   const handlePropertySelect = (property: Property) => {
     setSelectedProperty(property);
@@ -298,16 +215,15 @@ export const Dashboard: React.FC = () => {
     }, 5000);
   };
 
-  const clearAllFilters = () => {
-    setSelectedFilter('all');
-    setSearchQuery('');
-    setMinPrice('');
-    setMaxPrice('');
-    setSortBy('score');
-    setVisiblePropertyIds([]);
+  const handleResetFilters = () => {
+    setFilters(defaultFilters);
   };
 
-  const hasActiveFilters = selectedFilter !== 'all' || searchQuery || minPrice !== '' || maxPrice !== '';
+  const clearSearch = () => {
+    setSearchQuery('');
+  };
+
+  const hasActiveSearch = searchQuery !== '';
 
   return (
     <div className="h-screen flex flex-col lg:flex-row bg-gray-50 overflow-hidden">
@@ -316,11 +232,10 @@ export const Dashboard: React.FC = () => {
         <div className="h-full p-4">
           <div className="bg-white rounded-lg shadow-sm h-full">
             <GoogleMap
-              properties={mapProperties}
+              properties={filteredMapProperties}
               selectedProperty={selectedProperty || undefined}
               highlightedProperty={highlightedProperty || undefined}
               onPropertySelect={handlePropertySelect}
-              onBoundsChange={handleBoundsChange}
               className="h-full"
               loading={mapLoading}
             />
@@ -346,7 +261,7 @@ export const Dashboard: React.FC = () => {
               </div>
 
               {/* Search Bar */}
-              <div className="mb-3 relative">
+              <div className="mb-4 relative">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 z-10" />
                 <input
                   type="text"
@@ -367,129 +282,16 @@ export const Dashboard: React.FC = () => {
                   </button>
                 )}
               </div>
-
-              {/* Sort Dropdown */}
-              <div className="mb-0">
-                <div className="relative">
-                  <SlidersHorizontal className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 z-10" />
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as 'score' | 'validity' | 'price' | 'newest')}
-                    className="w-full pl-11 pr-4 py-3 bg-white/95 backdrop-blur-sm border-0 rounded-xl
-                      shadow-lg focus:outline-none focus:ring-2 focus:ring-white/50 text-sm
-                      appearance-none text-gray-900 font-medium cursor-pointer transition-all"
-                  >
-                    <option value="score">Sort by Community Score</option>
-                    <option value="validity">Sort by Validity Score</option>
-                    <option value="price">Sort by Price (Low to High)</option>
-                    <option value="newest">Sort by Newest</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            {/* Collapsible Filters */}
-            <div className="mx-6 mb-4 bg-white/10 backdrop-blur-sm rounded-xl overflow-hidden border border-white/20">
-              <button
-                onClick={() => setFiltersExpanded(!filtersExpanded)}
-                className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/10 transition-all duration-200"
-              >
-                <div className="flex items-center gap-2">
-                  <SlidersHorizontal className="w-4 h-4 text-white" />
-                  <span className="font-semibold text-white">Filters & Options</span>
-                  {hasActiveFilters && (
-                    <span className="bg-white text-primary-700 text-xs px-2 py-0.5 rounded-full font-bold animate-pulse-slow">
-                      Active
-                    </span>
-                  )}
-                </div>
-                {filtersExpanded ? (
-                  <ChevronUp className="w-5 h-5 text-white" />
-                ) : (
-                  <ChevronDown className="w-5 h-5 text-white" />
-                )}
-              </button>
-              
-              {filtersExpanded && (
-                <div className="p-4 bg-white space-y-4 slide-up">
-                  {/* Price Range Filters */}
-                  <div>
-                    <div className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                      Price Range (€)
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label htmlFor="min-price" className="sr-only">Minimum Price</label>
-                        <input
-                          id="min-price"
-                          type="number"
-                          placeholder="Min"
-                          value={minPrice}
-                          onChange={(e) => setMinPrice(e.target.value ? Number(e.target.value) : '')}
-                          className="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none 
-                            focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm font-medium
-                            transition-all"
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="max-price" className="sr-only">Maximum Price</label>
-                        <input
-                          id="max-price"
-                          type="number"
-                          placeholder="Max"
-                          value={maxPrice}
-                          onChange={(e) => setMaxPrice(e.target.value ? Number(e.target.value) : '')}
-                          className="w-full px-3 py-2.5 border border-gray-200 rounded-lg focus:outline-none 
-                            focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm font-medium
-                            transition-all"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Category Filters */}
-                  <div>
-                    <div className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                      Categories
-                    </div>
-                    <PropertyFilters
-                      filters={filterOptions.map(f => ({ ...f, count: filterCounts[f.id] || 0 }))}
-                      selectedFilter={selectedFilter}
-                      onFilterChange={setSelectedFilter}
-                    />
-                  </div>
-
-                  {/* Clear Button */}
-                  {hasActiveFilters && (
-                    <button
-                      onClick={clearAllFilters}
-                      className="w-full flex items-center justify-center gap-2 px-4 py-2.5 
-                        bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-semibold 
-                        transition-all duration-200 button-press shadow-sm hover:shadow-md"
-                    >
-                      <X className="w-4 h-4" />
-                      Clear All Filters
-                    </button>
-                  )}
-                </div>
-              )}
             </div>
           </div>
 
-          {/* Results Count */}
-          <div className="flex-shrink-0 px-6 py-3 bg-gray-50 border-b border-gray-200">
-            <div className="flex items-center justify-between">
-              <div className="text-sm text-gray-600">
-                Showing <span className="font-bold text-primary-600">{sortedProperties.length}</span> properties
-              </div>
-              {loading && (
-                <div className="flex items-center gap-2 text-xs text-gray-500">
-                  <div className="w-3 h-3 border-2 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
-                  <span>Loading...</span>
-                </div>
-              )}
-            </div>
-          </div>
+          {/* Filter Panel */}
+          <FilterPanel
+            filters={filters}
+            onFiltersChange={setFilters}
+            onReset={handleResetFilters}
+            propertyCount={filteredAndSortedProperties.length}
+          />
 
           {/* Scrollable Properties List - Takes all remaining space */}
           <div className="flex-1 overflow-y-auto p-4 space-y-3"  style={{ height: 0 }}>
@@ -531,27 +333,27 @@ export const Dashboard: React.FC = () => {
                   Retry
                 </button>
               </div>
-            ) : sortedProperties.length === 0 ? (
+            ) : filteredAndSortedProperties.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 px-4">
                 <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                   <MapPin className="w-10 h-10 text-gray-400" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">No properties found</h3>
                 <p className="text-gray-600 text-center max-w-sm mb-4">
-                  Try adjusting your filters or search terms to see more results
+                  Try adjusting your search terms to see more results
                 </p>
-                {hasActiveFilters && (
+                {hasActiveSearch && (
                   <button 
-                    onClick={clearAllFilters}
+                    onClick={clearSearch}
                     className="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg 
                       font-semibold transition-all duration-200 button-press shadow-sm hover:shadow-md"
                   >
-                    Clear All Filters
+                    Clear Search
                   </button>
                 )}
               </div>
             ) : (
-              sortedProperties.map((property, index) => (
+              filteredAndSortedProperties.map((property, index) => (
                 <div key={property.id} className="fade-in" style={{ animationDelay: `${index * 0.05}s` }}>
                   <PropertyCard
                     property={property}
@@ -565,7 +367,7 @@ export const Dashboard: React.FC = () => {
           </div>
 
           {/* Load More Button - Fixed at bottom */}
-          {pagination.hasMore && !loading && sortedProperties.length > 0 && (
+          {pagination.hasMore && !loading && filteredAndSortedProperties.length > 0 && (
             <div className="flex-shrink-0 p-4 bg-gray-50 border-t border-gray-200">
               <button
                 onClick={loadMoreProperties}
@@ -584,12 +386,12 @@ export const Dashboard: React.FC = () => {
 
       {/* Mobile Drawer */}
       <MobileDrawer
-        properties={sortedProperties}
-        filters={filterOptions.map(f => ({ ...f, count: filterCounts[f.id] || 0 }))}
-        selectedFilter={selectedFilter}
+        properties={filteredAndSortedProperties}
+        filters={[]}
+        selectedFilter=""
         selectedProperty={selectedProperty || undefined}
         onPropertySelect={handlePropertySelect}
-        onFilterChange={setSelectedFilter}
+        onFilterChange={() => {}}
         isOpen={isMobileDrawerOpen}
         onToggle={() => setIsMobileDrawerOpen(!isMobileDrawerOpen)}
       />

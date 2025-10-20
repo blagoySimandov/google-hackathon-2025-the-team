@@ -64,6 +64,12 @@ export interface MapProperty {
   propertyType: string;
   communityValueScore: number;
   beforeImage: string;
+  communityImpact?: {
+    nearSchool: boolean;
+    nearPark: boolean;
+    nearTransit: boolean;
+    historicDistrict: boolean;
+  };
 }
 
 // Transform Firestore document to Property type
@@ -799,6 +805,16 @@ function transformFirestoreToMapProperty(doc: QueryDocumentSnapshot<DocumentData
     propertyType: data.propertyType || 'Property',
     communityValueScore,
     beforeImage: data.media?.images?.[0]?.size1440x960 || '',
+    communityImpact: {
+      nearSchool: data.communityImpact?.nearSchool || 
+        (data.amenities?.primarySchools?.length > 0 || data.amenities?.secondarySchools?.length > 0) || 
+        false,
+      nearPark: data.communityImpact?.nearPark || false,
+      nearTransit: data.communityImpact?.nearTransit || 
+        (data.amenities?.publicTransports?.length > 0) || 
+        false,
+      historicDistrict: data.communityImpact?.historicDistrict || false,
+    },
   };
 }
 

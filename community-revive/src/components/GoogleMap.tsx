@@ -15,7 +15,6 @@ interface GoogleMapProps {
   selectedProperty?: Property;
   highlightedProperty?: Property;
   onPropertySelect: (property: Property) => void;
-  onBoundsChange?: (visiblePropertyIds: number[]) => void;
   className?: string;
   loading?: boolean;
 }
@@ -25,7 +24,6 @@ interface MapComponentProps {
   selectedProperty?: Property;
   highlightedProperty?: Property;
   onPropertySelect: (property: Property) => void;
-  onBoundsChange?: (visiblePropertyIds: number[]) => void;
   className?: string;
   loading?: boolean;
 }
@@ -85,7 +83,6 @@ const MapComponent: React.FC<MapComponentProps> = ({
   selectedProperty,
   highlightedProperty,
   onPropertySelect,
-  onBoundsChange,
   className = '',
   loading = false,
 }) => {
@@ -471,8 +468,10 @@ const MapComponent: React.FC<MapComponentProps> = ({
                 {isFullProperty(hoverProperty) ? (
                   <div className="mt-2">
                     <p className="text-xs text-gray-500">
-                      {hoverProperty.propertyType.charAt(0).toUpperCase() + hoverProperty.propertyType.slice(1)} • 
-                      {Math.round(hoverProperty.size.squareFeet / 1000)}k sq ft
+                      {hoverProperty.propertyType.charAt(0).toUpperCase() + hoverProperty.propertyType.slice(1)}
+                      {hoverProperty.size?.squareFeet && (
+                        <> • {Math.round(hoverProperty.size.squareFeet / 1000)}k sq ft</>
+                      )}
                     </p>
                   </div>
                 ) : (
