@@ -95,33 +95,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
             }}
           />
 
-          {/* Validity Score Badge - Top Left */}
-          <div className="absolute top-3 left-3">
-            <div className="glass rounded-full px-3 py-1.5 shadow-lg ring-1 ring-white/20">
-              <div className="flex items-center gap-2">
-                <div
-                  className="w-2.5 h-2.5 rounded-full animate-pulse-slow"
-                  style={{ backgroundColor: getScoreColor(property.validityScore) }}
-                ></div>
-                <span className="font-bold text-sm text-gray-900">{property.validityScore}</span>
-                <span className="text-xs text-gray-600 font-medium">Validity</span>
-              </div>
-            </div>
-          </div>
 
-          {/* Community Score Badge - Top Right */}
-          <div className="absolute top-3 right-3">
-            <div className="glass rounded-full px-3 py-1.5 shadow-lg ring-1 ring-white/20">
-              <div className="flex items-center gap-2">
-                <div
-                  className="w-2.5 h-2.5 rounded-full animate-pulse-slow"
-                  style={{ backgroundColor: scoreColor }}
-                ></div>
-                <span className="font-bold text-sm text-gray-900">{property.communityScore}</span>
-                <span className="text-xs text-gray-600 font-medium">Community</span>
-              </div>
-            </div>
-          </div>
 
           {/* Price Tag - Bottom Right */}
           <div className="absolute bottom-3 right-3">
@@ -187,13 +161,6 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
             </div>
           )}
 
-          {/* Potential Uses */}
-          <div>
-            <p className="text-xs text-gray-500 mb-1 font-medium">Potential Uses:</p>
-            <p className="text-xs text-gray-700 line-clamp-2">
-              {property.potentialUses.slice(0, 3).join(' • ')}
-            </p>
-          </div>
 
           {/* See on Map Button */}
           {onViewOnMap && (

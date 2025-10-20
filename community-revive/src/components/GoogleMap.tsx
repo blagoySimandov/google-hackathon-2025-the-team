@@ -310,21 +310,10 @@ const MapComponent: React.FC<MapComponentProps> = ({
         continue;
       }
       
-      // Use default Google marker with custom label showing score
+      // Use default Google marker without label value on the pin
       const marker = new google.maps.Marker({
         position: { lat: coordinates.lat, lng: coordinates.lng },
         title: title,
-        label: isHighlighted ? {
-          text: String(score),
-          color: '#ffffff',
-          fontSize: '14px',
-          fontWeight: 'bold',
-        } : {
-          text: String(score),
-          color: '#ffffff',
-          fontSize: '12px',
-          fontWeight: 'bold',
-        },
         optimized: true, // Use optimized rendering for better performance
       });
 

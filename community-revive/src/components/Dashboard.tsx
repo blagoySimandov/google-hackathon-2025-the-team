@@ -129,19 +129,6 @@ export const Dashboard: React.FC = () => {
       filtered = filtered.filter(p => filters.propertyTypes.includes(p.propertyType));
     }
 
-    // Apply score range filter (communityScore for full properties, communityValueScore for map properties)
-    if (filters.scoreRange.min !== '') {
-      filtered = filtered.filter(p => {
-        const score = p.communityScore !== undefined ? p.communityScore : p.communityValueScore;
-        return score >= (filters.scoreRange.min as number);
-      });
-    }
-    if (filters.scoreRange.max !== '') {
-      filtered = filtered.filter(p => {
-        const score = p.communityScore !== undefined ? p.communityScore : p.communityValueScore;
-        return score <= (filters.scoreRange.max as number);
-      });
-    }
 
     return filtered;
   }, [searchQuery, filters]);
@@ -216,8 +203,7 @@ export const Dashboard: React.FC = () => {
   const sortedSidebarProperties = useMemo(() => {
     return [...sidebarProperties].sort((a, b) => {
       switch (filters.sortBy) {
-        case 'score':
-          return b.communityScore - a.communityScore;
+
         case 'price-low':
           return (a.price?.amount || 0) - (b.price?.amount || 0);
         case 'price-high':

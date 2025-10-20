@@ -34,7 +34,6 @@ const propertyTypeOptions = [
 
 
 const sortOptions = [
-  { value: 'score', label: 'Highest Score First' },
   { value: 'price-low', label: 'Price: Low to High' },
   { value: 'price-high', label: 'Price: High to Low' },
   { value: 'newest', label: 'Newest First' },
@@ -212,57 +211,6 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
                     {type.label}
                   </button>
                 ))}
-              </div>
-            )}
-          </div>
-
-          {/* Community Score Range */}
-          <div className="border-t border-gray-100 pt-4">
-            <button
-              onClick={() => toggleSection('score')}
-              className="w-full flex items-center justify-between mb-3"
-            >
-              <span className="text-sm font-semibold text-gray-700">Community Score</span>
-              {expandedSections.score ? (
-                <ChevronUp className="w-4 h-4 text-gray-400" />
-              ) : (
-                <ChevronDown className="w-4 h-4 text-gray-400" />
-              )}
-            </button>
-            {expandedSections.score && (
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <input
-                    type="number"
-                    placeholder="Min (0-100)"
-                    min="0"
-                    max="100"
-                    value={filters.scoreRange.min}
-                    onChange={(e) =>
-                      onFiltersChange({
-                        ...filters,
-                        scoreRange: { ...filters.scoreRange, min: e.target.value ? Number(e.target.value) : '' },
-                      })
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                  />
-                </div>
-                <div>
-                  <input
-                    type="number"
-                    placeholder="Max (0-100)"
-                    min="0"
-                    max="100"
-                    value={filters.scoreRange.max}
-                    onChange={(e) =>
-                      onFiltersChange({
-                        ...filters,
-                        scoreRange: { ...filters.scoreRange, max: e.target.value ? Number(e.target.value) : '' },
-                      })
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                  />
-                </div>
               </div>
             )}
           </div>
