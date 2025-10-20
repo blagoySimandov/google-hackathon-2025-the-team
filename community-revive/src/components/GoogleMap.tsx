@@ -15,6 +15,7 @@ interface GoogleMapProps {
   selectedProperty?: Property;
   highlightedProperty?: Property;
   onPropertySelect: (property: Property) => void;
+  onBoundsChange?: (visiblePropertyIds: number[]) => void;
   className?: string;
   loading?: boolean;
 }
@@ -24,6 +25,7 @@ interface MapComponentProps {
   selectedProperty?: Property;
   highlightedProperty?: Property;
   onPropertySelect: (property: Property) => void;
+  onBoundsChange?: (visiblePropertyIds: number[]) => void;
   className?: string;
   loading?: boolean;
 }
@@ -83,12 +85,13 @@ const MapComponent: React.FC<MapComponentProps> = ({
   selectedProperty,
   highlightedProperty,
   onPropertySelect,
+  onBoundsChange,
   className = '',
   loading = false,
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<google.maps.Map | null>(null);
-  const markers = useRef<Map<number, google.maps.Marker>>(new Map()); // Use Map for O(1) lookup
+  const markers = useRef<Map<number, google.maps.Marker>>(new Map());
   const markerClusterer = useRef<MarkerClusterer | null>(null);
   const [popoverProperty, setPopoverProperty] = useState<Property | null>(null);
   const [popoverPosition, setPopoverPosition] = useState<{ x: number; y: number } | null>(null);

@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { usePropertyById, useGetValidityData } from '../api';
 import { PhotoCarousel } from './PhotoCarousel';
-import { ArrowLeft, List, Map as MapIcon, TrendingUp, DollarSign, Home, Star } from 'lucide-react';
+import { ArrowLeft, List, Map as MapIcon, TrendingUp, DollarSign, Home, Star, Info } from 'lucide-react';
 import { AmenitiesMap } from './AmenitiesMap';
+import { AirQuality } from './AirQuality';
 import { SchoolsSection } from './SchoolsSection';
 import { TransportSection } from './TransportSection';
-import { RenovationDetailsSection } from './RenovationDetailsSection';
 import type { ValidityData } from '../api/firestore/types';
 
 // ValidityDataSection Component
@@ -17,6 +17,24 @@ interface ValidityDataSectionProps {
 }
 
 const ValidityDataSection: React.FC<ValidityDataSectionProps> = ({ validityData, loading, error }) => {
+  const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
+
+  // Close tooltip when clicking anywhere
+  useEffect(() => {
+    const handleClickOutside = () => {
+      if (activeTooltip) {
+        setActiveTooltip(null);
+      }
+    };
+
+    if (activeTooltip) {
+      document.addEventListener('click', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [activeTooltip]);
   if (loading) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-6">
@@ -68,6 +86,15 @@ const ValidityDataSection: React.FC<ValidityDataSectionProps> = ({ validityData,
     return 'text-red-600 bg-red-50';
   };
 
+  const scoreExplanations = {
+    price_attractiveness: "Measures how attractive the property price is compared to market average. Higher scores indicate better value for money.",
+    amenity_score: "Evaluates proximity and quality of nearby amenities like schools, transport, shops, and services. Higher scores mean better accessibility.",
+    sustainability_score: "Assesses environmental factors including air quality, energy efficiency, and green spaces. Higher scores indicate better sustainability.",
+    community_score: "Measures community engagement potential, walkability, and neighborhood characteristics. Higher scores suggest better community integration.",
+    viability_score: "Overall investment viability based on market conditions, property condition, and investment potential. Higher scores indicate better investment opportunities.",
+    validity_score: "Combined score calculated from Price Attractiveness (40%), Amenity Score (20%), Renovation cost (30%), and Air Quality (20%). This weighted average provides a comprehensive validity assessment."
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
       <div className="flex items-center mb-6">
@@ -76,18 +103,50 @@ const ValidityDataSection: React.FC<ValidityDataSectionProps> = ({ validityData,
       </div>
 
       {/* Overall Scores */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="text-center p-4 bg-gray-50 rounded-lg">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        {/* <div className="text-center p-4 bg-gray-50 rounded-lg">
           <div className="text-3xl font-bold text-blue-600 mb-2">{validityData.rank}</div>
           <div className="text-sm text-gray-600">Overall Rank</div>
+        </div> */}
+        <div className="text-center p-4 bg-gray-50 rounded-lg relative">
+          <div className="text-3xl font-bold text-green-600 mb-2">{validityData.scores.viability_score}</div>
+          <div className="flex items-center justify-center gap-2">
+            <span className="text-sm text-gray-600">Viability Score</span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveTooltip(activeTooltip === 'viability_score' ? null : 'viability_score');
+                  }}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+              <Info className="w-4 h-4" />
+            </button>
+          </div>
+          {activeTooltip === 'viability_score' && (
+            <div className="absolute top-16 left-0 right-0 bg-gray-900 text-white text-xs p-3 rounded-lg shadow-lg z-10">
+              {scoreExplanations.viability_score}
+            </div>
+          )}
         </div>
-        <div className="text-center p-4 bg-gray-50 rounded-lg">
-          <div className="text-3xl font-bold text-green-600 mb-2">{validityData.scores.score}</div>
-          <div className="text-sm text-gray-600">Total Score</div>
-        </div>
-        <div className="text-center p-4 bg-gray-50 rounded-lg">
+        <div className="text-center p-4 bg-gray-50 rounded-lg relative">
           <div className="text-3xl font-bold text-purple-600 mb-2">{validityData.scores.validity_score}</div>
-          <div className="text-sm text-gray-600">Validity Score</div>
+          <div className="flex items-center justify-center gap-2">
+            <span className="text-sm text-gray-600">Validity Score</span>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveTooltip(activeTooltip === 'validity_score' ? null : 'validity_score');
+              }}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <Info className="w-4 h-4" />
+            </button>
+          </div>
+          {activeTooltip === 'validity_score' && (
+            <div className="absolute top-16 left-0 right-0 bg-gray-900 text-white text-xs p-3 rounded-lg shadow-lg z-10">
+              {scoreExplanations.validity_score}
+            </div>
+          )}
         </div>
       </div>
 
@@ -122,9 +181,20 @@ const ValidityDataSection: React.FC<ValidityDataSectionProps> = ({ validityData,
           Detailed Scores
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="p-4 border border-gray-200 rounded-lg">
+          <div className="p-4 border border-gray-200 rounded-lg relative">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-sm text-gray-600">Price Attractiveness</span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">Price Attractiveness</span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveTooltip(activeTooltip === 'price_attractiveness' ? null : 'price_attractiveness');
+                  }}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <Info className="w-4 h-4" />
+                </button>
+              </div>
               <span className={`px-2 py-1 rounded-full text-sm font-medium ${getScoreColor(validityData.scores.price_attractiveness_score)}`}>
                 {validityData.scores.price_attractiveness_score}
               </span>
@@ -135,11 +205,27 @@ const ValidityDataSection: React.FC<ValidityDataSectionProps> = ({ validityData,
                 style={{ width: `${validityData.scores.price_attractiveness_score}%` }}
               ></div>
             </div>
+            {activeTooltip === 'price_attractiveness' && (
+              <div className="absolute top-12 left-0 right-0 bg-gray-900 text-white text-xs p-3 rounded-lg shadow-lg z-10">
+                {scoreExplanations.price_attractiveness}
+              </div>
+            )}
           </div>
           
-          <div className="p-4 border border-gray-200 rounded-lg">
+          <div className="p-4 border border-gray-200 rounded-lg relative">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-sm text-gray-600">Amenity Score</span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">Amenity Score</span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveTooltip(activeTooltip === 'amenity_score' ? null : 'amenity_score');
+                  }}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <Info className="w-4 h-4" />
+                </button>
+              </div>
               <span className={`px-2 py-1 rounded-full text-sm font-medium ${getScoreColor(validityData.scores.amenity_score)}`}>
                 {validityData.scores.amenity_score}
               </span>
@@ -150,11 +236,27 @@ const ValidityDataSection: React.FC<ValidityDataSectionProps> = ({ validityData,
                 style={{ width: `${validityData.scores.amenity_score}%` }}
               ></div>
             </div>
+            {activeTooltip === 'amenity_score' && (
+              <div className="absolute top-12 left-0 right-0 bg-gray-900 text-white text-xs p-3 rounded-lg shadow-lg z-10">
+                {scoreExplanations.amenity_score}
+              </div>
+            )}
           </div>
 
-          <div className="p-4 border border-gray-200 rounded-lg">
+          <div className="p-4 border border-gray-200 rounded-lg relative">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-sm text-gray-600">Sustainability Score</span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">Sustainability Score</span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveTooltip(activeTooltip === 'sustainability_score' ? null : 'sustainability_score');
+                  }}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <Info className="w-4 h-4" />
+                </button>
+              </div>
               <span className={`px-2 py-1 rounded-full text-sm font-medium ${getScoreColor(validityData.scores.sustainability_score)}`}>
                 {validityData.scores.sustainability_score}
               </span>
@@ -165,11 +267,27 @@ const ValidityDataSection: React.FC<ValidityDataSectionProps> = ({ validityData,
                 style={{ width: `${validityData.scores.sustainability_score}%` }}
               ></div>
             </div>
+            {activeTooltip === 'sustainability_score' && (
+              <div className="absolute top-12 left-0 right-0 bg-gray-900 text-white text-xs p-3 rounded-lg shadow-lg z-10">
+                {scoreExplanations.sustainability_score}
+              </div>
+            )}
           </div>
 
-          <div className="p-4 border border-gray-200 rounded-lg">
+          <div className="p-4 border border-gray-200 rounded-lg relative">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-sm text-gray-600">Community Score</span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">Community Score</span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveTooltip(activeTooltip === 'community_score' ? null : 'community_score');
+                  }}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <Info className="w-4 h-4" />
+                </button>
+              </div>
               <span className={`px-2 py-1 rounded-full text-sm font-medium ${getScoreColor(validityData.scores.community_score)}`}>
                 {validityData.scores.community_score}
               </span>
@@ -180,6 +298,11 @@ const ValidityDataSection: React.FC<ValidityDataSectionProps> = ({ validityData,
                 style={{ width: `${validityData.scores.community_score}%` }}
               ></div>
             </div>
+            {activeTooltip === 'community_score' && (
+              <div className="absolute top-12 left-0 right-0 bg-gray-900 text-white text-xs p-3 rounded-lg shadow-lg z-10">
+                {scoreExplanations.community_score}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -488,13 +611,6 @@ export const PropertyDetails: React.FC = () => {
                 )}
               </div>
             </div>
-          </div>
-        )}
-
-        {/* Renovation Details Section */}
-        {validityData?.renovation_details && (
-          <div>
-            <RenovationDetailsSection renovationDetails={validityData.renovation_details} />
           </div>
         )}
       </div>

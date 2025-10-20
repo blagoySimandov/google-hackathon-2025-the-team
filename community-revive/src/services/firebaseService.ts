@@ -33,6 +33,22 @@ export interface PaginatedResult<T> {
   totalCount?: number;
 }
 
+export interface PropertyFilters {
+  propertyIds?: number[];
+  propertyType?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  minCommunityScore?: number;
+  maxCommunityScore?: number;
+  nearSchool?: boolean;
+  nearPark?: boolean;
+  nearTransit?: boolean;
+  historicDistrict?: boolean;
+  blightRemoval?: boolean;
+  highYouthImpact?: boolean;
+  potentialGreenSpace?: boolean;
+}
+
 // Lightweight property interface for map markers
 export interface MapProperty {
   id: number;
@@ -55,6 +71,9 @@ function transformFirestoreToProperty(doc: QueryDocumentSnapshot<DocumentData>):
   const data = doc.data() as any; // Use any since the structure is different
   
   console.log('🔄 Transforming document:', doc.id, 'Data keys:', Object.keys(data));
+  console.log('📊 Scores:', data.scores);
+  console.log('🏘️ Found Amenities:', data.found_amenities);
+  console.log('🏘️ Investment Analysis:', data.investment_analysis);
   console.log('💰 Price data:', data.price);
   console.log('💰 NonFormatted data:', data.nonFormatted);
   console.log('💰 PriceHistory data:', data.priceHistory);
@@ -405,30 +424,50 @@ function transformFirestoreToProperty(doc: QueryDocumentSnapshot<DocumentData>):
   };
 
   // Calculate community-specific values
-  const communityValueScore = calculateCommunityValueScore(mappedData);
-  const estimatedRenovationCost = calculateRenovationCost(mappedData);
+  const communityValueScore = data.scores?.community_value_score || calculateCommunityValueScore(mappedData);
+  const estimatedRenovationCost = data.total_renovation_cost || data.renovation_details?.total_cost || calculateRenovationCost(mappedData);
   const potentialUses = calculatePotentialUses(mappedData);
-  const communityImpact = calculateCommunityImpact(mappedData);
-  const neighborhoodMetrics = calculateNeighborhoodMetrics(mappedData);
+  const communityImpact = calculateCommunityImpact(mappedData, data.found_amenities || []);
+  const neighborhoodMetrics = {
+    renewalScore: data.scores?.score || communityValueScore,
+    walkabilityScore: data.scores?.amenity_score || 50,
+    safetyScore: data.scores?.viability_score || 50,
+  };
   const impactStory = generateImpactStory(mappedData);
+
+  const areaInSquareFeet = data.area_m2 ? Math.round(data.area_m2 * 10.764) : (data.floorArea?.value ? Math.round(parseFloat(data.floorArea.value) * (data.floorArea.unit === 'ACRES' ? 43560 : 10.764)) : 1200);
+
+  const airQuality = data.air_quality_score ? {
+    score: data.air_quality_score,
+    aqi: data.air_quality_index,
+    category: data.air_quality_category || 'Unknown',
+    lastUpdated: new Date().toISOString(),
+    pollutants: {},
+  } : undefined;
 
   return {
     ...mappedData,
     propertyType: mapPropertyType(mappedData.propertyType),
+    validityScore: data.validityScore || 0,
+    communityScore: data.communityScore || 0,
     communityValueScore,
     estimatedRenovationCost,
     potentialUses,
     communityImpact,
     neighborhoodMetrics,
     impactStory,
+    airQuality,
+    investmentAnalysis: data.investment_analysis,
+    renovationDetails: data.renovation_details,
+    foundAmenities: data.found_amenities,
     coordinates: transformedCoordinates,
-    address: city, // Use the cleaned city name as the main address
+    address: city,
     city,
     state,
     zipCode,
     beforeImage: mappedData.media.images[0]?.size1440x960 || '',
     size: {
-      squareFeet: 1200, // Default estimate
+      squareFeet: areaInSquareFeet,
     },
     yearBuilt: mappedData.dates.dateOfConstruction ? Number.parseInt(mappedData.dates.dateOfConstruction) : undefined,
     lastOccupied: mappedData.dates.lastUpdateDate ? new Date(mappedData.dates.lastUpdateDate).getFullYear() : undefined,
@@ -507,34 +546,37 @@ function calculatePotentialUses(data: ApiProperty): string[] {
 }
 
 // Calculate community impact metrics
-function calculateCommunityImpact(data: ApiProperty) {
+function calculateCommunityImpact(data: ApiProperty, foundAmenities: any[] = []) {
+  const hasSchoolAmenity = foundAmenities.some((a: any) =>
+    a.type?.toLowerCase().includes('school') || a.name?.toLowerCase().includes('school')
+  ) || data.amenities?.primarySchools?.length > 0 || data.amenities?.secondarySchools?.length > 0;
+
+  const hasParkAmenity = foundAmenities.some((a: any) =>
+    a.type?.toLowerCase().includes('park') || a.name?.toLowerCase().includes('park') || a.name?.toLowerCase().includes('green')
+  );
+
+  const hasTransitAmenity = foundAmenities.some((a: any) =>
+    a.type?.toLowerCase().includes('transit') || a.type?.toLowerCase().includes('station') || a.type?.toLowerCase().includes('bus')
+  ) || data.amenities?.publicTransports?.length > 0;
+
   return {
     blightRemoval: data.propertyType === 'Site' || (data.ber.rating === 'F' || data.ber.rating === 'G'),
-    nearSchool: data.extracted.nearbyLocations.closeBy?.some(loc => 
+    nearSchool: hasSchoolAmenity || data.extracted.nearbyLocations.closeBy?.some(loc =>
       loc.toLowerCase().includes('school') || loc.toLowerCase().includes('education')
     ) || false,
-    nearPark: data.extracted.nearbyLocations.closeBy?.some(loc => 
+    nearPark: hasParkAmenity || data.extracted.nearbyLocations.closeBy?.some(loc =>
       loc.toLowerCase().includes('park') || loc.toLowerCase().includes('green')
     ) || false,
-    nearTransit: data.extracted.nearbyLocations.closeBy?.some(loc => 
+    nearTransit: hasTransitAmenity || data.extracted.nearbyLocations.closeBy?.some(loc =>
       loc.toLowerCase().includes('station') || loc.toLowerCase().includes('bus')
     ) || false,
-    historicDistrict: data.extracted.nearbyLocations.closeBy?.some(loc => 
+    historicDistrict: data.extracted.nearbyLocations.closeBy?.some(loc =>
       loc.toLowerCase().includes('historic') || loc.toLowerCase().includes('heritage')
     ) || false,
     highYouthImpact: Boolean(data.bedrooms && data.bedrooms >= 3),
-    potentialGreenSpace: data.propertyType === 'Site' || data.extracted.nearbyLocations.closeBy?.some(loc => 
+    potentialGreenSpace: data.propertyType === 'Site' || hasParkAmenity || data.extracted.nearbyLocations.closeBy?.some(loc =>
       loc.toLowerCase().includes('park')
     ) || false,
-  };
-}
-
-// Calculate neighborhood metrics
-function calculateNeighborhoodMetrics(data: ApiProperty) {
-  return {
-    renewalScore: calculateCommunityValueScore(data),
-    walkabilityScore: data.extracted.nearbyLocations.closeBy?.length ? 70 : 50,
-    safetyScore: data.location.areaName ? 75 : 60,
   };
 }
 
@@ -761,62 +803,51 @@ function transformFirestoreToMapProperty(doc: QueryDocumentSnapshot<DocumentData
 }
 
 export class FirebaseService {
-  // Fetch properties with pagination
-  async fetchProperties(options: PaginationOptions = {}): Promise<PaginatedResult<Property>> {
+  // Fetch properties with filters and pagination
+  async fetchProperties(filters: PropertyFilters = {}, options: PaginationOptions = {}): Promise<PaginatedResult<Property>> {
     try {
-      console.log('🔥 FirebaseService.fetchProperties called with options:', options);
-      
+      console.log('🔥 FirebaseService.fetchProperties called with:', { filters, options });
+
       const { pageSize = 20, lastDoc } = options;
-      console.log('🔥 Creating collection reference for:', PROPERTIES_COLLECTION);
-      
       const propertiesRef = collection(db, PROPERTIES_COLLECTION);
-      console.log('🔥 Collection reference created:', propertiesRef);
-      
-      const constraints: QueryConstraint[] = [
-        orderBy('id', 'desc'), // Use id field since analytics.listingViews might not exist
-        limit(pageSize)
-      ];
-      
+
+      if (filters.propertyIds && filters.propertyIds.length > 0) {
+        return await this.fetchPropertiesByIds(filters.propertyIds, options);
+      }
+
+      const constraints: QueryConstraint[] = [];
+
+      if (filters.propertyType) {
+        constraints.push(where('propertyType', '==', filters.propertyType));
+      }
+
+      constraints.push(orderBy('id', 'desc'));
+      constraints.push(limit(pageSize));
+
       if (lastDoc) {
-        console.log('🔥 Adding startAfter constraint with lastDoc:', lastDoc);
         constraints.push(startAfter(lastDoc));
       }
-      
-      console.log('🔥 Query constraints:', constraints);
+
       const q = query(propertiesRef, ...constraints);
-      console.log('🔥 Query created:', q);
-      
-      console.log('🔥 Executing Firestore query...');
       const snapshot = await getDocs(q);
-      console.log('🔥 Query executed successfully. Snapshot:', {
-        size: snapshot.size,
-        empty: snapshot.empty,
-        docs: snapshot.docs.length
-      });
-      
+
       if (snapshot.empty) {
-        console.log('⚠️ No documents found in collection');
-        return {
-          data: [],
-          hasMore: false,
-        };
+        return { data: [], hasMore: false };
       }
-      
-      console.log('🔥 Transforming documents...');
-      const properties = snapshot.docs.map(doc => {
-        console.log('🔥 Transforming doc:', doc.id, doc.data());
-        return transformFirestoreToProperty(doc);
-      });
-      
+
+      let properties = snapshot.docs.map(doc => transformFirestoreToProperty(doc));
+
+      properties = this.applyClientSideFilters(properties, filters);
+
       const hasMore = snapshot.docs.length === pageSize;
       const newLastDoc = snapshot.docs.at(-1);
-      
+
       console.log('🔥 Fetch completed:', {
         propertiesCount: properties.length,
         hasMore,
         newLastDoc: newLastDoc?.id
       });
-      
+
       return {
         data: properties,
         lastDoc: newLastDoc,
@@ -824,71 +855,144 @@ export class FirebaseService {
       };
     } catch (error) {
       console.error('❌ Error fetching properties:', error);
-      console.error('❌ Error details:', {
-        name: error instanceof Error ? error.name : 'Unknown',
-        message: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : 'No stack trace'
-      });
       throw new Error(`Failed to fetch properties from Firebase: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
-  // Fetch lightweight properties for map markers only
-  async fetchMapProperties(options: PaginationOptions = {}): Promise<PaginatedResult<MapProperty>> {
+  async fetchPropertiesByIds(propertyIds: number[], options: PaginationOptions = {}): Promise<PaginatedResult<Property>> {
     try {
-      console.log('🗺️ FirebaseService.fetchMapProperties called with options:', options);
-      
-      const { pageSize = 50, lastDoc } = options;
-      console.log('🗺️ Creating collection reference for map properties:', PROPERTIES_COLLECTION);
-      
+      console.log('🔥 Fetching properties by IDs:', propertyIds.length, 'IDs');
+
+      const { pageSize = 20, lastDoc } = options;
+
+      if (propertyIds.length === 0) {
+        return { data: [], hasMore: false };
+      }
+
       const propertiesRef = collection(db, PROPERTIES_COLLECTION);
-      console.log('🗺️ Collection reference created:', propertiesRef);
-      
-      const constraints: QueryConstraint[] = [
-        orderBy('id', 'desc'), // Use id field since analytics.listingViews might not exist
-        limit(pageSize)
-      ];
-      
+      const batchSize = 30;
+      const batches: number[][] = [];
+
+      for (let i = 0; i < propertyIds.length; i += batchSize) {
+        batches.push(propertyIds.slice(i, i + batchSize));
+      }
+
+      const allProperties: Property[] = [];
+
+      for (const batch of batches) {
+        const q = query(
+          propertiesRef,
+          where('id', 'in', batch),
+          orderBy('id', 'desc')
+        );
+
+        const snapshot = await getDocs(q);
+        const properties = snapshot.docs.map(doc => transformFirestoreToProperty(doc));
+        allProperties.push(...properties);
+      }
+
+      return {
+        data: allProperties.slice(0, pageSize),
+        hasMore: allProperties.length > pageSize,
+      };
+    } catch (error) {
+      console.error('❌ Error fetching properties by IDs:', error);
+      throw new Error(`Failed to fetch properties by IDs: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  private applyClientSideFilters(properties: Property[], filters: PropertyFilters): Property[] {
+    let filtered = properties;
+
+    if (filters.minPrice !== undefined) {
+      filtered = filtered.filter(p => p.price && p.price.amount >= filters.minPrice!);
+    }
+
+    if (filters.maxPrice !== undefined) {
+      filtered = filtered.filter(p => p.price && p.price.amount <= filters.maxPrice!);
+    }
+
+    if (filters.minCommunityScore !== undefined) {
+      filtered = filtered.filter(p => p.communityScore >= filters.minCommunityScore!);
+    }
+
+    if (filters.maxCommunityScore !== undefined) {
+      filtered = filtered.filter(p => p.communityScore <= filters.maxCommunityScore!);
+    }
+
+    if (filters.nearSchool !== undefined && filters.nearSchool) {
+      filtered = filtered.filter(p => p.communityImpact?.nearSchool);
+    }
+
+    if (filters.nearPark !== undefined && filters.nearPark) {
+      filtered = filtered.filter(p => p.communityImpact?.nearPark);
+    }
+
+    if (filters.nearTransit !== undefined && filters.nearTransit) {
+      filtered = filtered.filter(p => p.communityImpact?.nearTransit);
+    }
+
+    if (filters.historicDistrict !== undefined && filters.historicDistrict) {
+      filtered = filtered.filter(p => p.communityImpact?.historicDistrict);
+    }
+
+    if (filters.blightRemoval !== undefined && filters.blightRemoval) {
+      filtered = filtered.filter(p => p.communityImpact?.blightRemoval);
+    }
+
+    if (filters.highYouthImpact !== undefined && filters.highYouthImpact) {
+      filtered = filtered.filter(p => p.communityImpact?.highYouthImpact);
+    }
+
+    if (filters.potentialGreenSpace !== undefined && filters.potentialGreenSpace) {
+      filtered = filtered.filter(p => p.communityImpact?.potentialGreenSpace);
+    }
+
+    return filtered;
+  }
+
+  // Fetch lightweight properties for map markers only
+  async fetchMapProperties(filters: PropertyFilters = {}, options: PaginationOptions = {}): Promise<PaginatedResult<MapProperty>> {
+    try {
+      console.log('🗺️ FirebaseService.fetchMapProperties called with:', { filters, options });
+
+      const { pageSize = 50, lastDoc } = options;
+      const propertiesRef = collection(db, PROPERTIES_COLLECTION);
+
+      const constraints: QueryConstraint[] = [];
+
+      if (filters.propertyType) {
+        constraints.push(where('propertyType', '==', filters.propertyType));
+      }
+
+      constraints.push(orderBy('id', 'desc'));
+      constraints.push(limit(pageSize));
+
       if (lastDoc) {
-        console.log('🗺️ Adding startAfter constraint with lastDoc:', lastDoc);
         constraints.push(startAfter(lastDoc));
       }
-      
-      console.log('🗺️ Query constraints:', constraints);
+
       const q = query(propertiesRef, ...constraints);
-      console.log('🗺️ Query created:', q);
-      
-      console.log('🗺️ Executing Firestore query for map properties...');
       const snapshot = await getDocs(q);
-      console.log('🗺️ Map query executed successfully. Snapshot:', {
-        size: snapshot.size,
-        empty: snapshot.empty,
-        docs: snapshot.docs.length
-      });
-      
+
       if (snapshot.empty) {
-        console.log('⚠️ No documents found in collection for map');
         return {
           data: [],
           hasMore: false,
         };
       }
-      
-      console.log('🗺️ Transforming documents for map...');
-      const properties = snapshot.docs.map(doc => {
-        console.log('🗺️ Transforming map doc:', doc.id);
-        return transformFirestoreToMapProperty(doc);
-      });
-      
+
+      const properties = snapshot.docs.map(doc => transformFirestoreToMapProperty(doc));
+
       const hasMore = snapshot.docs.length === pageSize;
       const newLastDoc = snapshot.docs.at(-1);
-      
+
       console.log('🗺️ Map fetch completed:', {
         propertiesCount: properties.length,
         hasMore,
         newLastDoc: newLastDoc?.id
       });
-      
+
       return {
         data: properties,
         lastDoc: newLastDoc,
@@ -896,11 +1000,6 @@ export class FirebaseService {
       };
     } catch (error) {
       console.error('❌ Error fetching map properties:', error);
-      console.error('❌ Map error details:', {
-        name: error instanceof Error ? error.name : 'Unknown',
-        message: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : 'No stack trace'
-      });
       throw new Error(`Failed to fetch map properties from Firebase: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -1016,14 +1115,16 @@ export class FirebaseService {
   // Get properties by community value score range with pagination
   async getHighValueProperties(minScore: number = 70, options: PaginationOptions = {}): Promise<PaginatedResult<Property>> {
     try {
-      const result = await this.fetchProperties(options);
-      const filteredData = result.data
-        .filter(p => p.communityValueScore >= minScore)
+      const filters: PropertyFilters = {
+        minCommunityScore: minScore
+      };
+      const result = await this.fetchProperties(filters, options);
+      const sortedData = result.data
         .sort((a, b) => b.communityValueScore - a.communityValueScore);
-      
+
       return {
         ...result,
-        data: filteredData,
+        data: sortedData,
       };
     } catch (error) {
       console.error('Error fetching high value properties:', error);

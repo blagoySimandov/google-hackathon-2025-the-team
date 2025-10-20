@@ -1,5 +1,5 @@
 import { Property } from '../types';
-import { firebaseService, PaginationOptions, PaginatedResult, MapProperty } from './firebaseService';
+import { firebaseService, PaginationOptions, PaginatedResult, MapProperty, PropertyFilters } from './firebaseService';
 
 // Cache for property data to prevent repeated database requests
 interface CacheEntry<T> {
@@ -18,47 +18,25 @@ export class ApiService {
     if (!entry) return false;
     return Date.now() - entry.timestamp < this.CACHE_TTL;
   }
-  // Fetch properties from Firebase with pagination
-  async fetchProperties(params?: {
-    area?: string;
-    propertyType?: string;
-    minPrice?: number;
-    maxPrice?: number;
-    bedrooms?: number;
-  }, options?: PaginationOptions): Promise<PaginatedResult<Property>> {
+  // Fetch properties from Firebase with pagination and filters
+  async fetchProperties(filters?: PropertyFilters, options?: PaginationOptions): Promise<PaginatedResult<Property>> {
     try {
-      console.log('🔌 ApiService.fetchProperties called with:', { params, options });
-      
-      // Use Firebase service to fetch properties
-      if (params && Object.keys(params).length > 0) {
-        console.log('🔌 ApiService: Using searchProperties with params');
-        return await firebaseService.searchProperties({
-          area: params.area,
-          propertyType: params.propertyType,
-          minPrice: params.minPrice,
-          maxPrice: params.maxPrice,
-          bedrooms: params.bedrooms,
-        }, options);
-      }
-      
-      console.log('🔌 ApiService: Using fetchProperties without params');
-      return await firebaseService.fetchProperties(options);
+      console.log('🔌 ApiService.fetchProperties called with:', { filters, options });
+
+      return await firebaseService.fetchProperties(filters || {}, options);
     } catch (error) {
       console.error('❌ ApiService: Error fetching properties:', error);
       throw new Error('Failed to fetch properties');
     }
   }
 
-  // Fetch lightweight properties for map markers
-  // Note: Caching is handled at the Dashboard component level for map properties
-  // because we need to fetch all pages and cache the complete collection
-  async fetchMapProperties(options?: PaginationOptions): Promise<PaginatedResult<MapProperty>> {
+  // Fetch lightweight properties for map markers with filters
+  async fetchMapProperties(filters?: PropertyFilters, options?: PaginationOptions): Promise<PaginatedResult<MapProperty>> {
     try {
-      console.log('🔌 ApiService.fetchMapProperties called with:', { options });
-      
-      // Don't cache paginated map properties - let the component handle it
-      const result = await firebaseService.fetchMapProperties(options);
-      
+      console.log('🔌 ApiService.fetchMapProperties called with:', { filters, options });
+
+      const result = await firebaseService.fetchMapProperties(filters || {}, options);
+
       return result;
     } catch (error) {
       console.error('❌ ApiService: Error fetching map properties:', error);
