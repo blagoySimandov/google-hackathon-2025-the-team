@@ -6,6 +6,7 @@ import { ArrowLeft, List, Map as MapIcon, TrendingUp, DollarSign, Home, Star } f
 import { AmenitiesMap } from './AmenitiesMap';
 import { SchoolsSection } from './SchoolsSection';
 import { TransportSection } from './TransportSection';
+import { RenovationDetailsSection } from './RenovationDetailsSection';
 import type { ValidityData } from '../api/firestore/types';
 
 // ValidityDataSection Component
@@ -487,6 +488,13 @@ export const PropertyDetails: React.FC = () => {
                 )}
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Renovation Details Section */}
+        {validityData?.renovation_details && (
+          <div>
+            <RenovationDetailsSection renovationDetails={validityData.renovation_details} />
           </div>
         )}
       </div>
