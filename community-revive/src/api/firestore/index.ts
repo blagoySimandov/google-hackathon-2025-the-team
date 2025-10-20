@@ -133,6 +133,8 @@ export const getValidityDataById = async (
     }
 
     const data = docSnap.data();
+    console.log('data', data);
+    console.log('propertyId', propertyId);
     return {
       id: data.id,
       property_id: data.property_id,
@@ -153,7 +155,7 @@ export const getValidityDataById = async (
       investment_analysis: data.investment_analysis || {},
       renovation_details: data.renovation_details || { total_cost: 0, items: [] },
       total_renovation_cost: data.total_renovation_cost,
-      scores: data.scores || {},
+      scores: data.scores || { viability_score: data.viability_score, validity_score: data.validity_score, price_attractiveness_score: data.price_attractiveness_score, amenity_score: data.amenity_score, sustainability_score: data.sustainability_score, community_score: data.community_score },
     } as ValidityData;
   } catch (error) {
     console.error("Error fetching validity data:", error);
