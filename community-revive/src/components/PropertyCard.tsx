@@ -26,7 +26,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
   onClick,
   onViewOnMap,
 }) => {
-  const scoreColor = getScoreColor(property.communityValueScore);
+  const scoreColor = getScoreColor(property.communityScore);
 
   const handleViewOnMap = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click
@@ -46,12 +46,60 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
     return new Intl.NumberFormat('en-US').format(sqft);
   };
 
-  // Get top 3 community impacts to display
-  const getTopImpacts = () => {
-    const impacts = [];
-    if (property.communityImpact.blightRemoval) {
-      impacts.push({ icon: null, label: 'Blight Removal', bgColor: 'bg-red-50', textColor: 'text-red-700' });
+  const getAmenityIcon = (type: string) => {
+    const typeLower = type.toLowerCase();
+    if (typeLower.includes('school') || typeLower.includes('education')) {
+      return <School className="w-3 h-3" />;
     }
+    if (typeLower.includes('park') || typeLower.includes('green')) {
+      return <Trees className="w-3 h-3" />;
+    }
+    if (typeLower.includes('transit') || typeLower.includes('bus') || typeLower.includes('train')) {
+      return <Bus className="w-3 h-3" />;
+    }
+    if (typeLower.includes('historic') || typeLower.includes('landmark')) {
+      return <Landmark className="w-3 h-3" />;
+    }
+    return <MapPin className="w-3 h-3" />;
+  };
+
+  const getAmenityColor = (type: string) => {
+    const typeLower = type.toLowerCase();
+    if (typeLower.includes('school') || typeLower.includes('education')) {
+      return { bgColor: 'bg-blue-50', textColor: 'text-blue-700' };
+    }
+    if (typeLower.includes('park') || typeLower.includes('green')) {
+      return { bgColor: 'bg-green-50', textColor: 'text-green-700' };
+    }
+    if (typeLower.includes('transit') || typeLower.includes('bus') || typeLower.includes('train')) {
+      return { bgColor: 'bg-purple-50', textColor: 'text-purple-700' };
+    }
+    if (typeLower.includes('historic') || typeLower.includes('landmark')) {
+      return { bgColor: 'bg-amber-50', textColor: 'text-amber-700' };
+    }
+    return { bgColor: 'bg-gray-50', textColor: 'text-gray-700' };
+  };
+
+  const getTopImpacts = () => {
+    console.log('🏠 Property:', property.id, 'foundAmenities:', property.foundAmenities);
+
+    if (property.foundAmenities && property.foundAmenities.length > 0) {
+      console.log('✅ Using foundAmenities for property', property.id);
+      return property.foundAmenities.slice(0, 3).map(amenity => {
+        const colors = getAmenityColor(amenity.type);
+        const distance = amenity.distance_km < 1
+          ? `${Math.round(amenity.distance_km * 1000)}m`
+          : `${amenity.distance_km.toFixed(1)}km`;
+        return {
+          icon: getAmenityIcon(amenity.type),
+          label: `${amenity.name} (${distance})`,
+          bgColor: colors.bgColor,
+          textColor: colors.textColor
+        };
+      });
+    }
+
+    const impacts = [];
     if (property.communityImpact.nearSchool) {
       impacts.push({ icon: <School className="w-3 h-3" />, label: 'Near School', bgColor: 'bg-blue-50', textColor: 'text-blue-700' });
     }
@@ -69,6 +117,9 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
     }
     if (property.communityImpact.potentialGreenSpace) {
       impacts.push({ icon: <Leaf className="w-3 h-3" />, label: 'Green Space', bgColor: 'bg-emerald-50', textColor: 'text-emerald-700' });
+    }
+    if (property.communityImpact.blightRemoval) {
+      impacts.push({ icon: null, label: 'Blight Removal', bgColor: 'bg-red-50', textColor: 'text-red-700' });
     }
     return impacts.slice(0, 3);
   };
@@ -95,23 +146,37 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
               e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23f3f4f6" width="400" height="300"/%3E%3Ctext fill="%239ca3af" font-family="sans-serif" font-size="18" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
             }}
           />
-          
-          {/* Score Badge - Top Right */}
-          <div className="absolute top-3 right-3">
+
+          {/* Validity Score Badge - Top Left */}
+          <div className="absolute top-3 left-3">
             <div className="glass rounded-full px-3 py-1.5 shadow-lg ring-1 ring-white/20">
               <div className="flex items-center gap-2">
-                <div 
-                  className="w-2.5 h-2.5 rounded-full animate-pulse-slow" 
-                  style={{ backgroundColor: scoreColor }}
+                <div
+                  className="w-2.5 h-2.5 rounded-full animate-pulse-slow"
+                  style={{ backgroundColor: getScoreColor(property.validityScore) }}
                 ></div>
-                <span className="font-bold text-sm text-gray-900">{property.communityValueScore}</span>
-                <span className="text-xs text-gray-600 font-medium">Score</span>
+                <span className="font-bold text-sm text-gray-900">{property.validityScore}</span>
+                <span className="text-xs text-gray-600 font-medium">Validity</span>
               </div>
             </div>
           </div>
 
-          {/* Price Tag - Bottom Left */}
-          <div className="absolute bottom-3 left-3">
+          {/* Community Score Badge - Top Right */}
+          <div className="absolute top-3 right-3">
+            <div className="glass rounded-full px-3 py-1.5 shadow-lg ring-1 ring-white/20">
+              <div className="flex items-center gap-2">
+                <div
+                  className="w-2.5 h-2.5 rounded-full animate-pulse-slow"
+                  style={{ backgroundColor: scoreColor }}
+                ></div>
+                <span className="font-bold text-sm text-gray-900">{property.communityScore}</span>
+                <span className="text-xs text-gray-600 font-medium">Community</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Price Tag - Bottom Right */}
+          <div className="absolute bottom-3 right-3">
             <div className="glass-dark text-white px-3 py-1.5 rounded-lg shadow-lg">
               <span className="text-sm font-bold">
                 {formatCurrency(property.price?.amount || 0, property.price?.currency || 'EUR')}

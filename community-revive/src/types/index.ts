@@ -1,15 +1,17 @@
-// Import the API schema types
 import { Listing as ApiProperty } from '../backend/scheme_of_api';
+import { InvestmentAnalysis, RenovationDetails, Amenity } from '../api/firestore/types';
 
-// Extended Property interface that combines API data with community-specific data
 export interface Property extends Omit<ApiProperty, 'propertyType'> {
-  // Override propertyType with our community-specific types
   propertyType: 'residential' | 'commercial' | 'industrial' | 'vacant';
-  
-  // Community-specific fields that we'll calculate or add
+
+  validityScore: number;
+  communityScore: number;
   communityValueScore: number;
   estimatedRenovationCost: number;
   potentialUses: string[];
+  investmentAnalysis?: InvestmentAnalysis;
+  renovationDetails?: RenovationDetails;
+  foundAmenities?: Amenity[];
   communityImpact: {
     blightRemoval: boolean;
     nearSchool: boolean;

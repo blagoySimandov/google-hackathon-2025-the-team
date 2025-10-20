@@ -15,6 +15,7 @@ interface GoogleMapProps {
   selectedProperty?: Property;
   highlightedProperty?: Property;
   onPropertySelect: (property: Property) => void;
+  onBoundsChange?: (visiblePropertyIds: number[]) => void;
   className?: string;
   loading?: boolean;
 }
@@ -24,6 +25,7 @@ interface MapComponentProps {
   selectedProperty?: Property;
   highlightedProperty?: Property;
   onPropertySelect: (property: Property) => void;
+  onBoundsChange?: (visiblePropertyIds: number[]) => void;
   className?: string;
   loading?: boolean;
 }
@@ -83,12 +85,13 @@ const MapComponent: React.FC<MapComponentProps> = ({
   selectedProperty,
   highlightedProperty,
   onPropertySelect,
+  onBoundsChange,
   className = '',
   loading = false,
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<google.maps.Map | null>(null);
-  const markers = useRef<Map<number, google.maps.Marker>>(new Map()); // Use Map for O(1) lookup
+  const markers = useRef<Map<number, google.maps.Marker>>(new Map());
   const markerClusterer = useRef<MarkerClusterer | null>(null);
   const [popoverProperty, setPopoverProperty] = useState<Property | null>(null);
   const [popoverPosition, setPopoverPosition] = useState<{ x: number; y: number } | null>(null);
@@ -97,6 +100,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
   const hoverTimeout = useRef<NodeJS.Timeout | null>(null);
   const hideTimeout = useRef<NodeJS.Timeout | null>(null);
   const currentHoveredProperty = useRef<MapDisplayProperty | null>(null);
+  const boundsChangeTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -184,13 +188,41 @@ const MapComponent: React.FC<MapComponentProps> = ({
       currentHoveredProperty.current = null;
     });
 
+    // Add bounds change listener to track visible properties
+    mapInstance.current.addListener('bounds_changed', () => {
+      if (boundsChangeTimeout.current) {
+        clearTimeout(boundsChangeTimeout.current);
+      }
+
+      boundsChangeTimeout.current = setTimeout(() => {
+        if (!mapInstance.current || !onBoundsChange) return;
+
+        const bounds = mapInstance.current.getBounds();
+        if (!bounds) return;
+
+        const visiblePropertyIds: number[] = [];
+        properties.forEach((property) => {
+          const coords = getPropertyCoordinates(property);
+          if (coords && bounds.contains({ lat: coords.lat, lng: coords.lng })) {
+            visiblePropertyIds.push(property.id);
+          }
+        });
+
+        console.log('🗺️ Bounds changed, visible properties:', visiblePropertyIds.length);
+        onBoundsChange(visiblePropertyIds);
+      }, 500);
+    });
+
     // Cleanup on unmount
     return () => {
       if (markerClusterer.current) {
         markerClusterer.current.clearMarkers();
       }
+      if (boundsChangeTimeout.current) {
+        clearTimeout(boundsChangeTimeout.current);
+      }
     };
-  }, []);
+  }, [properties, onBoundsChange]);
 
   // Handle highlighted property - center and zoom to it
   useEffect(() => {
