@@ -36,7 +36,6 @@ const ValidityDataSection: React.FC<ValidityDataSectionProps> = ({
 }) => {
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
 
-  // Effect to close tooltip on outside click
   useEffect(() => {
     const handleClickOutside = () => {
       if (activeTooltip) {
@@ -563,6 +562,8 @@ export const PropertyDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [view, setView] = useState<"list" | "map">("list");
+  const [showAnalysis, setShowAnalysis] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const { property, loading, error } = usePropertyById(id || "");
   const {
@@ -570,6 +571,14 @@ export const PropertyDetails: React.FC = () => {
     loading: validityLoading,
     error: validityError,
   } = useGetValidityData(id || "");
+
+  const handleStartAnalysis = () => {
+    setIsAnalyzing(true);
+    setTimeout(() => {
+      setIsAnalyzing(false);
+      setShowAnalysis(true);
+    }, 2000);
+  };
 
   if (loading) {
     return (
@@ -696,23 +705,62 @@ export const PropertyDetails: React.FC = () => {
           <PhotoCarousel images={carouselImages} />
         </div>
 
-        <div>
-          <ValidityDataSection
-            validityData={validityData}
-            loading={validityLoading}
-            error={validityError}
-          />
-        </div>
-        
-        
-       {validityData?.renovation_details && (
-          <div>
-            <RenovationDetailsSection renovationDetails={validityData.renovation_details} />
+        {!showAnalysis && !isAnalyzing && (
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="flex flex-col items-center justify-center py-12">
+              <TrendingUp className="w-16 h-16 text-blue-600 mb-4" />
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                Property Analysis
+              </h2>
+              <p className="text-gray-600 mb-6 text-center max-w-md">
+                Get comprehensive insights about this property's investment potential, including price analysis, amenity scores, renovation estimates, and nearby amenities.
+              </p>
+              <button
+                onClick={handleStartAnalysis}
+                className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold text-lg shadow-md hover:shadow-lg"
+              >
+                Start Analysis
+              </button>
+            </div>
           </div>
         )}
 
-        {/* Amenities Section */}
-        {hasAmenities && (
+        {isAnalyzing && (
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="flex flex-col items-center justify-center py-12">
+              <div className="relative mb-6">
+                <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200"></div>
+                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-600 absolute top-0 left-0"></div>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                Analyzing Property Data
+              </h3>
+              <p className="text-gray-600 text-center">
+                Calculating investment metrics, validity scores, and nearby amenities...
+              </p>
+            </div>
+          </div>
+        )}
+
+        {showAnalysis && (
+          <>
+            <div>
+              <ValidityDataSection
+                validityData={validityData}
+                loading={validityLoading}
+                error={validityError}
+              />
+            </div>
+
+
+           {validityData?.renovation_details && (
+              <div>
+                <RenovationDetailsSection renovationDetails={validityData.renovation_details} />
+              </div>
+            )}
+
+            {/* Amenities Section */}
+            {hasAmenities && (
           <div>
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">
@@ -847,8 +895,10 @@ export const PropertyDetails: React.FC = () => {
             </div>
           </div>
         )}
+          </>
+        )}
       </div>
-      
+
     </div>
   );
 };
