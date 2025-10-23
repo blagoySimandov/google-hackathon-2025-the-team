@@ -181,48 +181,4 @@ async function scrapeAllProperties() {
   );
 }
 
-async function scrapeDetails(url: string) {
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-  });
-
-  try {
-    const page = await browser.newPage();
-
-    await page.setUserAgent(
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    );
-
-    console.log(`Navigating to ${url}...`);
-    await page.goto(url, {
-      waitUntil: "networkidle2",
-      timeout: 60000,
-    });
-
-    console.log("Simulating mouse movement...");
-    await simulateMouseMovement(page);
-
-    console.log("Waiting for JS challenge to resolve...");
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-
-    await page.waitForNetworkIdle({ timeout: 30000 });
-
-    console.log("Getting HTML content...");
-    const html = await page.content();
-
-    writeFileSync("html.html", html, "utf-8");
-    console.log("Parsing Next.js hydration data...");
-    const data = parseHydrationData(html);
-
-    const filename = "data.js";
-    const jsContent = `export const data = ${JSON.stringify(data, null, 2)};`;
-
-    writeFileSync(filename, jsContent, "utf-8");
-    console.log(`Parsed data saved to ${filename}`);
-  } finally {
-    await browser.close();
-  }
-}
-
 scrapeAllProperties().catch(console.error);
